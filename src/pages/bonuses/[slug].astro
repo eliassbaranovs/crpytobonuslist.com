@@ -5,42 +5,59 @@ import Layout from "../../layouts/Layout.astro";
 export async function getStaticPaths() {
   const bonuses = await getCollection("bonuses");
   return bonuses.map((bonus) => ({
-    params: { slug: bonus.data.slug },
+    params: { slug: bonus.id.replace(/\.md$/, '') },
     props: { bonus },
   }));
 }
 
 const { bonus } = Astro.props;
 const { Content } = await render(bonus);
-const jsonld = bonus.data.schema_jsonld ? JSON.stringify(bonus.data.schema_jsonld) : undefined;
+const seoTitle = bonus.data.title + " | CryptoBonusList";
 ---
 
-<Layout title={bonus.data.seoTitle} description={bonus.data.description} jsonld={jsonld}>
+<Layout title={seoTitle} description={bonus.data.description}>
   <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <!-- Banner -->
       <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14]">
         <div class="flex items-center gap-4 mb-4">
-          <span class="inline-block bg-[#8A2BE2] text-white text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
-            {bonus.data.bonusType}
-          </span>
-          <span class="text-[#39FF14] text-sm font-[JetBrains_Mono]">
-            {bonus.data.publishedAt}
-          </span>
+          {bonus.data.bonusType && (
+            <span class="inline-block bg-[#8A2BE2] text-white text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+              {bonus.data.bonusType}
+            </span>
+          )}
+          {bonus.data.verified && (
+            <span class="inline-block bg-[#39FF14] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+              VERIFIED
+            </span>
+          )}
+          {bonus.data.publishDate && (
+            <span class="text-[#39FF14] text-sm font-[JetBrains_Mono]">
+              {bonus.data.publishDate}
+            </span>
+          )}
         </div>
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
           {bonus.data.title}
         </h1>
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg">
-          {bonus.data.imageAlt}
+          {bonus.data.description}
         </p>
-        <div class="flex flex-wrap gap-2 mt-4">
-          {bonus.data.tags.map((tag: string) => (
-            <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] border border-[#FAFF00] px-3 py-1">
-              {tag}
-            </span>
-          ))}
-        </div>
+        {bonus.data.casino && (
+          <div class="mt-4 text-white font-[JetBrains_Mono]">
+            <span class="text-[#FAFF00]">Casino:</span> {bonus.data.casino}
+          </div>
+        )}
+        {bonus.data.bonus && (
+          <div class="mt-2 text-white font-[JetBrains_Mono]">
+            <span class="text-[#FAFF00]">Bonus:</span> {bonus.data.bonus}
+          </div>
+        )}
+        {bonus.data.code && (
+          <div class="mt-2 text-white font-[JetBrains_Mono]">
+            <span class="text-[#FAFF00]">Code:</span> {bonus.data.code}
+          </div>
+        )}
       </div>
 
       <!-- Content -->

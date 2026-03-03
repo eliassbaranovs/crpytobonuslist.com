@@ -5,16 +5,13 @@ const bonuses = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/bonuses" }),
   schema: z.object({
     title: z.string(),
-    slug: z.string(),
     description: z.string(),
-    seoTitle: z.string(),
-    tags: z.array(z.string()),
-    publishedAt: z.coerce.string(),
-    image: z.string(),
-    imageAlt: z.string(),
-    author: z.string(),
-    bonusType: z.string().default("welcome"),
-    schema_jsonld: z.union([z.array(z.any()), z.record(z.any()), z.string()]).optional(),
+    casino: z.string().optional(),
+    bonus: z.string().optional(),
+    code: z.string().optional(),
+    verified: z.boolean().optional(),
+    publishDate: z.coerce.string().optional(),
+    bonusType: z.string().optional(),
   }),
 });
 
