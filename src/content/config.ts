@@ -9,12 +9,12 @@ const bonuses = defineCollection({
     description: z.string(),
     seoTitle: z.string(),
     tags: z.array(z.string()),
-    publishedAt: z.string(),
+    publishedAt: z.coerce.string(),
     image: z.string(),
     imageAlt: z.string(),
     author: z.string(),
     bonusType: z.string().default("welcome"),
-    schema_jsonld: z.union([z.array(z.any()), z.record(z.any())]).optional(),
+    schema_jsonld: z.union([z.array(z.any()), z.record(z.any()), z.string()]).optional(),
   }),
 });
 
@@ -26,11 +26,11 @@ const news = defineCollection({
     description: z.string(),
     seoTitle: z.string(),
     tags: z.array(z.string()),
-    publishedAt: z.string(),
+    publishedAt: z.coerce.string(),
     image: z.string(),
     imageAlt: z.string(),
     author: z.string(),
-    schema_jsonld: z.union([z.array(z.any()), z.record(z.any())]).optional(),
+    schema_jsonld: z.union([z.array(z.any()), z.record(z.any()), z.string()]).optional(),
   }),
 });
 
