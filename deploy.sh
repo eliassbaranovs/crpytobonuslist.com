@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DEPLOYPATH=/home/exparboc/cryptobonuslist.com
-REPOPATH=/home/exparboc/repositories/cryptobonuslist.com
+REPOPATH=/home/exparboc/repositories/crpytobonuslist.com
 
 echo "========================================" >> $REPOPATH/deploy.log
 echo "Starting deployment at $(date)" >> $REPOPATH/deploy.log

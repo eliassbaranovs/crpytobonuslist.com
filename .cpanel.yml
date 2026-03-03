@@ -2,5 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/exparboc/cryptobonuslist.com
-    - export REPOPATH=/home/exparboc/repositories/cryptobonuslist.com
+    - export REPOPATH=/home/exparboc/repositories/crpytobonuslist.com
     - /bin/bash $REPOPATH/deploy.sh
