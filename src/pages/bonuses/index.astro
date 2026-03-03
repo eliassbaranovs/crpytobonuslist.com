@@ -1,0 +1,53 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const allBonuses = await getCollection("bonuses");
+const sortedBonuses = allBonuses.sort(
+  (a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime()
+);
+---
+
+<Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.">
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        CRYPTO <span class="text-[#39FF14]">BONUSES</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
+        Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers. Reviewed with the numbers that matter.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedBonuses.map((bonus) => (
+          <a
+            href={`/bonuses/${bonus.data.slug}`}
+            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                {bonus.data.bonusType}
+              </span>
+              <span class="text-[#39FF14] text-xs font-[JetBrains_Mono]">
+                {bonus.data.publishedAt}
+              </span>
+            </div>
+            <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">
+              {bonus.data.title}
+            </h2>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">
+              {bonus.data.description}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              {bonus.data.tags.map((tag: string) => (
+                <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

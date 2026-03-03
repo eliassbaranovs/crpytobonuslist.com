@@ -1,0 +1,132 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  jsonld?: string;
+  ogType?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = "Raw crypto casino bonuses. No fluff.",
+  jsonld,
+  ogType = "website",
+  ogImage = "/favicon.svg",
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site).href} />
+    <meta property="og:site_name" content="CryptoBonusList" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    {jsonld && <script type="application/ld+json" set:html={jsonld} />}
+  </head>
+  <body class="bg-[#0A0A0A] text-white min-h-screen flex flex-col">
+    <!-- Skip to content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-[#39FF14] focus:text-black focus:px-4 focus:py-2 focus:font-bold focus:border-[3px] focus:border-white">
+      Skip to content
+    </a>
+
+    <!-- Header -->
+    <header class="border-b-[3px] border-white px-6 py-4">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="/" class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-[#39FF14] tracking-tight">
+          [ CRYPTO_BONUS_LIST ]
+        </a>
+        <nav aria-label="Main navigation" class="flex gap-6 text-sm font-[Public_Sans] font-semibold uppercase tracking-widest">
+          <a href="/bonuses" class="text-white hover:text-[#39FF14] transition-colors">Bonuses</a>
+          <a href="/news" class="text-white hover:text-[#39FF14] transition-colors">News</a>
+          <a href="/casinos" class="text-white hover:text-[#39FF14] transition-colors">Casinos</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Marquee -->
+    <div class="border-b-[3px] border-white bg-black overflow-hidden py-2">
+      <div class="flex whitespace-nowrap animate-marquee">
+        <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold tracking-wider px-8">
+          &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt;
+        </span>
+        <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold tracking-wider px-8">
+          &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt;
+        </span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t-[3px] border-white mt-16">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white">
+        <div class="p-8">
+          <p class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-4">[ CRYPTO_BONUS_LIST ]</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] leading-relaxed">
+            Crypto casino bonuses, reviewed by people who use them. No fluff. No hype.
+          </p>
+        </div>
+        <nav aria-label="Footer pages" class="p-8">
+          <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">PAGES</p>
+          <ul class="space-y-2 text-sm font-[Public_Sans]">
+            <li><a href="/bonuses" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
+            <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14]">News</a></li>
+            <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casinos</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Company links" class="p-8">
+          <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">COMPANY</p>
+          <ul class="space-y-2 text-sm font-[Public_Sans]">
+            <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14]">About Us</a></li>
+            <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14]">Contact</a></li>
+            <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14]">Privacy Policy</a></li>
+            <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14]">Terms & Conditions</a></li>
+          </ul>
+        </nav>
+        <div class="p-8">
+          <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">LEGAL</p>
+          <p class="text-[#D4D4D4] text-xs font-[Public_Sans] leading-relaxed">
+            Gambling involves risk. Only wager what you can afford to lose. 18+ only. Content is for informational purposes. Verify legality in your jurisdiction.
+          </p>
+          <p class="text-[#D4D4D4] text-xs font-[Public_Sans] mt-4">
+            &copy; 2026 CryptoBonusList.com
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

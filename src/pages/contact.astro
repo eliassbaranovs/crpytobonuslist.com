@@ -1,0 +1,138 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Contact | CryptoBonusList" description="Get in touch with the CryptoBonusList team. Email only.">
+  <section class="px-6 py-12">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        CONTACT <span class="text-[#39FF14]">US</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10">
+        Got a question, correction, or partnership inquiry? Send us a message. We read everything and reply when it makes sense.
+      </p>
+
+      <!-- Contact Form -->
+      <form id="contact-form" class="space-y-6">
+        <div>
+          <label for="email" class="block text-white font-[Space_Grotesk] font-bold text-sm uppercase tracking-wider mb-2">
+            Your Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="you@example.com"
+            class="w-full bg-black border-[3px] border-white text-white font-[Public_Sans] px-4 py-3 placeholder-gray-500 focus:border-[#39FF14] focus:outline-none transition-colors"
+          />
+        </div>
+
+        <div>
+          <label for="subject" class="block text-white font-[Space_Grotesk] font-bold text-sm uppercase tracking-wider mb-2">
+            Subject
+          </label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            required
+            placeholder="What is this about"
+            class="w-full bg-black border-[3px] border-white text-white font-[Public_Sans] px-4 py-3 placeholder-gray-500 focus:border-[#39FF14] focus:outline-none transition-colors"
+          />
+        </div>
+
+        <div>
+          <label for="message" class="block text-white font-[Space_Grotesk] font-bold text-sm uppercase tracking-wider mb-2">
+            Message
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows="6"
+            placeholder="Write your message here..."
+            class="w-full bg-black border-[3px] border-white text-white font-[Public_Sans] px-4 py-3 placeholder-gray-500 focus:border-[#39FF14] focus:outline-none transition-colors resize-y"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          id="submit-btn"
+          class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all cursor-pointer"
+        >
+          SEND MESSAGE
+        </button>
+      </form>
+
+      <!-- Sending State -->
+      <div id="sending-state" class="hidden mt-6">
+        <div class="border-[3px] border-[#FAFF00] bg-black p-6 shadow-[6px_6px_0px_0px_#FAFF00]">
+          <p class="text-[#FAFF00] font-[JetBrains_Mono] font-bold text-lg flex items-center gap-3">
+            <span id="sending-dots">SENDING</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div id="success-state" class="hidden mt-6">
+        <div class="border-[3px] border-[#39FF14] bg-black p-6 shadow-[6px_6px_0px_0px_#39FF14]">
+          <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-xl mb-2">MESSAGE SENT</p>
+          <p class="text-[#D4D4D4] font-[Public_Sans]">
+            We got your message. If it needs a reply, expect to hear back within a few days.
+          </p>
+        </div>
+      </div>
+
+      <!-- Direct email -->
+      <div class="mt-10 pt-8 border-t-[3px] border-white">
+        <p class="text-[#D4D4D4] font-[Public_Sans] mb-2">
+          Prefer email directly?
+        </p>
+        <a
+          href="mailto:contact@cryptobonuslist.com"
+          class="text-[#39FF14] font-[JetBrains_Mono] text-lg underline underline-offset-4 decoration-2"
+        >
+          contact@cryptobonuslist.com
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement;
+  const sendingState = document.getElementById("sending-state") as HTMLElement;
+  const successState = document.getElementById("success-state") as HTMLElement;
+  const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+  const sendingDots = document.getElementById("sending-dots") as HTMLElement;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    // Hide form, show sending
+    submitBtn.disabled = true;
+    submitBtn.classList.add("opacity-50");
+    sendingState.classList.remove("hidden");
+    successState.classList.add("hidden");
+
+    // Animate dots
+    let dotCount = 0;
+    const dotInterval = setInterval(() => {
+      dotCount = (dotCount + 1) % 4;
+      sendingDots.textContent = "SENDING" + ".".repeat(dotCount);
+    }, 400);
+
+    // Random delay between 1-3 seconds
+    const delay = 1000 + Math.random() * 2000;
+
+    setTimeout(() => {
+      clearInterval(dotInterval);
+      sendingState.classList.add("hidden");
+      successState.classList.remove("hidden");
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("opacity-50");
+    }, delay);
+  });
+</script>

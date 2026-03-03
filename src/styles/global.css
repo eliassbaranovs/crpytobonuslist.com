@@ -1,0 +1,108 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "Public Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-void: #0a0a0a;
+  --color-pure-black: #000000;
+  --color-acid: #39ff14;
+  --color-cyber: #faff00;
+  --color-violet: #8a2be2;
+  --color-ash: #d4d4d4;
+
+  --shadow-brutal-green: 6px 6px 0px 0px #39ff14;
+  --shadow-brutal-white: 6px 6px 0px 0px #ffffff;
+  --shadow-brutal-violet: 6px 6px 0px 0px #8a2be2;
+  --shadow-brutal-yellow: 6px 6px 0px 0px #faff00;
+}
+
+/* Base resets */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-void);
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Card hover: crush the shadow */
+.card-brutal {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.card-brutal:hover {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0px 0px #39ff14 !important;
+}
+
+/* Prose overrides for dark brutalist theme */
+.prose-brutal {
+  --tw-prose-body: #d4d4d4;
+  --tw-prose-headings: #ffffff;
+  --tw-prose-links: #39ff14;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-quotes: #faff00;
+  --tw-prose-quote-borders: #faff00;
+  --tw-prose-code: #39ff14;
+  --tw-prose-th-borders: #ffffff;
+  --tw-prose-td-borders: #ffffff;
+}
+
+.prose-brutal table {
+  border: 2px solid #ffffff;
+}
+.prose-brutal th,
+.prose-brutal td {
+  border: 2px solid #ffffff;
+  padding: 0.5rem 1rem;
+}
+.prose-brutal a {
+  color: #39ff14;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 3px;
+}
+.prose-brutal blockquote {
+  border-left: 4px solid #faff00;
+  background: #1a1a1a;
+  padding: 1rem;
+}
