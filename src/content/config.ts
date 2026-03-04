@@ -331,6 +331,17 @@ const news = defineCollection({
       playerRating: z.string().optional(),
       established: z.string().optional(),
       minimumWithdrawalAmount: z.string().optional(),
+      
+      // ==========================================
+      // FAQs FOR SCHEMA.ORG FAQPAGE MARKUP
+      // ==========================================
+      faqs: z.preprocess(
+        (v) => Array.isArray(v) ? v : undefined,
+        z.array(z.object({
+          question: z.string(),
+          answer: z.string()
+        })).optional()
+      ),
     })
     .transform((data) => ({
       ...data,
