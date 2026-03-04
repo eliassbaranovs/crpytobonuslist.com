@@ -14,6 +14,7 @@ Do not give me pleasantries. Do not explain the code. Output ONLY the raw Markdo
 - **Design Style:** [ e.g., Dark Neo-Brutalism, High-Contrast, Text-Heavy ]
 - **Primary Keywords:** [ e.g., best crypto casino bonus, no kyc crypto casinos ]
 - **Overall Vibe:** [ e.g., Authoritative, blunt, data-driven, player-first ]
+- **Layout Structure** [ e.g., Asymmetrical overlapping grids, strict Bento-box UI, classic vertical SaaS, horizontal scrolling sections, terminal/CLI style ]
 
 # Required Output Structure
 
@@ -21,9 +22,9 @@ Your generated `.md` file MUST strictly follow this structure:
 
 1. **SEO Strategy & Content Architecture:** Define the Hub-and-Spoke (Silo) internal linking strategy. Provide the Tagline, Value Proposition, and generate 3-4 **Niche Keyword Silos** (e.g., `/no-kyc-casinos`, `/fast-withdrawal-casinos`). NO lorem ipsum.
 2. **Tech Stack & Semantic Requirements:** Define the framework and styling. You MUST specify strict rules for Semantic HTML (`<article>`, `<aside>`, `<nav>`, proper `H1` -> `H3` nesting). Define exactly what Schema.org markup (Review, FAQPage, Article, Organization) is required on which routes. **Ensure `datePublished` and `dateModified` are strictly mapped in the Schema.**
-3. **Design Aesthetic Rules:** Provide strict, unambiguous CSS rules. Define exact shadow styles, border thicknesses, typography sizing (using `clamp()`), and color hex codes.
+3. **Design Aesthetic Rules:** Provide strict, unambiguous CSS rules. Define exact shadow styles, border thicknesses, typography sizing (using `clamp()`), and color hex codes. Layout Engine Directives: Based on the Design Style, dictate the specific Flexbox/Grid behaviors. Do NOT default to standard centered containers. Specify if the layout should use edge-to-edge full-viewport sections, heavy asymmetrical overlapping, or strict masonry bento grids.
 4. **Deep Site Architecture (Mandatory SEO, Trust & CRO Pages):** Map out the exact routing structure. You MUST include:
-   - **High-Converting "Money Pages" (Keyword Hubs):** Setup instructions for generating static paths for category silos. **CRO MANDATE:** These pages must feature a "Toplist" UI component above the fold—a high-contrast comparison table or card stack ranking the top casinos with massive, unavoidable CTA buttons.
+   - **High-Converting "Money Pages" (Keyword Hubs):** Setup instructions for generating static paths for category silos. **CRO MANDATE:** These pages must feature a "Toplist" UI component above the fold—a high-contrast comparison table or card stack ranking the top casinos with massive, unavoidable CTA buttons. These pages must feature a "Toplist" UI component above the fold. The visual structure of this Toplist MUST adapt to the Design Style (e.g., if Neo-Brutalist, use massive overlapping cards; if Minimalist, use a razor-thin data table).
    - **Review / Bonus Slugs:** Dynamic slugs parsed from Markdown. **CRO MANDATE:** Must feature a custom UI block for "Pros and Cons", and implement a "Sticky Mobile CTA" (e.g., "Claim Bonus") that remains anchored to the bottom of the viewport on mobile devices. Include a "Related Posts/Casinos" component at the bottom to prevent orphan pages.
    - **"First-Hand Testing" Components:** Require the UI design for review slugs to include a distinct section highlighting personal testing data (e.g., "Actual Withdrawal Time") to satisfy Google's "Information Gain" requirements.
    - **The Automated Affiliate Link Cloaker (`/go/[slug].astro`):** A dynamic routing mechanism using Astro's `getStaticPaths` to automatically generate clean URLs at build time by mapping over a JSON dictionary/frontmatter, outputting a fast meta-refresh redirect to the raw affiliate link.
@@ -316,11 +317,6 @@ Your generated `.md` file MUST strictly follow this structure:
    - Site MAY use all content types (promotions, deals, news, reviews) or only a subset
    - Content Collection schema MUST support ALL fields (use optional fields with `?`)
    - Filtering/routing should be dynamic based on `contentType` field
-   - Example routes:
-     - `/promotions/` - List all contentType === "promotion"
-     - `/deals/` - List all contentType === "deal"
-     - `/news/` - List all contentType === "news"
-     - `/reviews/` - List all contentType === "review"
-     - `/posts/{slug}` - Universal detail page, UI adapts based on contentType
+   - Dynamic Routing Logic: Use the contentType or tags field to dynamically populate the specific Niche Keyword Silos generated in Section 1 (e.g., mapping contentType === "review" to /no-kyc-casinos/). The universal detail page should be /casinos/[slug] or /bonus/[slug] rather than a generic /posts/ directory.
 
 Generate the `.md` specification now.
