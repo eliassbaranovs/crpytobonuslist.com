@@ -324,13 +324,19 @@ const news = defineCollection({
       bonusPercentage: z.preprocess((v) => toStr(v), z.string().optional()),
       bonusDuration: z.preprocess((v) => toStr(v), z.string().optional()),
       maximumBonusAmount: z.preprocess((v) => toStr(v), z.string().optional()),
-      wageringRequirements: z.preprocess((v) => toStr(v), z.string().optional()),
+      wageringRequirements: z.preprocess(
+        (v) => toStr(v),
+        z.string().optional(),
+      ),
       freeSpinsCount: z.preprocess((v) => toNum(v), z.number().optional()),
       freeSpinsWr: z.preprocess((v) => toStr(v), z.string().optional()),
       casinoReviewUrl: z.preprocess((v) => toStr(v), z.string().optional()),
       playerRating: z.preprocess((v) => toStr(v), z.string().optional()),
       established: z.preprocess((v) => toStr(v), z.string().optional()),
-      minimumWithdrawalAmount: z.preprocess((v) => toStr(v), z.string().optional()),
+      minimumWithdrawalAmount: z.preprocess(
+        (v) => toStr(v),
+        z.string().optional(),
+      ),
 
       // ==========================================
       // FAQs FOR SCHEMA.ORG FAQPAGE MARKUP
@@ -366,17 +372,21 @@ const authors = defineCollection({
   schema: z.object({
     name: z.string(),
     slug: z.string(),
-    role: z.string(),
-    bio: z.string(),
-    expertise: z.array(z.string()).optional(),
-    joinedAt: z.coerce.string(),
-    image: z.string().optional(),
-    social: z
-      .object({
-        twitter: z.string().optional(),
-        linkedin: z.string().optional(),
-      })
-      .optional(),
+    role: z.string().optional(),
+    bio: z.string().optional(),
+    expertise: z.preprocess(
+      (v) => (Array.isArray(v) ? v : undefined),
+      z.array(z.string()).optional(),
+    ),
+    avatar: z.string().optional(),
+    socialLinks: z.preprocess(
+      (v) =>
+        typeof v === "object" && v !== null && !Array.isArray(v)
+          ? v
+          : undefined,
+      z.record(z.string()).optional(),
+    ),
+    joinedAt: z.string(),
   }),
 });
 
