@@ -278,7 +278,7 @@ const news = defineCollection({
       featured: z.preprocess((v) => toBool(v), z.boolean().optional()),
       category: z.string().optional(),
       relatedPosts: z.array(z.string()).optional(),
-      
+
       // ==========================================
       // AUTOMATION COMPATIBILITY FIELDS (UNUSED)
       // Accept all fields from universal schema but ignore them in news
@@ -291,62 +291,67 @@ const news = defineCollection({
         (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
         z.string().optional(),
       ),
-      // Casino/Bonus fields (ignored for news)
-      code: z.string().optional(),
-      cons: z.string().optional(),
-      pros: z.string().optional(),
-      bonus: z.string().optional(),
-      casino: z.string().optional(),
-      maxBonus: z.string().optional(),
-      wagering: z.string().optional(),
-      bonusType: z.string().optional(),
-      exclusive: z.string().optional(),
-      freeSpins: z.string().optional(),
-      ourRating: z.string().optional(),
-      verified: z.string().optional(),
-      company: z.string().optional(),
-      website: z.string().optional(),
-      casinoName: z.string().optional(),
-      casinoType: z.string().optional(),
-      licences: z.string().optional(),
-      liveChat: z.string().optional(),
-      emailSupport: z.string().optional(),
-      currencies: z.string().optional(),
-      depositMethods: z.string().optional(),
-      withdrawalMethods: z.string().optional(),
-      minimumDeposit: z.string().optional(),
-      withdrawalFees: z.string().optional(),
-      withdrawalLimit: z.string().optional(),
-      withdrawalTimes: z.string().optional(),
-      gameProviders: z.string().optional(),
-      vipLoyaltyProgram: z.string().optional(),
-      affiliateProgram: z.string().optional(),
-      bonusPercentage: z.string().optional(),
-      bonusDuration: z.string().optional(),
-      maximumBonusAmount: z.string().optional(),
-      wageringRequirements: z.string().optional(),
-      freeSpinsCount: z.string().optional(),
-      freeSpinsWr: z.string().optional(),
-      casinoReviewUrl: z.string().optional(),
-      playerRating: z.string().optional(),
-      established: z.string().optional(),
-      minimumWithdrawalAmount: z.string().optional(),
-      
+      // Casino/Bonus fields (ignored for news) - preprocessed to handle automation data types
+      code: z.preprocess((v) => toStr(v), z.string().optional()),
+      cons: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
+      pros: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
+      bonus: z.preprocess((v) => toStr(v), z.string().optional()),
+      casino: z.preprocess((v) => toStr(v), z.string().optional()),
+      maxBonus: z.preprocess((v) => toStr(v), z.string().optional()),
+      wagering: z.preprocess((v) => toStr(v), z.string().optional()),
+      bonusType: z.preprocess((v) => toStr(v), z.string().optional()),
+      exclusive: z.preprocess((v) => toBool(v), z.boolean().optional()),
+      freeSpins: z.preprocess((v) => toStr(v), z.string().optional()),
+      ourRating: z.preprocess((v) => toStr(v), z.string().optional()),
+      verified: z.preprocess((v) => toBool(v), z.boolean().optional()),
+      company: z.preprocess((v) => toStr(v), z.string().optional()),
+      website: z.preprocess((v) => toStr(v), z.string().optional()),
+      casinoName: z.preprocess((v) => toStr(v), z.string().optional()),
+      casinoType: z.preprocess((v) => toStr(v), z.string().optional()),
+      licences: z.preprocess((v) => toStr(v), z.string().optional()),
+      liveChat: z.preprocess((v) => toStr(v), z.string().optional()),
+      emailSupport: z.preprocess((v) => toStr(v), z.string().optional()),
+      currencies: z.preprocess((v) => toStr(v), z.string().optional()),
+      depositMethods: z.preprocess((v) => toStr(v), z.string().optional()),
+      withdrawalMethods: z.preprocess((v) => toStr(v), z.string().optional()),
+      minimumDeposit: z.preprocess((v) => toStr(v), z.string().optional()),
+      withdrawalFees: z.preprocess((v) => toStr(v), z.string().optional()),
+      withdrawalLimit: z.preprocess((v) => toStr(v), z.string().optional()),
+      withdrawalTimes: z.preprocess((v) => toStr(v), z.string().optional()),
+      gameProviders: z.preprocess((v) => toStr(v), z.string().optional()),
+      vipLoyaltyProgram: z.preprocess((v) => toStr(v), z.string().optional()),
+      affiliateProgram: z.preprocess((v) => toStr(v), z.string().optional()),
+      bonusPercentage: z.preprocess((v) => toStr(v), z.string().optional()),
+      bonusDuration: z.preprocess((v) => toStr(v), z.string().optional()),
+      maximumBonusAmount: z.preprocess((v) => toStr(v), z.string().optional()),
+      wageringRequirements: z.preprocess((v) => toStr(v), z.string().optional()),
+      freeSpinsCount: z.preprocess((v) => toNum(v), z.number().optional()),
+      freeSpinsWr: z.preprocess((v) => toStr(v), z.string().optional()),
+      casinoReviewUrl: z.preprocess((v) => toStr(v), z.string().optional()),
+      playerRating: z.preprocess((v) => toStr(v), z.string().optional()),
+      established: z.preprocess((v) => toStr(v), z.string().optional()),
+      minimumWithdrawalAmount: z.preprocess((v) => toStr(v), z.string().optional()),
+
       // ==========================================
       // FAQs FOR SCHEMA.ORG FAQPAGE MARKUP
       // ==========================================
       faqs: z.preprocess(
-        (v) => Array.isArray(v) ? v : undefined,
-        z.array(z.object({
-          question: z.string(),
-          answer: z.string()
-        })).optional()
+        (v) => (Array.isArray(v) ? v : undefined),
+        z
+          .array(
+            z.object({
+              question: z.string(),
+              answer: z.string(),
+            }),
+          )
+          .optional(),
       ),
     })
     .transform((data) => ({
       ...data,
       // Ensure updatedAt always exists: fallback to lastModified → publishedAt
-      updatedAt: data.updatedAt ?? 
+      updatedAt:
+        data.updatedAt ??
         (data.lastModified ? new Date(data.lastModified) : data.publishedAt),
       // Use coverImage as fallback for image if needed
       image: data.image || data.coverImage || "",

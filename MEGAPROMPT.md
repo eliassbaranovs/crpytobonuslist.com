@@ -267,11 +267,15 @@ Your generated `.md` file MUST strictly follow this structure:
        // FAQs FOR SCHEMA.ORG FAQPAGE MARKUP
        // ==========================================
        faqs: z.preprocess(
-         (v) => Array.isArray(v) ? v : undefined,
-         z.array(z.object({
-           question: z.string(),
-           answer: z.string()
-         })).optional()
+         (v) => (Array.isArray(v) ? v : undefined),
+         z
+           .array(
+             z.object({
+               question: z.string(),
+               answer: z.string(),
+             }),
+           )
+           .optional(),
        ),
      }),
    }).transform((data) => ({

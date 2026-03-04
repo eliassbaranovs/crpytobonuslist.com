@@ -28,7 +28,7 @@ if (article.data.faqs && article.data.faqs.length > 0) {
       }
     }))
   };
-  
+
   // Merge with existing schema or use FAQ schema alone
   if (jsonld) {
     const existingSchema = JSON.parse(jsonld);
@@ -97,9 +97,9 @@ const robots = article.data.robots || (article.data.noIndex ? "noindex, nofollow
 const ogImage = article.data.image || "/favicon.svg";
 ---
 
-<Layout 
-  title={article.data.seoTitle || article.data.title} 
-  description={article.data.description || article.data.excerpt || article.data.title} 
+<Layout
+  title={article.data.seoTitle || article.data.title}
+  description={article.data.description || article.data.excerpt || article.data.title}
   jsonld={jsonld}
   ogType="article"
   ogImage={ogImage}
@@ -182,8 +182,8 @@ const ogImage = article.data.image || "/favicon.svg";
       <!-- Featured Image -->
       {article.data.image && (
         <div class="mb-8">
-          <img 
-            src={article.data.image} 
+          <img
+            src={article.data.image}
             alt={article.data.imageAlt || article.data.title}
             class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
           />
