@@ -39,7 +39,7 @@ const relatedBonuses = allBonuses
 const displayRelated = relatedBonuses.length > 0 ? relatedBonuses : allBonuses.filter((b) => b.id !== bonus.id).slice(0, 3);
 
 // Schema JSON-LD
-const schemaJsonLd = bonus.data.schema_jsonld && typeof bonus.data.schema_jsonld === 'object' 
+const schemaJsonLd = bonus.data.schema_jsonld && typeof bonus.data.schema_jsonld === 'object'
   ? JSON.stringify(bonus.data.schema_jsonld)
   : typeof bonus.data.schema_jsonld === 'string' && bonus.data.schema_jsonld !== '[object Object]'
     ? bonus.data.schema_jsonld
@@ -104,11 +104,11 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
             </span>
           )}
         </div>
-        
+
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
           {bonus.data.title}
         </h1>
-        
+
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">
           {bonus.data.description}
         </p>

@@ -42,6 +42,39 @@ Your generated `.md` file MUST strictly follow this structure:
    ```typescript
    import { z, defineCollection } from "astro:content";
 
+   // ============================================================
+   // HELPER: Safely coerce any value to string (handles numbers,
+   // booleans, Date objects from YAML auto-parsing)
+   // ============================================================
+   const toStr = (v: unknown) =>
+     v == null || v === "" ? undefined : String(v);
+
+   // HELPER: Coerce "Yes"/"No"/"true"/"false"/boolean → boolean
+   const toBool = (v: unknown) =>
+     v === true || v === "true" || v === "Yes"
+       ? true
+       : v === false || v === "false" || v === "No"
+         ? false
+         : undefined;
+
+   // HELPER: Turn pipe-separated strings into arrays, pass arrays through
+   const toStrArray = (v: unknown): string[] | undefined => {
+     if (Array.isArray(v)) return v.map(String);
+     if (typeof v === "string" && v.trim())
+       return v
+         .split("|")
+         .map((s) => s.trim())
+         .filter(Boolean);
+     return undefined;
+   };
+
+   // HELPER: Coerce to number, reject NaN / empty string
+   const toNum = (v: unknown): number | undefined => {
+     if (v == null || v === "") return undefined;
+     const n = Number(v);
+     return isNaN(n) ? undefined : n;
+   };
+
    const postsCollection = defineCollection({
      type: "content",
      schema: z.object({
@@ -52,108 +85,182 @@ Your generated `.md` file MUST strictly follow this structure:
        slug: z.string(),
        description: z.string(), // SEO meta description
        seoTitle: z.string(), // Custom SEO title (H1 vs meta title)
-       excerpt: z.string().optional(), // Content summary (different from meta description)
-       publishedAt: z.coerce.date(), // ISO 8601 string, coerced to Date
-       updatedAt: z.coerce.date(), // ISO 8601 string, coerced to Date
-       publishDate: z.string().optional(), // YYYY-MM-DD format for display
-       tags: z.array(z.string()),
+       excerpt: z.string().optional(), // Content summary
+       publishedAt: z.coerce.date(), // ISO string → Date
+       updatedAt: z.coerce.date(), // ISO string → Date
+       // publishDate arrives as Date (YAML auto-parses "2026-03-04")
+       // so we accept any type and always output a string
+       publishDate: z.preprocess(
+         (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
+         z.string().optional(),
+       ),
+       tags: z.preprocess((v) => toStrArray(v) ?? [], z.array(z.string())),
        image: z.string(), // Path: /images/covers/{slug}.webp
        imageAlt: z.string(),
-       imageWidth: z.number().default(1792),
-       imageHeight: z.number().default(1024),
+       imageWidth: z.preprocess((v) => toNum(v) ?? 1792, z.number()),
+       imageHeight: z.preprocess((v) => toNum(v) ?? 1024, z.number()),
        imageLoading: z.enum(["lazy", "eager"]).default("lazy"),
        imageFetchPriority: z.enum(["high", "low", "auto"]).default("auto"),
        logo: z.string().optional(), // Path: /images/logos/{slug}.{ext}
        author: z.string(),
-       authorSlug: z.string(), // For linking to /team/{authorSlug}
-       canonical: z.string(), // Full canonical URL
-       schema_jsonld: z.string(), // CRITICAL: JSON.stringify'd schema
-       contentType: z.enum(["promotion", "deal", "news", "review"]),
+       authorSlug: z.preprocess((v) => toStr(v) ?? "", z.string()), // For linking to /team/{authorSlug}
+       canonical: z.string().default(""), // Full canonical URL
+       // schema_jsonld may arrive as object (YAML parses JSON) or string
+       schema_jsonld: z.preprocess(
+         (v) => (typeof v === "object" && v !== null ? JSON.stringify(v) : v),
+         z.string().default(""),
+       ),
+       // contentType: accepts ANY string from pipeline ("bonus", "default",
+       // "promotion", "news", etc.) — never reject content over this field
+       contentType: z.string().default("promotion"),
 
        // SEO Control Fields
-       draft: z.boolean().optional(),
-       noIndex: z.boolean().optional(),
+       draft: z.preprocess((v) => toBool(v), z.boolean().optional()),
+       noIndex: z.preprocess((v) => toBool(v), z.boolean().optional()),
        robots: z.string().optional(), // e.g., "index, follow"
 
        // ==========================================
        // CASINO/REVIEW FIELDS (OPTIONAL)
+       // Scraped ratings use 0-10 scale, NOT 1-5
        // ==========================================
-       // Ratings & Verification
-       rating: z.number().min(1).max(5).optional(), // Editorial rating (1-5 stars)
-       ourRating: z.number().min(1).max(5).optional(), // Editorial rating (alias)
-       playerRating: z.number().min(1).max(5).optional(), // User/community rating
-       verified: z.boolean().optional(), // "Verified by our team" badge
+       rating: z.preprocess(
+         (v) => toNum(v),
+         z.number().min(0).max(10).optional(),
+       ),
+       ourRating: z.preprocess(
+         (v) => toNum(v),
+         z.number().min(0).max(10).optional(),
+       ),
+       playerRating: z.preprocess(
+         (v) => toNum(v),
+         z.number().min(0).max(10).optional(),
+       ),
+       playerRatingCount: z.preprocess((v) => toStr(v), z.string().optional()), // e.g., "142 reviews"
+       verified: z.preprocess((v) => toBool(v), z.boolean().optional()), // "Verified by our team" badge
 
-       // Review Content
-       pros: z.array(z.string()).optional(), // Bullet list for UI
-       cons: z.array(z.string()).optional(), // Bullet list for UI
+       // Review Content — pipeline sends pipe-separated strings
+       pros: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
+       cons: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
 
        // Casino Identity
-       casino: z.string().optional(), // Casino short identifier
-       casino_name: z.string().optional(), // Full casino name
-       casinoReviewUrl: z.string().optional(), // Link to full casino review
-       casinoType: z.string().optional(), // regular/crypto/hybrid
-       website: z.string().optional(), // Official casino website URL
-       company: z.string().optional(), // Operating company
-       established: z.string().optional(), // Year established
+       casino: z.string().optional(),
+       casino_name: z.string().optional(),
+       casinoName: z.string().optional(), // Alias (camelCase)
+       casinoReviewUrl: z.string().optional(),
+       casinoType: z.string().optional(),
+       website: z.string().optional(),
+       company: z.string().optional(),
+       // established: arrives as number (YAML parses "2024" → 2024)
+       established: z.preprocess((v) => toStr(v), z.string().optional()),
+       languages: z.string().optional(),
+       mobileApps: z.string().optional(),
+       readReview: z.string().optional(),
 
        // Licensing & Security
-       licences: z.string().optional(), // Licensing info (comma-separated or formatted)
+       licences: z.string().optional(),
+       rtp: z.string().optional(),
+       rngTested: z.string().optional(),
 
        // Payment Methods
-       currencies: z.string().optional(), // Accepted currencies
-       deposit_methods: z.string().optional(), // Deposit methods (comma-separated)
-       withdrawal_methods: z.string().optional(), // Withdrawal methods (array or string)
+       currencies: z.string().optional(),
+       deposit_methods: z.string().optional(),
+       depositMethods: z.string().optional(), // Alias (camelCase)
+       withdrawal_methods: z.string().optional(),
+       withdrawalMethods: z.string().optional(), // Alias (camelCase)
 
        // Withdrawal Details
-       minimum_deposit: z.string().optional(), // e.g., "$10"
-       minimumWithdrawalAmount: z.string().optional(), // Min withdrawal limit
-       withdrawal_time: z.string().optional(), // e.g., "24-48 hours"
-       withdrawalTimes: z.string().optional(), // Processing times (detailed)
-       withdrawalFees: z.string().optional(), // Fee structure
-       withdrawalLimit: z.string().optional(), // Max withdrawal limits
+       minimum_deposit: z.string().optional(),
+       minimumDeposit: z.string().optional(), // Alias (camelCase)
+       minimumWithdrawalAmount: z.string().optional(),
+       withdrawal_time: z.string().optional(),
+       withdrawalTimes: z.string().optional(),
+       withdrawalFees: z.preprocess((v) => toStr(v), z.string().optional()), // May arrive as boolean from YAML
+       withdrawalLimit: z.string().optional(),
+       pendingTime: z.string().optional(),
 
        // Games & Providers
-       game_providers: z.string().optional(), // Software providers
+       game_providers: z.string().optional(),
+       gameProviders: z.string().optional(), // Alias (camelCase)
 
        // Support
-       live_chat: z.boolean().optional(), // Live chat availability
-       email_support: z.string().optional(), // Support email
+       // live_chat: may be boolean, or string like "24/7", "Limited Hours"
+       liveChat: z.preprocess(
+         (v) =>
+           typeof v === "string"
+             ? v
+             : v === true
+               ? "Yes"
+               : v === false
+                 ? "No"
+                 : undefined,
+         z.string().optional(),
+       ),
+       email_support: z.string().optional(),
+       emailSupport: z.string().optional(), // Alias (camelCase)
+       complaintResponse: z.string().optional(),
 
        // Loyalty & VIP
-       vipLoyaltyProgram: z.string().optional(), // VIP program details
-       affiliate_program: z.string().optional(), // Affiliate program info
+       vipLoyaltyProgram: z.string().optional(),
+       affiliate_program: z.string().optional(),
+       affiliateProgram: z.string().optional(), // Alias (camelCase)
 
        // ==========================================
        // BONUS/PROMOTION FIELDS (OPTIONAL)
        // ==========================================
-       // Bonus Details
        bonus: z.string().optional(), // e.g., "100% up to $500"
-       bonusType: z.string().optional(), // welcome/reload/cashback/etc.
-       bonusPercentage: z.string().optional(), // Match percentage
-       bonusDuration: z.string().optional(), // How long bonus is valid
+       bonusType: z.string().optional(), // WELCOME/NO-DEPOSIT/etc.
+       bonusPercentage: z.string().optional(),
+       bonusDuration: z.string().optional(),
        code: z.string().optional(), // Bonus code
-       maxBonus: z.string().optional(), // Maximum bonus amount
-       maximumBonusAmount: z.string().optional(), // Cap on bonus value (alias)
+       maxBonus: z.string().optional(),
+       maximumBonusAmount: z.string().optional(),
 
-       // Free Spins
-       freeSpins: z.string().optional(), // Free spins offer summary
-       freeSpinsCount: z.number().optional(), // Number of free spins
-       freeSpinsWr: z.string().optional(), // Free spins wagering requirement
+       // Free Spins — may arrive as number or empty string
+       freeSpins: z.preprocess((v) => toStr(v), z.string().optional()),
+       freeSpinsCount: z.preprocess((v) => toNum(v), z.number().optional()),
+       freeSpinsWr: z.string().optional(),
 
        // Wagering Requirements
-       wagering: z.string().optional(), // e.g., "40x"
-       wageringRequirements: z.string().optional(), // Full wagering details
+       wagering: z.string().optional(),
+       wageringRequirements: z.string().optional(),
 
        // Promotion Flags
-       exclusive: z.boolean().optional(), // "Exclusive" badge
-       expires_at: z.coerce.date().optional(), // Deal expiration
+       exclusive: z.preprocess((v) => toBool(v), z.boolean().optional()),
+       expires_at: z.coerce.date().optional(),
        claim_url: z.string().optional(), // Affiliate link slug for /go/{slug}
 
        // ==========================================
-       // NEWS FIELDS (OPTIONAL)
+       // RESPONSIBLE GAMING TOOLS (OPTIONAL)
+       // Critical for SEO & regulatory compliance
        // ==========================================
-       featured: z.boolean().optional(), // Pin to top of news feed
+       depositLimitTool: z.string().optional(),
+       lossLimitTool: z.string().optional(),
+       wagerLimitTool: z.string().optional(),
+       selfExclusionTool: z.string().optional(),
+       coolOffTimeOutTool: z.string().optional(),
+       realityCheckTool: z.string().optional(),
+       timeSessionLimitTool: z.string().optional(),
+       selfAssessmentTest: z.string().optional(),
+       gameHistoryFeature: z.string().optional(),
+       selfExclusionRegisterParticipation: z.string().optional(),
+
+       // ==========================================
+       // NEWS / GENERAL FIELDS (OPTIONAL)
+       // ==========================================
+       featured: z.preprocess((v) => toBool(v), z.boolean().optional()),
+       category: z.string().optional(), // Display category label
+       // Extra aliases the pipeline may send
+       authorName: z.string().optional(),
+       coverImage: z.string().optional(),
+       schemaJsonLd: z.preprocess(
+         (v) => (typeof v === "object" && v !== null ? JSON.stringify(v) : v),
+         z.string().optional(),
+       ),
+       createdAt: z.coerce.date().optional(),
+       lastModified: z.preprocess(
+         (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
+         z.string().optional(),
+       ),
      }),
    });
 
