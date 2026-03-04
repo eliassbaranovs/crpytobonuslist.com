@@ -21,6 +21,13 @@ const now = new Date();
 const diffMs = now.getTime() - publishedDate.getTime();
 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
+// Calculate reading time (average 200 words per minute)
+const wordCount = article.body ? article.body.split(/\s+/).filter(Boolean).length : 0;
+const readingTime = Math.ceil(wordCount / 200) || 1;
+
+// Check if article was updated (more than 1 day after publish)
+const wasUpdated = lastUpdated.getTime() - publishedDate.getTime() > 86400000;
+
 // Relative time for news
 let relativeTime: string;
 if (diffDays === 0) {
@@ -60,17 +67,61 @@ const displayRelated = relatedNews.length > 0 ? relatedNews : allNews.filter((n)
 
 // Author slug (derive from author name if not provided)
 const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBonusList Team" ? "cryptobonuslist-team" : null);
+
+// Prepare SEO fields
+const robots = article.data.robots || (article.data.noIndex ? "noindex, nofollow" : "index, follow");
+const ogImage = article.data.image || "/favicon.svg";
 ---
 
-<Layout title={article.data.seoTitle || article.data.title} description={article.data.description || article.data.title} jsonld={jsonld}>
+<Layout 
+  title={article.data.seoTitle || article.data.title} 
+  description={article.data.description || article.data.excerpt || article.data.title} 
+  jsonld={jsonld}
+  ogType="article"
+  ogImage={ogImage}
+  canonical={article.data.canonical || undefined}
+  robots={robots}
+>
   <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
+          <li class="text-[#D4D4D4]">/</li>
+          <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14]">News</a></li>
+          {article.data.category && (
+            <>
+              <li class="text-[#D4D4D4]">/</li>
+              <li class="text-[#D4D4D4]">{article.data.category}</li>
+            </>
+          )}
+          <li class="text-[#D4D4D4]">/</li>
+          <li class="text-white" aria-current="page">{article.data.title}</li>
+        </ol>
+      </nav>
+
       <!-- Banner -->
       <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#FAFF00]">
+        {article.data.featured && (
+          <div class="mb-4">
+            <span class="inline-block bg-[#FAFF00] text-black font-[Space_Grotesk] font-bold text-xs px-3 py-1 tracking-wider">FEATURED</span>
+          </div>
+        )}
         <div class="flex items-center gap-4 mb-4 flex-wrap">
           <span class="text-[#39FF14] text-sm font-[JetBrains_Mono] font-bold">
             {relativeTime}
           </span>
+          {wasUpdated && (
+            <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] font-bold border border-[#FAFF00] px-2 py-0.5">
+              Updated {lastUpdated.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          )}
+          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">•</span>
+          <span class="text-[#D4D4D4] text-sm font-[JetBrains_Mono]">
+            {readingTime} min read
+          </span>
+          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">•</span>
           <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">by</span>
           {authorSlug ? (
             <a href={`/team/${authorSlug}`} class="text-[#39FF14] text-sm font-[Public_Sans] font-bold hover:underline">
@@ -85,7 +136,17 @@ const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBo
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
           {article.data.title}
         </h1>
+        {article.data.excerpt && (
+          <p class="text-[#D4D4D4] text-lg font-[Public_Sans] leading-relaxed mb-4">
+            {article.data.excerpt}
+          </p>
+        )}
         <div class="flex flex-wrap gap-2">
+          {article.data.category && (
+            <span class="text-[#39FF14] text-sm font-[JetBrains_Mono] border border-[#39FF14] px-3 py-1 bg-[#39FF14]/10">
+              {article.data.category}
+            </span>
+          )}
           {article.data.tags.map((tag: string) => (
             <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] border border-[#FAFF00] px-3 py-1">
               {tag}
@@ -95,10 +156,10 @@ const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBo
       </header>
 
       <!-- Featured Image -->
-      {(article.data.image || article.data.coverImage) && (
+      {article.data.image && (
         <div class="mb-8">
           <img 
-            src={article.data.image || article.data.coverImage} 
+            src={article.data.image} 
             alt={article.data.imageAlt || article.data.title}
             class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
           />

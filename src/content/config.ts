@@ -258,7 +258,7 @@ const news = defineCollection({
       ),
       tags: z.preprocess((v) => toStrArray(v) ?? [], z.array(z.string())),
       image: z.string(),
-      imageAlt: z.string(),
+      imageAlt: z.string().optional(),
       imageWidth: z.preprocess((v) => toNum(v) ?? 1792, z.number()),
       imageHeight: z.preprocess((v) => toNum(v) ?? 1024, z.number()),
       imageLoading: z.enum(["lazy", "eager"]).default("lazy"),
@@ -276,12 +276,72 @@ const news = defineCollection({
       noIndex: z.preprocess((v) => toBool(v), z.boolean().optional()),
       robots: z.string().optional(),
       featured: z.preprocess((v) => toBool(v), z.boolean().optional()),
+      category: z.string().optional(),
       relatedPosts: z.array(z.string()).optional(),
+      
+      // ==========================================
+      // AUTOMATION COMPATIBILITY FIELDS (UNUSED)
+      // Accept all fields from universal schema but ignore them in news
+      // ==========================================
+      coverImage: z.string().optional(),
+      authorName: z.string().optional(),
+      schemaJsonLd: z.string().optional(),
+      createdAt: z.coerce.date().optional(),
+      lastModified: z.preprocess(
+        (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
+        z.string().optional(),
+      ),
+      // Casino/Bonus fields (ignored for news)
+      code: z.string().optional(),
+      cons: z.string().optional(),
+      pros: z.string().optional(),
+      bonus: z.string().optional(),
+      casino: z.string().optional(),
+      maxBonus: z.string().optional(),
+      wagering: z.string().optional(),
+      bonusType: z.string().optional(),
+      exclusive: z.string().optional(),
+      freeSpins: z.string().optional(),
+      ourRating: z.string().optional(),
+      verified: z.string().optional(),
+      company: z.string().optional(),
+      website: z.string().optional(),
+      casinoName: z.string().optional(),
+      casinoType: z.string().optional(),
+      licences: z.string().optional(),
+      liveChat: z.string().optional(),
+      emailSupport: z.string().optional(),
+      currencies: z.string().optional(),
+      depositMethods: z.string().optional(),
+      withdrawalMethods: z.string().optional(),
+      minimumDeposit: z.string().optional(),
+      withdrawalFees: z.string().optional(),
+      withdrawalLimit: z.string().optional(),
+      withdrawalTimes: z.string().optional(),
+      gameProviders: z.string().optional(),
+      vipLoyaltyProgram: z.string().optional(),
+      affiliateProgram: z.string().optional(),
+      bonusPercentage: z.string().optional(),
+      bonusDuration: z.string().optional(),
+      maximumBonusAmount: z.string().optional(),
+      wageringRequirements: z.string().optional(),
+      freeSpinsCount: z.string().optional(),
+      freeSpinsWr: z.string().optional(),
+      casinoReviewUrl: z.string().optional(),
+      playerRating: z.string().optional(),
+      established: z.string().optional(),
+      minimumWithdrawalAmount: z.string().optional(),
     })
     .transform((data) => ({
       ...data,
-      // Ensure updatedAt always exists: fallback to publishedAt
-      updatedAt: data.updatedAt ?? data.publishedAt,
+      // Ensure updatedAt always exists: fallback to lastModified → publishedAt
+      updatedAt: data.updatedAt ?? 
+        (data.lastModified ? new Date(data.lastModified) : data.publishedAt),
+      // Use coverImage as fallback for image if needed
+      image: data.image || data.coverImage || "",
+      // Normalize author name
+      author: data.author || data.authorName || "",
+      imageAlt: data.imageAlt || data.title,
     })),
 });
 
