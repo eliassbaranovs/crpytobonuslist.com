@@ -37,53 +37,129 @@ Your generated `.md` file MUST strictly follow this structure:
    - **UX / Penalty Avoidance:** Explicitly forbid any intrusive pop-ups or full-screen interstitials on page load.
    - **Content Freshness:** The UI must prominently display "Last Updated" timestamps on all reviews and guides.
 
-6. **Automation-Ready Content Collection Schema (CRITICAL):** The Astro Content Collections schema MUST be designed to accept automated content generation. Define STRICT frontmatter requirements:
-
-   **MANDATORY Core Fields (All Content Types):**
+6. **Automation-Ready Content Collection Schema (CRITICAL):** The Astro Content Collections schema MUST be designed to accept automated content generation. Copy this EXACT schema into `src/content/config.ts`:
 
    ```typescript
-   title: string
-   slug: string
-   description: string          // SEO meta description
-   seoTitle: string             // Custom SEO title (may differ from title)
-   publishedAt: Date            // ISO 8601 string
-   updatedAt: Date              // ISO 8601 string
-   tags: string[]
-   image: string                // Path: /images/covers/{slug}.webp
-   imageAlt: string
-   imageWidth: 1792
-   imageHeight: 1024
-   imageLoading: "lazy"
-   logo?: string                // Path: /images/logos/{slug}.{ext} (if exists)
-   author: string               // Author name
-   authorSlug: string           // For linking to /team/{authorSlug}
-   canonical: string            // Full canonical URL
-   schema_jsonld: string        // CRITICAL: JSON.stringify'd schema - parse in layout and inject
-   contentType: "promotion" | "deal" | "news" | "review"
-   ```
+   import { z, defineCollection } from "astro:content";
 
-   **Content-Type Specific Fields:**
+   const postsCollection = defineCollection({
+     type: "content",
+     schema: z.object({
+       // ==========================================
+       // MANDATORY CORE FIELDS (ALL CONTENT TYPES)
+       // ==========================================
+       title: z.string(),
+       slug: z.string(),
+       description: z.string(), // SEO meta description
+       seoTitle: z.string(), // Custom SEO title (H1 vs meta title)
+       excerpt: z.string().optional(), // Content summary (different from meta description)
+       publishedAt: z.coerce.date(), // ISO 8601 string, coerced to Date
+       updatedAt: z.coerce.date(), // ISO 8601 string, coerced to Date
+       publishDate: z.string().optional(), // YYYY-MM-DD format for display
+       tags: z.array(z.string()),
+       image: z.string(), // Path: /images/covers/{slug}.webp
+       imageAlt: z.string(),
+       imageWidth: z.number().default(1792),
+       imageHeight: z.number().default(1024),
+       imageLoading: z.enum(["lazy", "eager"]).default("lazy"),
+       imageFetchPriority: z.enum(["high", "low", "auto"]).default("auto"),
+       logo: z.string().optional(), // Path: /images/logos/{slug}.{ext}
+       author: z.string(),
+       authorSlug: z.string(), // For linking to /team/{authorSlug}
+       canonical: z.string(), // Full canonical URL
+       schema_jsonld: z.string(), // CRITICAL: JSON.stringify'd schema
+       contentType: z.enum(["promotion", "deal", "news", "review"]),
 
-   ```typescript
-   // FOR REVIEWS (contentType === "review"):
-   rating?: number              // 1-5 star rating
-   verified?: boolean           // "Verified by our team" badge
-   pros?: string[]              // Bullet list for UI
-   cons?: string[]              // Bullet list for UI
-   casino_name?: string
-   wagering?: string            // e.g., "40x"
-   minimum_deposit?: string     // e.g., "$10"
-   withdrawal_time?: string     // e.g., "24-48 hours"
+       // SEO Control Fields
+       draft: z.boolean().optional(),
+       noIndex: z.boolean().optional(),
+       robots: z.string().optional(), // e.g., "index, follow"
 
-   // FOR PROMOTIONS/DEALS (contentType === "promotion" | "deal"):
-   bonus?: string               // e.g., "100% up to $500"
-   code?: string                // Bonus code
-   exclusive?: boolean          // "Exclusive" badge
-   expires_at?: Date            // Deal expiration
-   claim_url?: string           // Affiliate link slug for /go/{slug}
+       // ==========================================
+       // CASINO/REVIEW FIELDS (OPTIONAL)
+       // ==========================================
+       // Ratings & Verification
+       rating: z.number().min(1).max(5).optional(), // Editorial rating (1-5 stars)
+       ourRating: z.number().min(1).max(5).optional(), // Editorial rating (alias)
+       playerRating: z.number().min(1).max(5).optional(), // User/community rating
+       verified: z.boolean().optional(), // "Verified by our team" badge
 
-   // FOR NEWS (contentType === "news"):
-   featured?: boolean           // Pin to top of news feed
+       // Review Content
+       pros: z.array(z.string()).optional(), // Bullet list for UI
+       cons: z.array(z.string()).optional(), // Bullet list for UI
+
+       // Casino Identity
+       casino: z.string().optional(), // Casino short identifier
+       casino_name: z.string().optional(), // Full casino name
+       casinoReviewUrl: z.string().optional(), // Link to full casino review
+       casinoType: z.string().optional(), // regular/crypto/hybrid
+       website: z.string().optional(), // Official casino website URL
+       company: z.string().optional(), // Operating company
+       established: z.string().optional(), // Year established
+
+       // Licensing & Security
+       licences: z.string().optional(), // Licensing info (comma-separated or formatted)
+
+       // Payment Methods
+       currencies: z.string().optional(), // Accepted currencies
+       deposit_methods: z.string().optional(), // Deposit methods (comma-separated)
+       withdrawal_methods: z.string().optional(), // Withdrawal methods (array or string)
+
+       // Withdrawal Details
+       minimum_deposit: z.string().optional(), // e.g., "$10"
+       minimumWithdrawalAmount: z.string().optional(), // Min withdrawal limit
+       withdrawal_time: z.string().optional(), // e.g., "24-48 hours"
+       withdrawalTimes: z.string().optional(), // Processing times (detailed)
+       withdrawalFees: z.string().optional(), // Fee structure
+       withdrawalLimit: z.string().optional(), // Max withdrawal limits
+
+       // Games & Providers
+       game_providers: z.string().optional(), // Software providers
+
+       // Support
+       live_chat: z.boolean().optional(), // Live chat availability
+       email_support: z.string().optional(), // Support email
+
+       // Loyalty & VIP
+       vipLoyaltyProgram: z.string().optional(), // VIP program details
+       affiliate_program: z.string().optional(), // Affiliate program info
+
+       // ==========================================
+       // BONUS/PROMOTION FIELDS (OPTIONAL)
+       // ==========================================
+       // Bonus Details
+       bonus: z.string().optional(), // e.g., "100% up to $500"
+       bonusType: z.string().optional(), // welcome/reload/cashback/etc.
+       bonusPercentage: z.string().optional(), // Match percentage
+       bonusDuration: z.string().optional(), // How long bonus is valid
+       code: z.string().optional(), // Bonus code
+       maxBonus: z.string().optional(), // Maximum bonus amount
+       maximumBonusAmount: z.string().optional(), // Cap on bonus value (alias)
+
+       // Free Spins
+       freeSpins: z.string().optional(), // Free spins offer summary
+       freeSpinsCount: z.number().optional(), // Number of free spins
+       freeSpinsWr: z.string().optional(), // Free spins wagering requirement
+
+       // Wagering Requirements
+       wagering: z.string().optional(), // e.g., "40x"
+       wageringRequirements: z.string().optional(), // Full wagering details
+
+       // Promotion Flags
+       exclusive: z.boolean().optional(), // "Exclusive" badge
+       expires_at: z.coerce.date().optional(), // Deal expiration
+       claim_url: z.string().optional(), // Affiliate link slug for /go/{slug}
+
+       // ==========================================
+       // NEWS FIELDS (OPTIONAL)
+       // ==========================================
+       featured: z.boolean().optional(), // Pin to top of news feed
+     }),
+   });
+
+   export const collections = {
+     posts: postsCollection,
+   };
    ```
 
    **Schema.org Integration Method:**
