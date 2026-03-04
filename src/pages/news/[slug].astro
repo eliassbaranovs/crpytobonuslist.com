@@ -94,6 +94,17 @@ const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBo
         </div>
       </header>
 
+      <!-- Featured Image -->
+      {(article.data.image || article.data.coverImage) && (
+        <div class="mb-8">
+          <img 
+            src={article.data.image || article.data.coverImage} 
+            alt={article.data.imageAlt || article.data.title}
+            class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
+          />
+        </div>
+      )}
+
       <!-- Content -->
       <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
         prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
