@@ -92,7 +92,7 @@ const ogImage = article.data.image || "/favicon.svg";
           <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14]">News</a></li>
-          {article.data.category && (
+          {article.data.category && article.data.category !== 'news' && (
             <>
               <li class="text-[#D4D4D4]">/</li>
               <li class="text-[#D4D4D4]">{article.data.category}</li>
