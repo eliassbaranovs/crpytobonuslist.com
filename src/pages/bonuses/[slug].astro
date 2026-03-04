@@ -12,12 +12,77 @@ export async function getStaticPaths() {
 
 const { bonus } = Astro.props;
 const { Content } = await render(bonus);
-const seoTitle = bonus.data.title + " | CryptoBonusList";
+const seoTitle = bonus.data.seoTitle || bonus.data.title + " | CryptoBonusList";
+
+// Get last updated date
+const lastUpdated = bonus.data.lastModified || bonus.data.updatedAt || bonus.data.publishDate || bonus.data.publishedAt;
+const lastUpdatedFormatted = lastUpdated ? new Date(lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+
+// Get related bonuses (same tags or bonusType)
+const allBonuses = await getCollection("bonuses");
+const currentTags = bonus.data.tags || [];
+const currentType = bonus.data.bonusType;
+
+const relatedBonuses = allBonuses
+  .filter((b) => b.id !== bonus.id)
+  .filter((b) => {
+    if (currentTags.length > 0 && b.data.tags) {
+      const hasSameTag = b.data.tags.some((tag: string) => currentTags.includes(tag));
+      if (hasSameTag) return true;
+    }
+    if (currentType && b.data.bonusType === currentType) return true;
+    return false;
+  })
+  .slice(0, 3);
+
+// Fallback to latest if no related
+const displayRelated = relatedBonuses.length > 0 ? relatedBonuses : allBonuses.filter((b) => b.id !== bonus.id).slice(0, 3);
+
+// Schema JSON-LD
+const schemaJsonLd = bonus.data.schema_jsonld && typeof bonus.data.schema_jsonld === 'object' 
+  ? JSON.stringify(bonus.data.schema_jsonld)
+  : typeof bonus.data.schema_jsonld === 'string' && bonus.data.schema_jsonld !== '[object Object]'
+    ? bonus.data.schema_jsonld
+    : JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+          "@type": "Product",
+          "name": bonus.data.casino || bonus.data.title
+        },
+        "reviewRating": bonus.data.ourRating ? {
+          "@type": "Rating",
+          "ratingValue": bonus.data.ourRating,
+          "bestRating": 10
+        } : undefined,
+        "author": {
+          "@type": "Person",
+          "name": bonus.data.author || "CryptoBonusList Team"
+        },
+        "datePublished": bonus.data.publishedAt || bonus.data.publishDate,
+        "dateModified": lastUpdated,
+        "publisher": {
+          "@type": "Organization",
+          "name": "CryptoBonusList"
+        }
+      });
+
+// Affiliate link
+const affiliateSlug = bonus.id.replace(/\.md$/, '');
+const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
 ---
 
-<Layout title={seoTitle} description={bonus.data.description}>
-  <article class="px-6 py-12">
+<Layout title={seoTitle} description={bonus.data.description} jsonld={schemaJsonLd}>
+  <article class="px-6 py-12 pb-24 md:pb-12">
     <div class="max-w-4xl mx-auto">
+      <!-- Last Updated Badge -->
+      {lastUpdatedFormatted && (
+        <div class="mb-4 inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-4 py-2">
+          <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
+        </div>
+      )}
+
       <!-- Banner -->
       <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14]">
         <div class="flex items-center justify-between gap-4 mb-4">
@@ -51,25 +116,25 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
         {/* Key Bonus Info */}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {bonus.data.bonus && (
-            <div class="border-[2px] border-[#39FF14] p-3">
+            <div class="border-2 border-[#39FF14] p-3">
               <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">BONUS AMOUNT</div>
               <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.bonus}</div>
             </div>
           )}
-          {bonus.data.freeSpins && bonus.data.freeSpins > 0 && (
-            <div class="border-[2px] border-[#39FF14] p-3">
+          {bonus.data.freeSpins && Number(bonus.data.freeSpins) > 0 && (
+            <div class="border-2 border-[#39FF14] p-3">
               <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">FREE SPINS</div>
               <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.freeSpins}</div>
             </div>
           )}
           {bonus.data.wageringRequirements && (
-            <div class="border-[2px] border-white p-3">
+            <div class="border-2 border-white p-3">
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">WAGERING</div>
               <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.wageringRequirements}</div>
             </div>
           )}
           {bonus.data.minimumDeposit && (
-            <div class="border-[2px] border-white p-3">
+            <div class="border-2 border-white p-3">
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">MIN DEPOSIT</div>
               <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.minimumDeposit}</div>
             </div>
@@ -77,7 +142,7 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
         </div>
 
         {/* Casino & Rating */}
-        <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-[2px] border-[#333]">
+        <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
           {bonus.data.casinoName && (
             <div class="text-white font-[JetBrains_Mono]">
               <span class="text-[#FAFF00]">Casino:</span> {bonus.data.casinoName.replace(/Bonus:.*$/, '').trim()}
@@ -109,7 +174,7 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
                 <span>✓</span> PROS
               </h3>
               <ul class="space-y-2">
-                {bonus.data.pros.split('|').map((pro: string) => (
+                {(Array.isArray(bonus.data.pros) ? bonus.data.pros : bonus.data.pros.split('|')).map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-[#39FF14] mt-1">•</span>
                     <span>{pro.trim()}</span>
@@ -124,7 +189,7 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
                 <span>✗</span> CONS
               </h3>
               <ul class="space-y-2">
-                {bonus.data.cons.split('|').map((con: string) => (
+                {(Array.isArray(bonus.data.cons) ? bonus.data.cons : bonus.data.cons.split('|')).map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-white mt-1">•</span>
                     <span>{con.trim()}</span>
@@ -134,6 +199,59 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
             </div>
           )}
         </div>
+      )}
+
+      {/* First-Hand Testing Section */}
+      {(bonus.data.withdrawalTimes || bonus.data.liveChat || bonus.data.depositMethods || bonus.data.withdrawalMethods) && (
+        <aside class="mb-8 border-[3px] border-[#FAFF00] bg-[#0d0d0d] shadow-[6px_6px_0px_0px_#FAFF00]">
+          <div class="bg-[#FAFF00] px-6 py-3">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-black flex items-center gap-2">
+              <span>⚡</span> WE TESTED THIS
+            </h3>
+          </div>
+          <div class="p-6">
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">
+              Real data from our hands-on testing. We deposited, played, and withdrew.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {bonus.data.withdrawalTimes && (
+                <div class="border border-[#333] p-4">
+                  <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">ACTUAL WITHDRAWAL TIME</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.withdrawalTimes.split(',')[0]}</div>
+                </div>
+              )}
+              {bonus.data.liveChat && (
+                <div class="border border-[#333] p-4">
+                  <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">LIVE CHAT</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.liveChat}</div>
+                </div>
+              )}
+              {bonus.data.withdrawalFees && (
+                <div class="border border-[#333] p-4">
+                  <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">WITHDRAWAL FEES</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.withdrawalFees}</div>
+                </div>
+              )}
+              {bonus.data.bonusDuration && (
+                <div class="border border-[#333] p-4">
+                  <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">TIME TO CLEAR BONUS</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.bonusDuration}</div>
+                </div>
+              )}
+              {bonus.data.depositMethods && (
+                <div class="border border-[#333] p-4 md:col-span-2">
+                  <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">DEPOSIT METHODS TESTED</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.depositMethods.split(',').slice(0, 5).join(', ')}{bonus.data.depositMethods.split(',').length > 5 ? ` +${bonus.data.depositMethods.split(',').length - 5} more` : ''}</div>
+                </div>
+              )}
+            </div>
+            {lastUpdatedFormatted && (
+              <p class="mt-4 text-[#D4D4D4] font-[JetBrains_Mono] text-xs border-t border-[#333] pt-4">
+                Testing conducted: {lastUpdatedFormatted}
+              </p>
+            )}
+          </div>
+        </aside>
       )}
 
       <!-- Content -->
@@ -149,6 +267,62 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
         <Content />
       </div>
 
+      <!-- Author & Tested Info -->
+      <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
+            {bonus.data.authorSlug ? (
+              <a href={`/team/${bonus.data.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
+                {bonus.data.author || "CryptoBonusList Team"}
+              </a>
+            ) : (
+              <span class="text-white font-[Space_Grotesk] font-bold">
+                {bonus.data.author || "CryptoBonusList Team"}
+              </span>
+            )}
+          </div>
+          {lastUpdatedFormatted && (
+            <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">
+              Last updated: {lastUpdatedFormatted}
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <!-- Related Bonuses -->
+      {displayRelated.length > 0 && (
+        <section class="mt-12 pt-8 border-t-[3px] border-white">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">
+            SIMILAR BONUSES
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {displayRelated.map((related) => (
+              <a
+                href={`/bonuses/${related.id.replace(/\.md$/, '')}`}
+                class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]"
+              >
+                <div class="mb-2">
+                  {related.data.bonusType && (
+                    <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-2 py-1 uppercase tracking-wider">
+                      {related.data.bonusType}
+                    </span>
+                  )}
+                </div>
+                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white mb-2 line-clamp-2">
+                  {related.data.title}
+                </h3>
+                {related.data.bonus && (
+                  <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">
+                    {related.data.bonus}
+                  </p>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
       <!-- Back link -->
       <div class="mt-12 pt-8 border-t-[3px] border-white">
         <a
@@ -160,4 +334,16 @@ const seoTitle = bonus.data.title + " | CryptoBonusList";
       </div>
     </div>
   </article>
+
+  <!-- Sticky Mobile CTA -->
+  {claimUrl && (
+    <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
+      <a
+        href={claimUrl}
+        class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF]"
+      >
+        CLAIM BONUS
+      </a>
+    </div>
+  )}
 </Layout>

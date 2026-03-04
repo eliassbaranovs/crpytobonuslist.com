@@ -1,0 +1,131 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const authors = await getCollection("authors");
+  return authors.map((author) => ({
+    params: { slug: author.data.slug },
+    props: { author },
+  }));
+}
+
+const { author } = Astro.props;
+const { Content } = await render(author);
+
+// Get all content by this author
+const allBonuses = await getCollection("bonuses");
+const allNews = await getCollection("news");
+
+const authorBonuses = allBonuses.filter(
+  (b) => b.data.authorSlug === author.data.slug || b.data.author === author.data.name
+);
+const authorNews = allNews.filter(
+  (n) => n.data.author === author.data.name
+);
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": author.data.name,
+  "jobTitle": author.data.role,
+  "description": author.data.bio,
+  "worksFor": {
+    "@type": "Organization",
+    "name": "CryptoBonusList",
+    "url": "https://cryptobonuslist.com"
+  }
+});
+---
+
+<Layout 
+  title={`${author.data.name} | CryptoBonusList Team`}
+  description={author.data.bio}
+  jsonld={schemaJsonLd}
+>
+  <article class="px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <!-- Author Header -->
+      <header class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-10">
+        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold mb-2">
+          {author.data.name}
+        </h1>
+        <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm uppercase tracking-wider mb-4">
+          {author.data.role}
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg leading-relaxed">
+          {author.data.bio}
+        </p>
+        
+        {author.data.expertise && (
+          <div class="mt-6 flex flex-wrap gap-2">
+            {author.data.expertise.map((skill: string) => (
+              <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                {skill}
+              </span>
+            ))}
+          </div>
+        )}
+        
+        <p class="mt-4 text-[#D4D4D4] font-[JetBrains_Mono] text-xs">
+          Team member since {new Date(author.data.joinedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        </p>
+      </header>
+
+      <!-- Author Bio Content -->
+      <section class="prose prose-brutal max-w-none mb-12">
+        <Content />
+      </section>
+
+      <!-- Author's Bonuses -->
+      {authorBonuses.length > 0 && (
+        <section class="mb-12">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2">
+            BONUSES BY {author.data.name.toUpperCase()}
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {authorBonuses.slice(0, 6).map((bonus) => (
+              <a
+                href={`/bonuses/${bonus.id.replace(/\.md$/, "")}`}
+                class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]"
+              >
+                <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">
+                  {bonus.data.title}
+                </h3>
+                {bonus.data.bonus && (
+                  <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm">
+                    {bonus.data.bonus}
+                  </p>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Author's News -->
+      {authorNews.length > 0 && (
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2">
+            NEWS BY {author.data.name.toUpperCase()}
+          </h2>
+          <div class="space-y-4">
+            {authorNews.slice(0, 4).map((news) => (
+              <a
+                href={`/news/${news.data.slug}`}
+                class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#8A2BE2]"
+              >
+                <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">
+                  {news.data.title}
+                </h3>
+                <p class="text-[#D4D4D4] font-[Public_Sans] text-sm line-clamp-2">
+                  {news.data.description}
+                </p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  </article>
+</Layout>

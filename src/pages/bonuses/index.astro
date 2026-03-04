@@ -64,7 +64,7 @@ const sortedBonuses = allBonuses.sort(
                   {bonus.data.bonus}
                 </div>
               )}
-              {bonus.data.freeSpins && bonus.data.freeSpins > 0 && (
+              {bonus.data.freeSpins && Number(bonus.data.freeSpins) > 0 && (
                 <div class="text-black bg-[#39FF14] text-xs font-[JetBrains_Mono] font-bold px-2 py-1 inline-block">
                   {bonus.data.freeSpins} FREE SPINS
                 </div>

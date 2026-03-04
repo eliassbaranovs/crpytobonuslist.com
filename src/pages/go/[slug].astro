@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const bonuses = await getCollection("bonuses");
+  
+  return bonuses
+    .filter((bonus) => bonus.data.website)
+    .map((bonus) => ({
+      params: { slug: bonus.id.replace(/\.md$/, "") },
+      props: { 
+        affiliateUrl: bonus.data.website,
+        casinoName: bonus.data.casino || bonus.data.title
+      },
+    }));
+}
+
+const { affiliateUrl, casinoName } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta http-equiv="refresh" content="0; url={affiliateUrl}" />
+    <title>Redirecting to {casinoName}...</title>
+    <style>
+      body {
+        background: #0A0A0A;
+        color: #fff;
+        font-family: system-ui, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .redirect-box {
+        text-align: center;
+        border: 3px solid #39FF14;
+        padding: 2rem;
+        background: #000;
+      }
+      a {
+        color: #39FF14;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="redirect-box">
+      <p>Redirecting to {casinoName}...</p>
+      <p>If you are not redirected, <a href={affiliateUrl}>click here</a>.</p>
+    </div>
+  </body>
+</html>

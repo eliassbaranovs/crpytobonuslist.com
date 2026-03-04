@@ -13,20 +13,74 @@ export async function getStaticPaths() {
 const { article } = Astro.props;
 const { Content } = await render(article);
 const jsonld = article.data.schema_jsonld ? JSON.stringify(article.data.schema_jsonld) : undefined;
+
+// Get last updated date
+const lastUpdated = article.data.updatedAt || article.data.publishedAt;
+const publishedDate = new Date(article.data.publishedAt);
+const now = new Date();
+const diffMs = now.getTime() - publishedDate.getTime();
+const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+// Relative time for news
+let relativeTime: string;
+if (diffDays === 0) {
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  if (diffHours === 0) {
+    relativeTime = "Just now";
+  } else {
+    relativeTime = `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  }
+} else if (diffDays === 1) {
+  relativeTime = "Yesterday";
+} else if (diffDays < 7) {
+  relativeTime = `${diffDays} days ago`;
+} else if (diffDays < 30) {
+  const weeks = Math.floor(diffDays / 7);
+  relativeTime = `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+} else {
+  relativeTime = publishedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Get related news (same tags)
+const allNews = await getCollection("news");
+const currentTags = article.data.tags || [];
+
+const relatedNews = allNews
+  .filter((n) => n.data.slug !== article.data.slug)
+  .filter((n) => {
+    if (currentTags.length > 0 && n.data.tags) {
+      return n.data.tags.some((tag: string) => currentTags.includes(tag));
+    }
+    return false;
+  })
+  .slice(0, 3);
+
+// Fallback to latest if no related
+const displayRelated = relatedNews.length > 0 ? relatedNews : allNews.filter((n) => n.data.slug !== article.data.slug).slice(0, 3);
+
+// Author slug (derive from author name if not provided)
+const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBonusList Team" ? "cryptobonuslist-team" : null);
 ---
 
 <Layout title={article.data.seoTitle} description={article.data.description} jsonld={jsonld}>
   <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <!-- Banner -->
-      <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#FAFF00]">
-        <div class="flex items-center gap-4 mb-4">
+      <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#FAFF00]">
+        <div class="flex items-center gap-4 mb-4 flex-wrap">
           <span class="text-[#39FF14] text-sm font-[JetBrains_Mono] font-bold">
-            {article.data.publishedAt}
+            {relativeTime}
           </span>
-          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">
-            {article.data.author}
-          </span>
+          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">by</span>
+          {authorSlug ? (
+            <a href={`/team/${authorSlug}`} class="text-[#39FF14] text-sm font-[Public_Sans] font-bold hover:underline">
+              {article.data.author}
+            </a>
+          ) : (
+            <span class="text-white text-sm font-[Public_Sans] font-bold">
+              {article.data.author}
+            </span>
+          )}
         </div>
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
           {article.data.title}
@@ -38,7 +92,7 @@ const jsonld = article.data.schema_jsonld ? JSON.stringify(article.data.schema_j
             </span>
           ))}
         </div>
-      </div>
+      </header>
 
       <!-- Content -->
       <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
@@ -53,6 +107,30 @@ const jsonld = article.data.schema_jsonld ? JSON.stringify(article.data.schema_j
       ">
         <Content />
       </div>
+
+      <!-- Related News -->
+      {displayRelated.length > 0 && (
+        <aside class="mt-12 pt-8 border-t-[3px] border-white">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">
+            RELATED NEWS
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {displayRelated.map((related) => (
+              <a
+                href={`/news/${related.data.slug}`}
+                class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#FAFF00]"
+              >
+                <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-2">
+                  {new Date(related.data.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </div>
+                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white line-clamp-2">
+                  {related.data.title}
+                </h3>
+              </a>
+            ))}
+          </div>
+        </aside>
+      )}
 
       <!-- Back link -->
       <div class="mt-12 pt-8 border-t-[3px] border-white">

@@ -112,18 +112,28 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
           <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">COMPANY</p>
           <ul class="space-y-2 text-sm font-[Public_Sans]">
             <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14]">About Us</a></li>
+            <li><a href="/team" class="text-[#D4D4D4] hover:text-[#39FF14]">Our Team</a></li>
+            <li><a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14]">How We Review</a></li>
             <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14]">Contact</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Legal and trust links" class="p-8">
+          <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">LEGAL & TRUST</p>
+          <ul class="space-y-2 text-sm font-[Public_Sans]">
+            <li><a href="/affiliate-disclosure" class="text-[#D4D4D4] hover:text-[#39FF14]">Affiliate Disclosure</a></li>
+            <li><a href="/responsible-gambling" class="text-[#D4D4D4] hover:text-[#39FF14]">Responsible Gambling</a></li>
             <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14]">Privacy Policy</a></li>
             <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14]">Terms & Conditions</a></li>
           </ul>
         </nav>
-        <div class="p-8">
-          <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">LEGAL</p>
-          <p class="text-[#D4D4D4] text-xs font-[Public_Sans] leading-relaxed">
-            Gambling involves risk. Only wager what you can afford to lose. 18+ only. Content is for informational purposes. Verify legality in your jurisdiction.
+      </div>
+      <div class="border-t-[3px] border-white p-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <p class="text-[#D4D4D4] text-xs font-[Public_Sans]">
+            &copy; 2026 CryptoBonusList.com. 18+ Only. Gambling involves risk. Content is for informational purposes.
           </p>
-          <p class="text-[#D4D4D4] text-xs font-[Public_Sans] mt-4">
-            &copy; 2026 CryptoBonusList.com
+          <p class="text-[#D4D4D4] text-xs font-[Public_Sans]">
+            <a href="/responsible-gambling" class="text-[#FAFF00] hover:underline">Play Responsibly</a>
           </p>
         </div>
       </div>

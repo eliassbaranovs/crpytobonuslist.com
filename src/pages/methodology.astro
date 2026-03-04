@@ -1,0 +1,152 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "How We Review Crypto Casino Bonuses",
+  "description": "Our methodology for testing and rating crypto casino bonuses. Real deposits, real wagering, real withdrawal attempts.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CryptoBonusList",
+    "url": "https://cryptobonuslist.com"
+  }
+});
+---
+
+<Layout 
+  title="How We Review | CryptoBonusList" 
+  description="Our methodology for testing and rating crypto casino bonuses. Real deposits, real wagering, real withdrawal attempts."
+  jsonld={schemaJsonLd}
+>
+  <article class="px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        HOW WE <span class="text-[#39FF14]">REVIEW</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
+        Every bonus on this site goes through the same process. No shortcuts. No copy-pasting from casino websites.
+      </p>
+
+      <!-- Step 1 -->
+      <section class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-8">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-2xl w-12 h-12 flex items-center justify-center">1</span>
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">REAL DEPOSIT</h2>
+        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          We deposit actual cryptocurrency. Usually BTC, ETH, or USDT depending on what the casino accepts. The minimum qualifying deposit for the bonus, plus a bit extra to have room to play.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mt-4">
+          We record the deposit time, transaction ID, and how long it takes for the funds to credit. Network fees are noted.
+        </p>
+      </section>
+
+      <!-- Step 2 -->
+      <section class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#8A2BE2] mb-8">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="bg-[#8A2BE2] text-white font-[JetBrains_Mono] font-bold text-2xl w-12 h-12 flex items-center justify-center">2</span>
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">BONUS CLAIM</h2>
+        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          We claim the bonus exactly as a new player would. If it requires a code, we use the code. If it requires opting in through support chat, we do that.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mt-4">
+          Any friction in the claiming process is documented. Hidden requirements, unclear instructions, or support delays are noted.
+        </p>
+      </section>
+
+      <!-- Step 3 -->
+      <section class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#FAFF00] mb-8">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="bg-[#FAFF00] text-black font-[JetBrains_Mono] font-bold text-2xl w-12 h-12 flex items-center justify-center">3</span>
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">WAGERING PLAYTHROUGH</h2>
+        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          We play through the wagering requirements. Slots, table games, whatever contributes. The goal is to reach the withdrawal threshold.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mt-4">
+          We track which games count toward wagering and at what percentage. Max bet limits and game restrictions are tested.
+        </p>
+      </section>
+
+      <!-- Step 4 -->
+      <section class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-8">
+        <div class="flex items-center gap-4 mb-4">
+          <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-2xl w-12 h-12 flex items-center justify-center">4</span>
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">WITHDRAWAL TEST</h2>
+        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          After meeting wagering requirements, we request a withdrawal. This is where many casinos show their true colors.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mt-4">
+          We document the exact withdrawal time from request to funds hitting our wallet. KYC requirements, processing delays, and any issues are recorded.
+        </p>
+      </section>
+
+      <!-- What We Look At -->
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2 mt-12">
+        WHAT WE EVALUATE
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">WAGERING REQUIREMENTS</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">The multiplier that determines how much you need to bet before withdrawing. Lower is better. 35x is standard. Anything above 50x is aggressive.</p>
+        </div>
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">MAX BET LIMITS</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">The maximum bet allowed while bonus is active. Exceeding this usually voids the bonus. We test how strictly this is enforced.</p>
+        </div>
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">GAME CONTRIBUTIONS</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Not all games count equally. Slots usually count 100%. Table games might count 10% or nothing. We verify the actual contribution rates.</p>
+        </div>
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">WITHDRAWAL SPEED</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">From request to wallet. We time it. Crypto withdrawals should be fast. If a casino takes 48+ hours for processing, we note it.</p>
+        </div>
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">BONUS VALUE</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">What is the expected value of the bonus given the wagering requirements? A 100% match with 60x wagering is worse than 50% with 25x.</p>
+        </div>
+        <div class="border-[3px] border-white p-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">TERMS CLARITY</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Are the bonus terms clear and findable? Hidden terms or contradictory conditions are red flags.</p>
+        </div>
+      </div>
+
+      <!-- Rating Scale -->
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2">
+        OUR RATING SCALE
+      </h2>
+      
+      <div class="space-y-4 mb-12">
+        <div class="flex items-center gap-4">
+          <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold px-4 py-2">8.0 - 10</span>
+          <span class="text-[#D4D4D4] font-[Public_Sans]">Worth taking. Good value, fair terms, reliable withdrawals.</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="bg-[#FAFF00] text-black font-[JetBrains_Mono] font-bold px-4 py-2">6.0 - 7.9</span>
+          <span class="text-[#D4D4D4] font-[Public_Sans]">Acceptable. Some drawbacks but can be worth it in certain situations.</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="bg-[#8A2BE2] text-white font-[JetBrains_Mono] font-bold px-4 py-2">4.0 - 5.9</span>
+          <span class="text-[#D4D4D4] font-[Public_Sans]">Below average. Proceed with caution. Terms may be unfavorable.</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="bg-white text-black font-[JetBrains_Mono] font-bold px-4 py-2">0.0 - 3.9</span>
+          <span class="text-[#D4D4D4] font-[Public_Sans]">Not recommended. Poor value or problematic casino behavior.</span>
+        </div>
+      </div>
+
+      <!-- Updates -->
+      <div class="border-[3px] border-[#FAFF00] bg-black p-6 shadow-[6px_6px_0px_0px_#FAFF00]">
+        <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#FAFF00] mb-2">STAYING CURRENT</h3>
+        <p class="text-[#D4D4D4] font-[Public_Sans]">
+          Bonuses change. Casinos update terms. We re-test bonuses periodically and update reviews when conditions change. Every review shows its last update date.
+        </p>
+      </div>
+    </div>
+  </article>
+</Layout>

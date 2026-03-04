@@ -1,0 +1,187 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Responsible Gambling",
+  "description": "Information about responsible gambling and resources for help. Gambling should be entertainment, not a financial strategy.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CryptoBonusList",
+    "url": "https://cryptobonuslist.com"
+  }
+});
+---
+
+<Layout 
+  title="Responsible Gambling | CryptoBonusList" 
+  description="Information about responsible gambling. Resources for help if gambling becomes a problem."
+  jsonld={schemaJsonLd}
+>
+  <article class="px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        RESPONSIBLE <span class="text-[#39FF14]">GAMBLING</span>
+      </h1>
+      
+      <!-- Warning Box -->
+      <div class="border-[3px] border-[#FAFF00] bg-black p-8 shadow-[6px_6px_0px_0px_#FAFF00] mb-10">
+        <p class="text-[#FAFF00] font-[Space_Grotesk] font-bold text-xl mb-4">
+          18+ ONLY. GAMBLING INVOLVES RISK.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Gambling should be entertainment. If it stops being fun or starts causing problems, it is time to stop. The house always has an edge. Over time, the math works against you.
+        </p>
+      </div>
+
+      <!-- Know The Odds -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          KNOW THE ODDS
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            Every casino game has a house edge. Slots typically range from 2% to 10%. Blackjack with perfect strategy is around 0.5%. Roulette is 2.7% for European, 5.26% for American.
+          </p>
+          <p>
+            This means if you bet $100,000 total on a slot with 5% house edge, you will lose $5,000 on average. Individual sessions have variance, but the math catches up.
+          </p>
+          <p>
+            Bonuses can reduce the effective house edge temporarily, but wagering requirements often negate this. A 100% bonus with 40x wagering still favors the house.
+          </p>
+        </div>
+      </section>
+
+      <!-- Warning Signs -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          WARNING SIGNS
+        </h2>
+        <div class="border-[3px] border-white p-6 space-y-3">
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Chasing losses. Depositing more to win back what you lost.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Gambling with money you need for bills, rent, or food.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Lying to family or friends about gambling.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Feeling anxious or irritable when not gambling.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Neglecting work, relationships, or responsibilities to gamble.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Borrowing money or selling things to fund gambling.</span>
+          </p>
+          <p class="text-white font-[Public_Sans] flex items-start gap-3">
+            <span class="text-[#39FF14] font-bold">-</span>
+            <span>Unable to stop despite wanting to.</span>
+          </p>
+        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] mt-4">
+          If any of these apply, consider taking a break and talking to someone.
+        </p>
+      </section>
+
+      <!-- Self-Exclusion -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          SELF-EXCLUSION TOOLS
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            Most casinos offer self-exclusion options. You can block yourself from the site for days, weeks, months, or permanently. Use these if you need a break.
+          </p>
+          <p>
+            Some third-party tools can block gambling sites at the device level:
+          </p>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">Gamban:</strong> Blocks access to gambling sites across all your devices.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">BetBlocker:</strong> Free app that blocks gambling content.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">GamStop:</strong> UK self-exclusion scheme for licensed operators.</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Budget Rules -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          SETTING LIMITS
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="border-[3px] border-white p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">DEPOSIT LIMITS</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Set daily, weekly, or monthly deposit limits at the casino. Once hit, you cannot deposit more until the period resets.</p>
+          </div>
+          <div class="border-[3px] border-white p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">LOSS LIMITS</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Decide before you play how much you are willing to lose. When you hit that number, stop. No exceptions.</p>
+          </div>
+          <div class="border-[3px] border-white p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">TIME LIMITS</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Set a timer. When it goes off, you are done for the day. Losing track of time is common when gambling.</p>
+          </div>
+          <div class="border-[3px] border-white p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-2">SEPARATE FUNDS</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Keep gambling money separate from everyday funds. Only use what you have explicitly set aside for gambling.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Help Resources -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          GET HELP
+        </h2>
+        <div class="space-y-4">
+          <div class="border-[3px] border-[#39FF14] p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-1">Gamblers Anonymous</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-2">Free support groups worldwide.</p>
+            <a href="https://www.gamblersanonymous.org" target="_blank" rel="noopener" class="text-[#39FF14] font-[JetBrains_Mono] text-sm underline">gamblersanonymous.org</a>
+          </div>
+          <div class="border-[3px] border-[#39FF14] p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-1">National Council on Problem Gambling (US)</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-2">24/7 confidential helpline: 1-800-522-4700</p>
+            <a href="https://www.ncpgambling.org" target="_blank" rel="noopener" class="text-[#39FF14] font-[JetBrains_Mono] text-sm underline">ncpgambling.org</a>
+          </div>
+          <div class="border-[3px] border-[#39FF14] p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-1">BeGambleAware (UK)</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-2">Free advice and support.</p>
+            <a href="https://www.begambleaware.org" target="_blank" rel="noopener" class="text-[#39FF14] font-[JetBrains_Mono] text-sm underline">begambleaware.org</a>
+          </div>
+          <div class="border-[3px] border-[#39FF14] p-6">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-1">Gambling Therapy</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-2">Free online support and live chat.</p>
+            <a href="https://www.gamblingtherapy.org" target="_blank" rel="noopener" class="text-[#39FF14] font-[JetBrains_Mono] text-sm underline">gamblingtherapy.org</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final Note -->
+      <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#39FF14]">
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          We make money when you gamble through our links. But we would rather have you come back for years as a recreational player than watch you blow your rent money in one session. If gambling is not fun anymore, stop.
+        </p>
+      </div>
+    </div>
+  </article>
+</Layout>

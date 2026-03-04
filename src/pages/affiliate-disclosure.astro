@@ -1,0 +1,173 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Affiliate Disclosure",
+  "description": "Full disclosure about how CryptoBonusList earns money through affiliate partnerships with crypto casinos.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "CryptoBonusList",
+    "url": "https://cryptobonuslist.com"
+  }
+});
+---
+
+<Layout 
+  title="Affiliate Disclosure | CryptoBonusList" 
+  description="How CryptoBonusList earns money through affiliate partnerships. Full transparency about our business model."
+  jsonld={schemaJsonLd}
+>
+  <article class="px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        AFFILIATE <span class="text-[#39FF14]">DISCLOSURE</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-10">
+        Last updated: March 1, 2026
+      </p>
+
+      <!-- Main Disclosure Box -->
+      <div class="border-[3px] border-[#39FF14] bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-10">
+        <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-xl mb-4">
+          WE EARN MONEY WHEN YOU CLICK OUR LINKS
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          CryptoBonusList is an affiliate website. When you click a link to a casino on our site and sign up or deposit, we earn a commission. This is how we pay for the site, the team, and the testing we do.
+        </p>
+      </div>
+
+      <!-- How It Works -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          HOW AFFILIATE MARKETING WORKS
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            We have agreements with various crypto casinos. Each casino gives us unique tracking links. When you click one of these links, a cookie is placed in your browser that identifies you as coming from our site.
+          </p>
+          <p>
+            If you sign up and deposit at that casino, we get paid. The payment structure varies:
+          </p>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">CPA (Cost Per Acquisition):</strong> A one-time payment when you sign up and make a qualifying deposit.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">Revenue Share:</strong> A percentage of the net revenue the casino earns from you over time.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span><strong class="text-white">Hybrid:</strong> A combination of upfront CPA plus ongoing revenue share.</span>
+            </li>
+          </ul>
+          <p>
+            This costs you nothing extra. You pay the same whether you click our link or go directly to the casino. The casino pays us from their marketing budget.
+          </p>
+        </div>
+      </section>
+
+      <!-- Does This Affect Reviews -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          DOES THIS AFFECT OUR REVIEWS?
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            Short answer: we try very hard to make sure it does not.
+          </p>
+          <p>
+            Long answer: there is inherent tension in any affiliate model. We make more money if you sign up at casinos. A dishonest operator would hype every casino regardless of quality.
+          </p>
+          <p>
+            Here is how we handle this:
+          </p>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>We test every casino with real deposits before reviewing. If it is bad, we say so.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>We do not accept payment for positive reviews. No casino can pay for a higher rating.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>Commission rates do not affect rankings. A casino paying us 50% revenue share gets the same scrutiny as one paying 25%.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>We list cons alongside pros. Every review includes downsides.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>If a casino treats players badly, we remove them regardless of lost revenue.</span>
+            </li>
+          </ul>
+          <p>
+            Trust is our business. If our recommendations are bad, you stop coming back. Short-term gains from promoting bad casinos would cost us long-term traffic.
+          </p>
+        </div>
+      </section>
+
+      <!-- What Links Are Affiliate Links -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          IDENTIFYING AFFILIATE LINKS
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            Assume any link to a casino on this site is an affiliate link. This includes:
+          </p>
+          <ul class="space-y-2 ml-4">
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>Buttons that say "Claim Bonus", "Visit Casino", or similar</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>Casino names linked in reviews or articles</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>Links in comparison tables and top lists</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-[#39FF14] font-bold">-</span>
+              <span>Links using our /go/ URL structure</span>
+            </li>
+          </ul>
+          <p>
+            Links to resources like responsible gambling help, news sources, or educational content are typically not affiliate links.
+          </p>
+        </div>
+      </section>
+
+      <!-- Your Choice -->
+      <section class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+          YOUR CHOICE
+        </h2>
+        <div class="space-y-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <p>
+            You are not obligated to use our links. If you find value in our reviews and want to support the site, using our links helps us keep going. If not, go directly to the casino. We will not know the difference.
+          </p>
+          <p>
+            Some casinos offer exclusive bonuses through affiliate links that are not available if you sign up directly. We note these when applicable.
+          </p>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
+        <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-2">QUESTIONS?</h3>
+        <p class="text-[#D4D4D4] font-[Public_Sans]">
+          If you have questions about our affiliate relationships or want to report a concern about a casino we promote, <a href="/contact" class="text-[#39FF14] underline">contact us</a>.
+        </p>
+      </div>
+    </div>
+  </article>
+</Layout>
