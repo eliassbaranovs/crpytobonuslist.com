@@ -5,8 +5,7 @@ import { defineCollection, z } from "astro:content";
 // HELPER: Safely coerce any value to string (handles numbers,
 // booleans, Date objects from YAML auto-parsing)
 // ============================================================
-const toStr = (v: unknown) =>
-  v == null || v === "" ? undefined : String(v);
+const toStr = (v: unknown) => (v == null || v === "" ? undefined : String(v));
 
 // HELPER: Coerce "Yes"/"No"/"true"/"false"/boolean → boolean
 const toBool = (v: unknown) =>
@@ -46,7 +45,7 @@ const bonuses = defineCollection({
     seoTitle: z.string(), // Custom SEO title (H1 vs meta title)
     excerpt: z.string().optional(), // Content summary
     publishedAt: z.coerce.date(), // ISO string → Date
-    updatedAt: z.coerce.date(), // ISO string → Date
+    updatedAt: z.coerce.date().optional(), // ISO string → Date (falls back to publishedAt if missing)
     // publishDate arrives as Date (YAML auto-parses "2026-03-04")
     // so we accept any type and always output a string
     publishDate: z.preprocess(
@@ -82,10 +81,7 @@ const bonuses = defineCollection({
     // CASINO/REVIEW FIELDS (OPTIONAL)
     // Scraped ratings use 0-10 scale, NOT 1-5
     // ==========================================
-    rating: z.preprocess(
-      (v) => toNum(v),
-      z.number().min(0).max(10).optional(),
-    ),
+    rating: z.preprocess((v) => toNum(v), z.number().min(0).max(10).optional()),
     ourRating: z.preprocess(
       (v) => toNum(v),
       z.number().min(0).max(10).optional(),
@@ -231,7 +227,12 @@ const bonuses = defineCollection({
       (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
       z.string().optional(),
     ),
-  }),
+  }).transform((data) => ({
+    ...data,
+    // Ensure updatedAt always exists: fallback to lastModified → publishedAt
+    updatedAt: data.updatedAt ?? 
+      (data.lastModified ? new Date(data.lastModified) : data.publishedAt),
+  })),
 });
 
 const news = defineCollection({
@@ -269,7 +270,11 @@ const news = defineCollection({
     robots: z.string().optional(),
     featured: z.preprocess((v) => toBool(v), z.boolean().optional()),
     relatedPosts: z.array(z.string()).optional(),
-  }),
+  }).transform((data) => ({
+    ...data,
+    // Ensure updatedAt always exists: fallback to publishedAt
+    updatedAt: data.updatedAt ?? data.publishedAt,
+  })),
 });
 
 const authors = defineCollection({

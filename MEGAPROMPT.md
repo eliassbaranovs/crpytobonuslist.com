@@ -87,7 +87,7 @@ Your generated `.md` file MUST strictly follow this structure:
        seoTitle: z.string(), // Custom SEO title (H1 vs meta title)
        excerpt: z.string().optional(), // Content summary
        publishedAt: z.coerce.date(), // ISO string → Date
-       updatedAt: z.coerce.date(), // ISO string → Date
+       updatedAt: z.coerce.date().optional(), // ISO string → Date (optional - may be missing on first publish)
        // publishDate arrives as Date (YAML auto-parses "2026-03-04")
        // so we accept any type and always output a string
        publishDate: z.preprocess(
@@ -262,7 +262,11 @@ Your generated `.md` file MUST strictly follow this structure:
          z.string().optional(),
        ),
      }),
-   });
+   }).transform((data) => ({
+     ...data,
+     // Ensure updatedAt always exists (fallback to publishedAt for new content)
+     updatedAt: data.updatedAt || data.publishedAt,
+   }));
 
    export const collections = {
      posts: postsCollection,
