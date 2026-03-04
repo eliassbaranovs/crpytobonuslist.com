@@ -30,7 +30,7 @@ maxBonus: ""
 seoTitle: "Luckygem Casino 150% Bonus + 150 Free Spins"
 verified: false
 wagering: ""
-bonusType: "NO-DEPOSIT"
+bonusType: "DEPOSIT"
 canonical: ""
 createdAt: "2026-03-04T07:11:04.795039+00:00"
 exclusive: ""
