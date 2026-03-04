@@ -15,7 +15,7 @@ const { Content } = await render(bonus);
 const seoTitle = bonus.data.seoTitle || bonus.data.title + " | CryptoBonusList";
 
 // Get last updated date
-const lastUpdated = bonus.data.lastModified || bonus.data.updatedAt || bonus.data.publishDate || bonus.data.publishedAt;
+const lastUpdated = bonus.data.updatedAt || bonus.data.publishDate || bonus.data.publishedAt;
 const lastUpdatedFormatted = lastUpdated ? new Date(lastUpdated).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
 
 // Get related bonuses (same tags or bonusType)
@@ -133,19 +133,19 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
               <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.wageringRequirements}</div>
             </div>
           )}
-          {bonus.data.minimumDeposit && (
+          {bonus.data.minimum_deposit && (
             <div class="border-2 border-white p-3">
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">MIN DEPOSIT</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.minimumDeposit}</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{bonus.data.minimum_deposit}</div>
             </div>
           )}
         </div>
 
         {/* Casino & Rating */}
         <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
-          {bonus.data.casinoName && (
+          {bonus.data.casino_name && (
             <div class="text-white font-[JetBrains_Mono]">
-              <span class="text-[#FAFF00]">Casino:</span> {bonus.data.casinoName.replace(/Bonus:.*$/, '').trim()}
+              <span class="text-[#FAFF00]">Casino:</span> {bonus.data.casino_name.replace(/Bonus:.*$/, '').trim()}
             </div>
           )}
           {bonus.data.ourRating && (
@@ -174,7 +174,7 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
                 <span>✓</span> PROS
               </h3>
               <ul class="space-y-2">
-                {(Array.isArray(bonus.data.pros) ? bonus.data.pros : bonus.data.pros.split('|')).map((pro: string) => (
+                {bonus.data.pros.map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-[#39FF14] mt-1">•</span>
                     <span>{pro.trim()}</span>
@@ -189,7 +189,7 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
                 <span>✗</span> CONS
               </h3>
               <ul class="space-y-2">
-                {(Array.isArray(bonus.data.cons) ? bonus.data.cons : bonus.data.cons.split('|')).map((con: string) => (
+                {bonus.data.cons.map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-white mt-1">•</span>
                     <span>{con.trim()}</span>
@@ -202,7 +202,7 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
       )}
 
       {/* First-Hand Testing Section */}
-      {(bonus.data.withdrawalTimes || bonus.data.liveChat || bonus.data.depositMethods || bonus.data.withdrawalMethods) && (
+      {(bonus.data.withdrawalTimes || bonus.data.live_chat || bonus.data.deposit_methods || bonus.data.withdrawal_methods) && (
         <aside class="mb-8 border-[3px] border-[#FAFF00] bg-[#0d0d0d] shadow-[6px_6px_0px_0px_#FAFF00]">
           <div class="bg-[#FAFF00] px-6 py-3">
             <h3 class="font-[Space_Grotesk] text-lg font-bold text-black flex items-center gap-2">
@@ -220,10 +220,10 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
                   <div class="text-white font-[Public_Sans] text-sm">{bonus.data.withdrawalTimes.split(',')[0]}</div>
                 </div>
               )}
-              {bonus.data.liveChat && (
+              {bonus.data.live_chat && (
                 <div class="border border-[#333] p-4">
                   <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">LIVE CHAT</div>
-                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.liveChat}</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.live_chat}</div>
                 </div>
               )}
               {bonus.data.withdrawalFees && (
@@ -238,10 +238,10 @@ const claimUrl = bonus.data.website ? `/go/${affiliateSlug}` : null;
                   <div class="text-white font-[Public_Sans] text-sm">{bonus.data.bonusDuration}</div>
                 </div>
               )}
-              {bonus.data.depositMethods && (
+              {bonus.data.deposit_methods && (
                 <div class="border border-[#333] p-4 md:col-span-2">
                   <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] font-bold mb-1">DEPOSIT METHODS TESTED</div>
-                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.depositMethods.split(',').slice(0, 5).join(', ')}{bonus.data.depositMethods.split(',').length > 5 ? ` +${bonus.data.depositMethods.split(',').length - 5} more` : ''}</div>
+                  <div class="text-white font-[Public_Sans] text-sm">{bonus.data.deposit_methods.split(',').slice(0, 5).join(', ')}{bonus.data.deposit_methods.split(',').length > 5 ? ` +${bonus.data.deposit_methods.split(',').length - 5} more` : ''}</div>
                 </div>
               )}
             </div>

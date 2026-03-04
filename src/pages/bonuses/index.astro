@@ -53,9 +53,9 @@ const sortedBonuses = allBonuses.sort(
             <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">
               {bonus.data.description}
             </p>
-            {bonus.data.casinoName && (
+            {bonus.data.casino_name && (
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-3">
-                {bonus.data.casinoName.replace(/Bonus:.*$/, '').trim()}
+                {bonus.data.casino_name.replace(/Bonus:.*$/, '').trim()}
               </div>
             )}
             <div class="flex items-center gap-2 flex-wrap">

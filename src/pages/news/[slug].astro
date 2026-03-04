@@ -62,7 +62,7 @@ const displayRelated = relatedNews.length > 0 ? relatedNews : allNews.filter((n)
 const authorSlug = article.data.authorSlug || (article.data.author === "CryptoBonusList Team" ? "cryptobonuslist-team" : null);
 ---
 
-<Layout title={article.data.seoTitle} description={article.data.description} jsonld={jsonld}>
+<Layout title={article.data.seoTitle || article.data.title} description={article.data.description || article.data.title} jsonld={jsonld}>
   <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <!-- Banner -->
