@@ -1,19 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import { isBonus, sortByDate } from "../lib/posts";
 
-const allBonuses = await getCollection("bonuses");
-const topBonuses = allBonuses
-  .filter((b) => b.data.verified)
-  .sort((a, b) => {
-    const dateA = new Date(a.data.publishDate || "2026-01-01").getTime();
-    const dateB = new Date(b.data.publishDate || "2026-01-01").getTime();
-    return dateB - dateA;
-  })
-  .slice(0, 3);
-
-// Fallback if no verified bonuses
-const displayBonuses = topBonuses.length > 0 ? topBonuses : allBonuses.slice(0, 3);
+const allPosts = await getCollection("posts");
+const bonuses = sortByDate(allPosts.filter(isBonus));
+const topBonuses = bonuses.filter((b) => b.data.verified).slice(0, 3);
+const displayBonuses = topBonuses.length > 0 ? topBonuses : bonuses.slice(0, 3);
 ---
 
 <Layout title="404 - Page Not Found | CryptoBonusList" description="This page does not exist. Check out today's top crypto casino bonuses instead.">
@@ -22,53 +15,33 @@ const displayBonuses = topBonuses.length > 0 ? topBonuses : allBonuses.slice(0, 
       <h1 class="font-[Space_Grotesk] text-6xl md:text-8xl font-bold mb-4">
         <span class="text-[#39FF14]">404</span>
       </h1>
-      <p class="font-[Space_Grotesk] text-2xl md:text-4xl font-bold text-white mb-6">
-        PAGE NOT FOUND
-      </p>
+      <p class="font-[Space_Grotesk] text-2xl md:text-4xl font-bold text-white mb-6">PAGE NOT FOUND</p>
       <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-12 max-w-xl mx-auto">
-        Whatever you were looking for is not here. Might have been removed, might never have existed. Here are some active bonuses instead.
+        Whatever you were looking for is not here. Here are some active bonuses instead.
       </p>
 
-      <h2 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold mb-6 text-[#FAFF00]">
-        TOP 3 ACTIVE BONUSES TODAY
-      </h2>
+      <h2 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold mb-6 text-[#FAFF00]">TOP 3 ACTIVE BONUSES TODAY</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {displayBonuses.map((bonus) => (
-          <a
-            href={`/bonuses/${bonus.id.replace(/\.md$/, "")}`}
-            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14] text-left"
-          >
+          <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14] text-left">
             <div class="mb-3 flex gap-2 items-center">
               {bonus.data.bonusType && (
-                <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                  {bonus.data.bonusType}
-                </span>
+                <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">{bonus.data.bonusType}</span>
               )}
               {bonus.data.verified && (
-                <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                  VERIFIED
-                </span>
+                <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">VERIFIED</span>
               )}
             </div>
-            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">
-              {bonus.data.title}
-            </h3>
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">{bonus.data.title}</h3>
             {bonus.data.bonus && (
-              <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold">
-                {bonus.data.bonus}
-              </p>
+              <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold">{bonus.data.bonus}</p>
             )}
           </a>
         ))}
       </div>
 
-      <a
-        href="/"
-        class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all"
-      >
-        BACK TO HOME
-      </a>
+      <a href="/" class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all">BACK TO HOME</a>
     </div>
   </section>
 </Layout>

@@ -1,5 +1,11 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { isReview, isBonus, sortByDate } from "../../lib/posts";
+
+const allPosts = await getCollection("posts");
+const reviews = sortByDate(allPosts.filter(isReview));
+const bonuses = sortByDate(allPosts.filter(isBonus));
 ---
 
 <Layout title="Crypto Casinos | CryptoBonusList" description="Crypto casino directory. The ones worth your time and BTC.">
@@ -9,90 +15,33 @@ import Layout from "../../layouts/Layout.astro";
         CRYPTO <span class="text-[#8A2BE2]">CASINOS</span>
       </h1>
       <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
-        Full casino directory coming soon. For now, check the bonus reviews for details on individual platforms.
+        {reviews.length > 0
+          ? "Full casino reviews tested with real deposits. Withdrawal times, support quality, and the details that matter."
+          : "Full casino directory coming soon. For now, check the bonus reviews for details on individual platforms."}
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Stake -->
-        <div class="bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white mb-2">Stake.com</h2>
-          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4">
-            Largest crypto casino by volume. Known for rakeback, VIP programs, and fast payouts. Supports 15+ coins.
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">Rakeback</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">15+ Coins</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">VIP</span>
-          </div>
-          <a href="/bonuses/stake-rakeback-bonus" class="text-[#39FF14] text-sm font-[JetBrains_Mono] underline underline-offset-4 decoration-2">
-            View Bonus &rarr;
-          </a>
+      {reviews.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {reviews.map((review) => (
+            <a href={`/casinos/${review.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
+              <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-2">{review.data.title}</h2>
+              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-3 line-clamp-3">{review.data.description}</p>
+              {review.data.ourRating && (
+                <div class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">Rating: {review.data.ourRating}/10</div>
+              )}
+            </a>
+          ))}
         </div>
-
-        <!-- BitStarz -->
-        <div class="bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white mb-2">BitStarz</h2>
-          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4">
-            One of the original crypto casinos. Solid game library, fast withdrawals, free spins on signup with no deposit.
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">No Deposit</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">Free Spins</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">BTC</span>
-          </div>
-          <a href="/bonuses/bitstarz-no-deposit-bonus" class="text-[#39FF14] text-sm font-[JetBrains_Mono] underline underline-offset-4 decoration-2">
-            View Bonus &rarr;
-          </a>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {bonuses.slice(0, 6).map((bonus) => (
+            <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
+              <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-2">{bonus.data.title}</h2>
+              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-3 line-clamp-3">{bonus.data.description}</p>
+            </a>
+          ))}
         </div>
-
-        <!-- CloudBet -->
-        <div class="bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white mb-2">CloudBet</h2>
-          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4">
-            High-roller friendly with a 5 BTC welcome bonus. Loyalty point system unlocks the bonus over time. Supports 10+ coins.
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">5 BTC Cap</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">Loyalty Unlock</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">High Roller</span>
-          </div>
-          <a href="/bonuses/cloudbet-first-deposit-bonus" class="text-[#39FF14] text-sm font-[JetBrains_Mono] underline underline-offset-4 decoration-2">
-            View Bonus &rarr;
-          </a>
-        </div>
-
-        <!-- mBit -->
-        <div class="bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white mb-2">mBit Casino</h2>
-          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4">
-            Weekly reload bonuses and a strong welcome package. Good for regular players who want consistent value from reloads.
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">Weekly Reload</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">50% Match</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">BTC</span>
-          </div>
-          <a href="/bonuses/mbit-casino-reload-bonus" class="text-[#39FF14] text-sm font-[JetBrains_Mono] underline underline-offset-4 decoration-2">
-            View Bonus &rarr;
-          </a>
-        </div>
-
-        <!-- Samba Slots -->
-        <div class="bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white mb-2">Samba Slots</h2>
-          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4">
-            200% welcome match up to 5,000 EUR. Accepts BTC, ETH, LTC, USDT, and DOGE. Bonus applies automatically on first deposit.
-          </p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">200% Match</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">€5,000</span>
-            <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14] px-2 py-1">5 Coins</span>
-          </div>
-          <a href="/bonuses/samba-slots-welcome-bonus" class="text-[#39FF14] text-sm font-[JetBrains_Mono] underline underline-offset-4 decoration-2">
-            View Bonus &rarr;
-          </a>
-        </div>
-      </div>
+      )}
     </div>
   </section>
 </Layout>

@@ -2,17 +2,26 @@
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const bonuses = await getCollection("bonuses");
-  
-  return bonuses
-    .filter((bonus) => bonus.data.website)
-    .map((bonus) => ({
-      params: { slug: bonus.id.replace(/\.md$/, "") },
-      props: { 
-        affiliateUrl: bonus.data.website,
-        casinoName: bonus.data.casino || bonus.data.title
-      },
-    }));
+  const posts = await getCollection("posts");
+
+  const paths = [];
+  for (const post of posts) {
+    // Route by claim_url slug if present
+    if (post.data.claim_url) {
+      paths.push({
+        params: { slug: post.data.claim_url },
+        props: { affiliateUrl: post.data.website || "#", casinoName: post.data.casino || post.data.casino_name || post.data.title },
+      });
+    }
+    // Also route by post slug for backwards compat
+    if (post.data.website) {
+      paths.push({
+        params: { slug: post.data.slug },
+        props: { affiliateUrl: post.data.website, casinoName: post.data.casino || post.data.casino_name || post.data.title },
+      });
+    }
+  }
+  return paths;
 }
 
 const { affiliateUrl, casinoName } = Astro.props;
@@ -26,25 +35,9 @@ const { affiliateUrl, casinoName } = Astro.props;
     <meta http-equiv="refresh" content={`0; url=${affiliateUrl}`} />
     <title>Redirecting to {casinoName}...</title>
     <style>
-      body {
-        background: #0A0A0A;
-        color: #fff;
-        font-family: system-ui, sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-      }
-      .redirect-box {
-        text-align: center;
-        border: 3px solid #39FF14;
-        padding: 2rem;
-        background: #000;
-      }
-      a {
-        color: #39FF14;
-      }
+      body { background: #0A0A0A; color: #fff; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+      .redirect-box { text-align: center; border: 3px solid #39FF14; padding: 2rem; background: #000; }
+      a { color: #39FF14; }
     </style>
   </head>
   <body>

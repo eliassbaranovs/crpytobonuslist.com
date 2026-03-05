@@ -1,0 +1,108 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { isReview } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.filter(isReview).map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const jsonld = post.data.schema_jsonld || "";
+const lastUpdated = post.data.updatedAt || post.data.publishedAt;
+const lastUpdatedFormatted = lastUpdated
+  ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+---
+
+<Layout
+  title={post.data.seoTitle}
+  description={post.data.description}
+  jsonld={jsonld}
+  ogType="article"
+  ogImage={post.data.image || "/favicon.svg"}
+  canonical={post.data.canonical || undefined}
+  robots={robots}
+>
+  <article class="px-6 py-12">
+    <div class="max-w-4xl mx-auto">
+      <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
+          <li class="text-[#D4D4D4]">/</li>
+          <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casinos</a></li>
+          <li class="text-[#D4D4D4]">/</li>
+          <li class="text-white" aria-current="page">{post.data.title}</li>
+        </ol>
+      </nav>
+
+      <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#8A2BE2]">
+        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{post.data.description}</p>
+        {post.data.ourRating && (
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
+            <span class="text-white font-[Space_Grotesk] font-bold text-3xl">{post.data.ourRating}</span>
+            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
+          </div>
+        )}
+        {lastUpdatedFormatted && (
+          <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last Tested: {lastUpdatedFormatted}</div>
+        )}
+      </header>
+
+      {post.data.image && (
+        <div class="mb-8">
+          <img src={post.data.image} alt={post.data.imageAlt} width={post.data.imageWidth} height={post.data.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2]" />
+        </div>
+      )}
+
+      {(post.data.pros || post.data.cons) && (
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          {post.data.pros && (
+            <div class="border-[3px] border-[#39FF14] bg-black p-6">
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4">PROS</h3>
+              <ul class="space-y-2">
+                {post.data.pros.map((pro: string) => (
+                  <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
+                    <span class="text-[#39FF14] mt-1">+</span><span>{pro.trim()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {post.data.cons && (
+            <div class="border-[3px] border-white bg-black p-6">
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4">CONS</h3>
+              <ul class="space-y-2">
+                {post.data.cons.map((con: string) => (
+                  <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
+                    <span class="text-white mt-1">-</span><span>{con.trim()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
+        prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
+        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#8A2BE2] prose-h2:pb-2
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4
+        prose-li:text-[#D4D4D4] prose-strong:text-white
+        prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
+      ">
+        <Content />
+      </div>
+    </div>
+  </article>
+</Layout>

@@ -1,25 +1,14 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import { isBonus, isNews, sortByDate, getPostUrl } from "../lib/posts";
 
-const allBonuses = await getCollection("bonuses");
-const allNews = await getCollection("news");
-
-const latestBonuses = allBonuses
-  .sort((a, b) => {
-    const dateA = new Date(a.data.publishDate || '2026-01-01').getTime();
-    const dateB = new Date(b.data.publishDate || '2026-01-01').getTime();
-    return dateB - dateA;
-  })
-  .slice(0, 3);
-
-const latestNews = allNews
-  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime())
-  .slice(0, 2);
+const allPosts = await getCollection("posts");
+const latestBonuses = sortByDate(allPosts.filter(isBonus)).slice(0, 3);
+const latestNews = sortByDate(allPosts.filter(isNews)).slice(0, 2);
 ---
 
 <Layout title="CryptoBonusList | Raw Crypto Yields. Zero Fluff." description="Compare the best crypto casino bonuses for 2026. No-deposit offers, welcome packages, rakeback deals, and reload bonuses reviewed with real wagering breakdowns.">
-  <!-- Hero -->
   <section class="px-6 py-16 md:py-24 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-5xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight">
@@ -30,23 +19,12 @@ const latestNews = allNews
         Crypto casino bonuses reviewed by people who use them. Wagering breakdowns, deposit mechanics, and the numbers that matter.
       </p>
       <div class="mt-8 flex gap-4">
-        <a
-          href="/bonuses"
-          class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all"
-        >
-          VIEW BONUSES
-        </a>
-        <a
-          href="/news"
-          class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#39FF14] transition-all"
-        >
-          READ NEWS
-        </a>
+        <a href="/bonus" class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all">VIEW BONUSES</a>
+        <a href="/news" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#39FF14] transition-all">READ NEWS</a>
       </div>
     </div>
   </section>
 
-  <!-- Featured Bonuses -->
   <section class="px-6 py-12">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold mb-8 text-white">
@@ -54,32 +32,19 @@ const latestNews = allNews
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {latestBonuses.map((bonus) => (
-          <a
-            href={`/bonuses/${bonus.id.replace(/\.md$/, '')}`}
-            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]"
-          >
+          <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]">
             <div class="mb-3 flex gap-2 items-center">
               {bonus.data.bonusType && (
-                <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                  {bonus.data.bonusType}
-                </span>
+                <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">{bonus.data.bonusType}</span>
               )}
               {bonus.data.verified && (
-                <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                  VERIFIED
-                </span>
+                <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">VERIFIED</span>
               )}
             </div>
-            <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">
-              {bonus.data.title}
-            </h3>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">
-              {bonus.data.description}
-            </p>
+            <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{bonus.data.title}</h3>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">{bonus.data.description}</p>
             {bonus.data.bonus && (
-              <div class="text-white text-xs font-[JetBrains_Mono] border border-white px-2 py-1 inline-block">
-                {bonus.data.bonus}
-              </div>
+              <div class="text-white text-xs font-[JetBrains_Mono] border border-white px-2 py-1 inline-block">{bonus.data.bonus}</div>
             )}
           </a>
         ))}
@@ -87,7 +52,6 @@ const latestNews = allNews
     </div>
   </section>
 
-  <!-- Featured News -->
   <section class="px-6 py-12 border-t-[3px] border-white">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold mb-8 text-white">
@@ -95,29 +59,18 @@ const latestNews = allNews
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {latestNews.map((article) => (
-          <a
-            href={`/news/${article.data.slug}`}
-            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#FAFF00]"
-          >
+          <a href={`/news/${article.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#FAFF00]">
             <div class="flex items-center gap-3 mb-3">
               <span class="text-[#39FF14] text-xs font-[JetBrains_Mono]">
-                {article.data.publishedAt}
+                {new Date(article.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </span>
-              <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">
-                {article.data.author}
-              </span>
+              <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">{article.data.author}</span>
             </div>
-            <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">
-              {article.data.title}
-            </h3>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">
-              {article.data.description}
-            </p>
+            <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{article.data.title}</h3>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">{article.data.description}</p>
             <div class="flex flex-wrap gap-2">
               {article.data.tags.slice(0, 3).map((tag: string) => (
-                <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">
-                  {tag}
-                </span>
+                <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">{tag}</span>
               ))}
             </div>
           </a>

@@ -1,0 +1,286 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { isBonus, getPostUrl, sortByDate } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.filter(isBonus).map((post) => ({
+    params: { slug: post.data.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const lastUpdated = post.data.updatedAt || post.data.publishedAt;
+const lastUpdatedFormatted = lastUpdated
+  ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+
+const allPosts = await getCollection("posts");
+const currentTags = post.data.tags || [];
+const currentType = post.data.bonusType;
+
+const relatedBonuses = allPosts
+  .filter(isBonus)
+  .filter((b) => b.data.slug !== post.data.slug)
+  .filter((b) => {
+    if (currentTags.length > 0 && b.data.tags) {
+      if (b.data.tags.some((tag: string) => currentTags.includes(tag))) return true;
+    }
+    if (currentType && b.data.bonusType === currentType) return true;
+    return false;
+  })
+  .slice(0, 3);
+
+const displayRelated =
+  relatedBonuses.length > 0
+    ? relatedBonuses
+    : allPosts.filter(isBonus).filter((b) => b.data.slug !== post.data.slug).slice(0, 3);
+
+const jsonld = post.data.schema_jsonld || "";
+const claimUrl = post.data.claim_url
+  ? `/go/${post.data.claim_url}`
+  : post.data.website
+    ? `/go/${post.data.slug}`
+    : null;
+
+const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+---
+
+<Layout
+  title={post.data.seoTitle}
+  description={post.data.description}
+  jsonld={jsonld}
+  ogType="article"
+  ogImage={post.data.image || "/favicon.svg"}
+  canonical={post.data.canonical || undefined}
+  robots={robots}
+>
+  <article class="px-6 py-12 pb-24 md:pb-12">
+    <div class="max-w-4xl mx-auto">
+      <!-- Breadcrumbs -->
+      <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
+          <li class="text-[#D4D4D4]">/</li>
+          <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
+          <li class="text-[#D4D4D4]">/</li>
+          <li class="text-white" aria-current="page">{post.data.title}</li>
+        </ol>
+      </nav>
+
+      {lastUpdatedFormatted && (
+        <div class="mb-4 inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-4 py-2">
+          <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
+        </div>
+      )}
+
+      <!-- Banner -->
+      <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14]">
+        <div class="flex items-center justify-between gap-4 mb-4">
+          <div class="flex items-center gap-3">
+            {post.data.bonusType && (
+              <span class="inline-block bg-[#8A2BE2] text-white text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+                {post.data.bonusType}
+              </span>
+            )}
+            {post.data.verified && (
+              <span class="inline-block bg-[#39FF14] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+                VERIFIED
+              </span>
+            )}
+          </div>
+        </div>
+
+        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
+          {post.data.title}
+        </h1>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{post.data.description}</p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {post.data.bonus && (
+            <div class="border-2 border-[#39FF14] p-3">
+              <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">BONUS AMOUNT</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.bonus}</div>
+            </div>
+          )}
+          {post.data.freeSpins && Number(post.data.freeSpins) > 0 && (
+            <div class="border-2 border-[#39FF14] p-3">
+              <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">FREE SPINS</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.freeSpins}</div>
+            </div>
+          )}
+          {post.data.wageringRequirements && (
+            <div class="border-2 border-white p-3">
+              <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">WAGERING</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.wageringRequirements}</div>
+            </div>
+          )}
+          {(post.data.minimum_deposit || post.data.minimumDeposit) && (
+            <div class="border-2 border-white p-3">
+              <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">MIN DEPOSIT</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.minimum_deposit || post.data.minimumDeposit}</div>
+            </div>
+          )}
+        </div>
+
+        {claimUrl && (
+          <div class="mb-6">
+            <a
+              href={claimUrl}
+              class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-5 text-center text-xl md:text-2xl border-[3px] border-black shadow-[8px_8px_0px_0px_#000000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_#000000] transition-all uppercase tracking-wide"
+            >
+              CLAIM BONUS NOW
+            </a>
+          </div>
+        )}
+
+        <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
+          {post.data.casino_name && (
+            <div class="text-white font-[JetBrains_Mono]">
+              <span class="text-[#FAFF00]">Casino:</span> {post.data.casino_name.replace(/Bonus:.*$/, "").trim()}
+            </div>
+          )}
+          {post.data.ourRating && (
+            <div class="flex items-center gap-2">
+              <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
+              <span class="text-white font-[Space_Grotesk] font-bold text-2xl">{post.data.ourRating}</span>
+              <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
+            </div>
+          )}
+        </div>
+
+        {post.data.code && post.data.code.trim() !== "" && (
+          <div class="mt-4 p-4 bg-[#39FF14] border-[3px] border-black">
+            <span class="text-black font-[JetBrains_Mono] text-sm font-bold">BONUS CODE:</span>
+            <span class="text-black font-[Space_Grotesk] text-xl font-bold ml-2">{post.data.code}</span>
+          </div>
+        )}
+      </div>
+
+      {(post.data.pros || post.data.cons) && (
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          {post.data.pros && (
+            <div class="border-[3px] border-[#39FF14] bg-black p-6">
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4 flex items-center gap-2">
+                PROS
+              </h3>
+              <ul class="space-y-2">
+                {post.data.pros.map((pro: string) => (
+                  <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
+                    <span class="text-[#39FF14] mt-1">+</span>
+                    <span>{pro.trim()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {post.data.cons && (
+            <div class="border-[3px] border-white bg-black p-6">
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4 flex items-center gap-2">
+                CONS
+              </h3>
+              <ul class="space-y-2">
+                {post.data.cons.map((con: string) => (
+                  <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
+                    <span class="text-white mt-1">-</span>
+                    <span>{con.trim()}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+
+      <!-- Cover Image -->
+      {post.data.image && (
+        <div class="mb-8">
+          <img
+            src={post.data.image}
+            alt={post.data.imageAlt}
+            width={post.data.imageWidth}
+            height={post.data.imageHeight}
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
+          />
+        </div>
+      )}
+
+      <!-- Content -->
+      <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
+        prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
+        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#39FF14] prose-h2:pb-2
+        prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4
+        prose-li:text-[#D4D4D4]
+        prose-strong:text-white
+        prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
+      ">
+        <Content />
+      </div>
+
+      <!-- Author & Info -->
+      <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
+            {post.data.authorSlug ? (
+              <a href={`/team/${post.data.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
+                {post.data.author}
+              </a>
+            ) : (
+              <span class="text-white font-[Space_Grotesk] font-bold">{post.data.author}</span>
+            )}
+          </div>
+          {lastUpdatedFormatted && (
+            <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last updated: {lastUpdatedFormatted}</div>
+          )}
+        </div>
+      </aside>
+
+      <!-- Related -->
+      {displayRelated.length > 0 && (
+        <section class="mt-12 pt-8 border-t-[3px] border-white">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">SIMILAR BONUSES</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {displayRelated.map((related) => (
+              <a href={`/bonus/${related.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]">
+                {related.data.bonusType && (
+                  <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-2 py-1 uppercase tracking-wider mb-2">
+                    {related.data.bonusType}
+                  </span>
+                )}
+                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white mb-2 line-clamp-2">{related.data.title}</h3>
+                {related.data.bonus && (
+                  <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">{related.data.bonus}</p>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="mt-12 pt-8 border-t-[3px] border-white">
+        <a href="/bonus" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-6 py-3 border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#39FF14] transition-all">
+          BACK TO BONUSES
+        </a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Sticky Mobile CTA -->
+  {claimUrl && (
+    <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
+      <a href={claimUrl} class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF]">
+        CLAIM BONUS
+      </a>
+    </div>
+  )}
+</Layout>

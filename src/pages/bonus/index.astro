@@ -1,15 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { isBonus, sortByDate } from "../../lib/posts";
 
-const allBonuses = await getCollection("bonuses");
-const sortedBonuses = allBonuses.sort(
-  (a, b) => {
-    const dateA = new Date(a.data.publishDate || '2026-01-01').getTime();
-    const dateB = new Date(b.data.publishDate || '2026-01-01').getTime();
-    return dateB - dateA;
-  }
-);
+const allPosts = await getCollection("posts");
+const bonuses = sortByDate(allPosts.filter(isBonus));
 ---
 
 <Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.">
@@ -23,9 +18,9 @@ const sortedBonuses = allBonuses.sort(
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedBonuses.map((bonus) => (
+        {bonuses.map((bonus) => (
           <a
-            href={`/bonuses/${bonus.id.replace(/\.md$/, '')}`}
+            href={`/bonus/${bonus.data.slug}`}
             class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]"
           >
             <div class="flex items-center justify-between mb-3">
@@ -41,32 +36,13 @@ const sortedBonuses = allBonuses.sort(
                   </span>
                 )}
               </div>
-              {bonus.data.publishDate && (
-                <span class="text-[#39FF14] text-xs font-[JetBrains_Mono]">
-                  {new Date(bonus.data.publishDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </span>
-              )}
             </div>
-            <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">
-              {bonus.data.title}
-            </h2>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">
-              {bonus.data.description}
-            </p>
-            {bonus.data.casino_name && (
-              <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-3">
-                {bonus.data.casino_name.replace(/Bonus:.*$/, '').trim()}
-              </div>
-            )}
+            <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{bonus.data.title}</h2>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">{bonus.data.description}</p>
             <div class="flex items-center gap-2 flex-wrap">
               {bonus.data.bonus && (
                 <div class="text-white text-xs font-[JetBrains_Mono] border border-white px-2 py-1 inline-block">
                   {bonus.data.bonus}
-                </div>
-              )}
-              {bonus.data.freeSpins && Number(bonus.data.freeSpins) > 0 && (
-                <div class="text-black bg-[#39FF14] text-xs font-[JetBrains_Mono] font-bold px-2 py-1 inline-block">
-                  {bonus.data.freeSpins} FREE SPINS
                 </div>
               )}
             </div>
