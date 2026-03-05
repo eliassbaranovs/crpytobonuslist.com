@@ -23,15 +23,8 @@ const toNum = (v: unknown): number | undefined => {
   return isNaN(n) ? undefined : n;
 };
 
-// Unified posts collection - pipeline publishes to src/content/posts/{slug}.md
-// contentType determines routing:
-//   "news"                -> /news/{slug}
-//   "promotion" | "bonus" -> /bonus/{slug}
-//   "review"              -> /casinos/{slug}
-//   "guide"               -> /guides/{slug}
-const posts = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
-  schema: z
+// Shared schema for all content types (posts + news)
+const contentSchema = z
     .object({
       title: z.string(),
       slug: z.string(),
@@ -174,7 +167,23 @@ const posts = defineCollection({
       author: data.author || data.authorName || "",
       imageAlt: data.imageAlt || data.title,
       seoTitle: data.seoTitle || data.title,
-    })),
+    }));
+
+// Unified posts collection - pipeline publishes to src/content/posts/{slug}.md
+// contentType determines routing:
+//   "news"                -> /news/{slug}
+//   "promotion" | "bonus" -> /bonus/{slug}
+//   "review"              -> /casinos/{slug}
+//   "guide"               -> /guides/{slug}
+const posts = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/posts" }),
+  schema: contentSchema,
+});
+
+// Separate news collection - pipeline can also publish to src/content/news/{slug}.md
+const news = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/news" }),
+  schema: contentSchema,
 });
 
 const authors = defineCollection({
@@ -197,4 +206,4 @@ const authors = defineCollection({
   }),
 });
 
-export const collections = { posts, authors };
+export const collections = { posts, news, authors };

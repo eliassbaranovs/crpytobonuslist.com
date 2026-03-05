@@ -1,10 +1,8 @@
 ---
-import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isNews, sortByDate } from "../../lib/posts";
+import { getAllNews } from "../../lib/posts";
 
-const allPosts = await getCollection("posts");
-const sortedNews = sortByDate(allPosts.filter(isNews));
+const sortedNews = await getAllNews();
 ---
 
 <Layout title="Crypto Casino News | CryptoBonusList" description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.">

@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isBonus, isNews, getPostUrl } from "../../lib/posts";
+import { isBonus, getPostUrl, getAllNews } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const authors = await getCollection("authors");
@@ -18,7 +18,8 @@ const allPosts = await getCollection("posts");
 const authorBonuses = allPosts.filter(isBonus).filter(
   (b) => b.data.authorSlug === author.data.slug || b.data.author === author.data.name
 );
-const authorNews = allPosts.filter(isNews).filter(
+const allNewsItems = await getAllNews();
+const authorNews = allNewsItems.filter(
   (n) => n.data.authorSlug === author.data.slug || n.data.author === author.data.name
 );
 

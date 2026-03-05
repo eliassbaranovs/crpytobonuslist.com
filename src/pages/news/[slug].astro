@@ -1,11 +1,11 @@
 ---
-import { getCollection, render } from "astro:content";
+import { render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isNews, sortByDate } from "../../lib/posts";
+import { getAllNews } from "../../lib/posts";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("posts");
-  return posts.filter(isNews).map((post) => ({
+  const allNews = await getAllNews();
+  return allNews.map((post) => ({
     params: { slug: post.data.slug },
     props: { post },
   }));
@@ -41,8 +41,7 @@ if (diffDays === 0) {
   relativeTime = publishedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-const allPosts = await getCollection("posts");
-const newsItems = allPosts.filter(isNews);
+const newsItems = await getAllNews();
 const currentTags = post.data.tags || [];
 
 const relatedNews = newsItems

@@ -1,11 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { isBonus, isNews, sortByDate, getPostUrl } from "../lib/posts";
+import { isBonus, sortByDate, getPostUrl, getAllNews } from "../lib/posts";
 
 const allPosts = await getCollection("posts");
 const latestBonuses = sortByDate(allPosts.filter(isBonus)).slice(0, 3);
-const latestNews = sortByDate(allPosts.filter(isNews)).slice(0, 2);
+const latestNews = (await getAllNews()).slice(0, 2);
 ---
 
 <Layout title="CryptoBonusList | Raw Crypto Yields. Zero Fluff." description="Compare the best crypto casino bonuses for 2026. No-deposit offers, welcome packages, rakeback deals, and reload bonuses reviewed with real wagering breakdowns.">
