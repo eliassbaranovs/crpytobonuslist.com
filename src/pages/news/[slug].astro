@@ -16,7 +16,8 @@ const { Content } = await render(post);
 
 const jsonld = post.data.schema_jsonld;
 const lastUpdated = post.data.updatedAt || post.data.publishedAt;
-const publishedDate = new Date(post.data.publishedAt);
+// Use publishDate (static) instead of publishedAt (auto-generated) for accurate relative time
+const publishedDate = new Date(post.data.publishDate || post.data.publishedAt);
 const now = new Date();
 const diffMs = now.getTime() - publishedDate.getTime();
 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
