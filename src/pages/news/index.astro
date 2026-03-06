@@ -1,8 +1,19 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getAllNews } from "../../lib/posts";
+import type { GetStaticPaths, Page } from "astro";
+import type { AnyPost } from "../../lib/posts";
 
-const sortedNews = await getAllNews();
+export const getStaticPaths = (async ({ paginate }) => {
+  const sortedNews = await getAllNews();
+  return paginate(sortedNews, { pageSize: 10 });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<AnyPost>;
+}
+
+const { page } = Astro.props;
 ---
 
 <Layout title="Crypto Casino News | CryptoBonusList" description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.">
@@ -16,7 +27,7 @@ const sortedNews = await getAllNews();
       </p>
 
       <div class="space-y-0">
-        {sortedNews.map((article, i) => (
+        {page.data.map((article, i) => (
           <a
             href={`/news/${article.data.slug}`}
             class:list={[
@@ -41,6 +52,45 @@ const sortedNews = await getAllNews();
           </a>
         ))}
       </div>
+
+      <!-- Pagination Navigation -->
+      {(page.url.prev || page.url.next) && (
+        <nav class="flex justify-between items-center mt-12 pt-8 border-t-[3px] border-white">
+          <div>
+            {page.url.prev ? (
+              <a
+                href={page.url.prev}
+                class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
+              >
+                ← Previous
+              </a>
+            ) : (
+              <span class="inline-block opacity-30 px-6 py-3 font-[Space_Grotesk] font-bold text-[#D4D4D4]">
+                ← Previous
+              </span>
+            )}
+          </div>
+
+          <div class="text-center font-[JetBrains_Mono] text-sm text-[#D4D4D4]">
+            Page {page.currentPage} of {page.lastPage}
+          </div>
+
+          <div>
+            {page.url.next ? (
+              <a
+                href={page.url.next}
+                class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
+              >
+                Next →
+              </a>
+            ) : (
+              <span class="inline-block opacity-30 px-6 py-3 font-[Space_Grotesk] font-bold text-[#D4D4D4]">
+                Next →
+              </span>
+            )}
+          </div>
+        </nav>
+      )}
     </div>
   </section>
 </Layout>
