@@ -42,7 +42,7 @@ const displayRelated =
     : allPosts.filter(isBonus).filter((b) => b.data.slug !== d.slug).slice(0, 3);
 
 const claimUrl = d.claim_url
-  ? `/go/${d.claim_url}`
+  ? (d.claim_url.includes("/") ? `/go/${d.slug}` : `/go/${d.claim_url}`)
   : d.website
     ? `/go/${d.slug}`
     : null;

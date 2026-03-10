@@ -6,18 +6,19 @@ export async function getStaticPaths() {
 
   const paths = [];
   for (const post of posts) {
-    // Route by claim_url slug if present
-    if (post.data.claim_url) {
+    // Route by claim_url if it's a plain slug (not a full URL)
+    if (post.data.claim_url && !post.data.claim_url.includes("/")) {
       paths.push({
         params: { slug: post.data.claim_url },
         props: { affiliateUrl: post.data.website || "#", casinoName: post.data.casino || post.data.casino_name || post.data.title },
       });
     }
-    // Also route by post slug for backwards compat
-    if (post.data.website) {
+    // Route by post slug — use claim_url as destination if it's a full URL, otherwise website
+    if (post.data.website || post.data.claim_url) {
+      const destination = (post.data.claim_url && post.data.claim_url.includes("/")) ? post.data.claim_url : post.data.website || "#";
       paths.push({
         params: { slug: post.data.slug },
-        props: { affiliateUrl: post.data.website, casinoName: post.data.casino || post.data.casino_name || post.data.title },
+        props: { affiliateUrl: destination, casinoName: post.data.casino || post.data.casino_name || post.data.title },
       });
     }
   }
