@@ -85,11 +85,25 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
                 <a href="/ethereum-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Ethereum Casinos</a>
                 <a href="/fast-withdrawal-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Fast Withdrawals</a>
                 <a href="/no-wagering-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">No Wagering</a>
+                <a href="/no-kyc-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">No KYC Casinos</a>
+                <a href="/solana-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Solana Casinos</a>
                 <a href="/new-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider">New Casinos</a>
               </div>
             </div>
           </div>
-          <a href="/bonus" class="text-white hover:text-[#39FF14] transition-colors">Bonuses</a>
+          <!-- Bonuses dropdown -->
+          <div class="relative group">
+            <a href="/bonus" class="text-white hover:text-[#39FF14] transition-colors flex items-center gap-1">
+              Bonuses
+              <svg class="w-3 h-3 mt-0.5 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+            <div class="absolute top-full left-0 pt-2 hidden group-hover:block">
+              <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#8A2BE2] min-w-55">
+                <a href="/bonus" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">All Bonuses</a>
+                <a href="/crypto-casino-bonuses" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider">Bonus Guide 2026</a>
+              </div>
+            </div>
+          </div>
           <!-- Guides dropdown -->
           <div class="relative group">
             <a href="/guides" class="text-white hover:text-[#39FF14] transition-colors flex items-center gap-1">
@@ -124,9 +138,13 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
           <a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Ethereum Casinos</a>
           <a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Fast Withdrawals</a>
           <a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">No Wagering</a>
+          <a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">No KYC Casinos</a>
+          <a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Solana Casinos</a>
           <a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">New Casinos</a>
           <div class="border-t border-white/20 my-2"></div>
-          <a href="/bonus" class="text-white hover:text-[#39FF14] px-2 py-2">Bonuses</a>
+          <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs px-2 py-1">Bonuses</p>
+          <a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">All Bonuses</a>
+          <a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Bonus Guide 2026</a>
           <div class="border-t border-white/20 my-2"></div>
           <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs px-2 py-1">Guides</p>
           <a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">All Guides</a>
@@ -179,7 +197,10 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
             <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Ethereum Casinos</a></li>
             <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Fast Withdrawals</a></li>
             <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">No Wagering</a></li>
+            <li><a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">No KYC Casinos</a></li>
+            <li><a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Solana Casinos</a></li>
             <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">New Casinos</a></li>
+            <li><a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14]">Crypto Casino Bonuses</a></li>
           </ul>
         </nav>
         <nav aria-label="Company links" class="p-8">

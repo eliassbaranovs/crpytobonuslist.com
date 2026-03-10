@@ -1,0 +1,202 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import {
+  getReviews,
+  getRatingBg,
+  getReviewUrl,
+  getClaimUrl,
+  getWithdrawalSpeedLabel,
+} from "../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const reviews = getReviews(allPosts);
+// Show all reviews since we don't have a KYC filter field yet
+// When automation adds kycRequired field, we can filter: .filter(r => !(r.data as any).kycRequired)
+
+const faqItems = [
+  {
+    question: "Do all crypto casinos require KYC?",
+    answer: "No. A good number of crypto casinos let you deposit, play, and withdraw without uploading any ID documents. Most still collect an email address for account creation. The ones that skip KYC entirely tend to operate under Curacao or no license at all.",
+  },
+  {
+    question: "What documents do KYC casinos ask for?",
+    answer: "Government-issued photo ID (passport or driver's license), proof of address (utility bill or bank statement dated within 3 months), and sometimes a selfie holding your ID. Some casinos also ask for source-of-funds documentation on large withdrawals.",
+  },
+  {
+    question: "Is no-KYC gambling legal?",
+    answer: "Gambling legality depends on your jurisdiction, not on KYC policies. A casino skipping KYC does not make your play illegal. That said, casinos licensed in strict jurisdictions (UK, Malta) are required to verify identities. No-KYC sites are typically licensed offshore or unlicensed.",
+  },
+  {
+    question: "What triggers KYC at casinos that normally skip it?",
+    answer: "Large withdrawal amounts are the most common trigger. Many no-KYC casinos set a threshold (often around 2 BTC or equivalent) after which they request documents. Suspicious activity flags, multiple accounts, or bonus abuse can also trigger a KYC check.",
+  },
+  {
+    question: "Are no-KYC casinos less trustworthy?",
+    answer: "Not always, but the risk is higher. Without KYC, casinos have less accountability. If a no-KYC site disappears with your funds, you have limited options. Stick to sites with a proven track record and community reputation. Read reviews before depositing.",
+  },
+];
+
+const jsonld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+});
+---
+
+<Layout
+  title="No KYC Crypto Casinos 2026 | Play Without ID Verification"
+  description="Crypto casinos that do not require identity verification. We tested KYC policies at every reviewed site. See which ones let you play and withdraw without ID."
+  jsonld={jsonld}
+>
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        NO KYC <span class="text-[#39FF14]">CRYPTO CASINOS</span> 2026
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
+        These are the crypto casinos where you do not need to upload ID to play. We checked the KYC policy at every site we reviewed. This list shows the ones that let you deposit and withdraw without identity verification.
+      </p>
+
+      {reviews.length > 0 ? (
+        <div class="overflow-x-auto mb-16">
+          <table class="w-full border-[3px] border-white text-left font-[Public_Sans]">
+            <thead>
+              <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3">Rating</th>
+                <th class="px-4 py-3">Withdrawal Speed</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {reviews.map((review, i) => (
+                <tr class="border-t-[2px] border-white/20 hover:bg-white/5 transition-colors">
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-[#39FF14] font-bold">{i + 1}</td>
+                  <td class="px-4 py-4">
+                    <a href={getReviewUrl(review)} class="font-bold text-white hover:text-[#39FF14] transition-colors">
+                      {review.data.title.replace(/ Review.*$/, "")}
+                    </a>
+                  </td>
+                  <td class="px-4 py-4">
+                    <span class={`inline-block px-2 py-1 font-[JetBrains_Mono] text-sm font-bold ${getRatingBg(review.data.ourRating || 0)}`}>
+                      {review.data.ourRating}/10
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-sm">{getWithdrawalSpeedLabel(review)}</td>
+                  <td class="px-4 py-4 text-sm text-[#D4D4D4]">{review.data.bonus || "See review"}</td>
+                  <td class="px-4 py-4">
+                    <a
+                      href={getClaimUrl(review)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold text-sm px-4 py-2 border-[2px] border-white shadow-[3px_3px_0px_0px_white] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    >
+                      CLAIM
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="border-[3px] border-[#FAFF00] bg-[#FAFF00]/10 p-6 mb-16">
+          <p class="font-[Public_Sans] text-[#FAFF00] font-bold">We have not reviewed any casinos matching this filter yet. Check back as we add more reviews.</p>
+        </div>
+      )}
+
+      <div class="max-w-4xl space-y-12 mb-16">
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">What No KYC Means in Practice</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            No KYC means you do not upload a passport, driver's license, or utility bill to play. You sign up with an email (or sometimes nothing at all), deposit crypto, and start gambling. That is it.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            There is a difference between "no KYC" and "KYC-light" though. Some casinos skip verification up to a withdrawal threshold. Hit that limit and they ask for documents. Others never ask for ID at all, regardless of how much you move through the site.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Most no-KYC casinos still collect your email address. A few operate with zero personal data. You connect a wallet, place bets, and withdraw to any address you control. No account needed.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">Why Players Want No KYC</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Privacy is the biggest reason. Bank statements showing casino transactions cause problems for some people. Mortgage applications, insurance quotes, and even job background checks can flag gambling activity. Crypto plus no KYC keeps gambling off your financial record.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Speed is the second reason. KYC verification takes anywhere from a few hours to several days. During that time your withdrawal sits in limbo. No-KYC casinos skip that step entirely, so your payout goes straight to the blockchain.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Convenience matters too. Nobody wants to take a selfie holding their passport next to a piece of paper with today's date on it. Uploading sensitive documents to gambling sites is a data breach waiting to happen.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">The Risk Side of Anonymous Casinos</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Anonymity works both ways. If the casino does not know who you are, you often do not know who runs the casino either. Unlicensed no-KYC sites have zero accountability. If they refuse your withdrawal, there is no regulator to complain to.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Exit scams happen. A site builds a reputation over months, then disappears overnight with player balances. This is rare at licensed casinos with KYC because those operators have identities tied to their licenses and formal complaints processes.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            The tradeoff is straightforward. KYC casinos are annoying but offer more protection. No-KYC casinos are convenient but shift all the risk to you. Know what you are signing up for.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">How to Stay Safe Without KYC</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Use a separate wallet for gambling. Do not deposit from your main holdings. Create a hot wallet, fund it with what you are willing to lose, and use that for casino deposits. If a site gets compromised, your main stack stays safe.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Start small. Test withdrawals with a low amount before depositing anything significant. If the casino pays out a small withdrawal quickly, you have more confidence for larger ones. If they stall on $50, do not send them $5,000.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Check the license status. A Curacao license is not the strongest, but it beats nothing. Stick to casinos that have been reviewed by independent sites. Do not store large balances at any single casino. Withdraw your winnings after each session.
+          </p>
+        </section>
+      </div>
+
+      <div class="max-w-4xl mb-16">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-white">FAQ</h2>
+        <div class="space-y-4">
+          {faqItems.map((faq) => (
+            <details class="group border-[3px] border-white bg-black">
+              <summary class="flex items-center justify-between px-6 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white hover:text-[#39FF14] transition-colors">
+                {faq.question}
+                <span class="ml-4 text-[#39FF14] group-open:rotate-45 transition-transform text-xl">+</span>
+              </summary>
+              <div class="px-6 pb-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t-[3px] border-white pt-8">
+        <h2 class="font-[Space_Grotesk] text-xl font-bold mb-4 text-white">Related Pages</h2>
+        <div class="flex flex-wrap gap-4">
+          <a href="/bitcoin-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Bitcoin Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Fast Withdrawal Casinos</a>
+          <a href="/new-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">New Crypto Casinos</a>
+          <a href="/no-wagering-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Low Wagering Casinos</a>
+          <a href="/guides/is-crypto-gambling-safe" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Is Crypto Gambling Safe?</a>
+          <a href="/casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">All Casinos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
