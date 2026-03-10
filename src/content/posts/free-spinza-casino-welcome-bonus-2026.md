@@ -28,17 +28,11 @@ noIndex: false
 robots: "index, follow"
 featured: true
 category: "Welcome Bonus"
-schemaJsonLd: |
-  [{"url":"https://cryptobonuslist.com/posts/free-spinza-casino-welcome-bonus-2026","@type":"Article","image":{"url":"https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/images/covers/free-spinza-casino-welcome-bonus-2026.webp","@type":"ImageObject","width":1792,"height":1024,"caption":"Free Spinza Casino Welcome Offer: 250% Bonus Up to €2500 + 100 Free Spins, 45x Wagering, Malta Gaming Authority."},"author":{"url":"https://cryptobonuslist.com/authors/silvia-rodriguez","name":"Silvia Rodriguez","@type":"Person","jobTitle":"expert","description":"Silvia Rodriguez is a crypto gambling analyst and bonus specialist with deep expertise in iGaming promotions, wagering mechanics, and player value optimization. She has reviewed over 500 crypto casino bonus offers and tracks the market daily to identify the best deals for players. Her work focuses on translating complex bonus T&Cs into clear, actionable advice."},"@context":"https://schema.org","headline":"Free Spinza Casino Welcome Bonus – 250% Up to €2500 + 100 Free Spins","keywords":"Free Spinza Casino, 250% bonus, €2500, 100 Free Spins, 45x wagering, Malta Gaming Authority","publisher":{"url":"https://cryptobonuslist.com","name":"cryptobonuslist.com","@type":"Organization"},"wordCount":1157,"description":"Claim a massive 250% bonus up to €2500 and 100 free spins at Free Spinza Casino with a 45x wagering requirement valid for 45 days.","dateModified":"2026-03-10T15:27:41.926Z","timeRequired":"PT6M","datePublished":"2026-03-10T15:27:41.926Z","mainEntityOfPage":{"@id":"https://cryptobonuslist.com/posts/free-spinza-casino-welcome-bonus-2026","@type":"WebPage"}},{"@type":"FAQPage","@context":"https://schema.org","mainEntity":[{"name":"Do I need a bonus code for the Free Spinza Casino welcome bonus?","@type":"Question","acceptedAnswer":{"text":"No bonus code is needed. The bonus is applied automatically upon qualifying deposit.","@type":"Answer"}},{"name":"What is the wagering requirement on this bonus?","@type":"Question","acceptedAnswer":{"text":"The wagering requirement is 45x the bonus amount, meaning you'll need to wager the bonus amount 45 times before withdrawing.","@type":"Answer"}},{"name":"Can I withdraw my deposit before completing the wagering?","@type":"Question","acceptedAnswer":{"text":"No, withdrawing before completing the wagering requirements will forfeit the bonus and any winnings.","@type":"Answer"}},{"name":"Which games can I play with the bonus?","@type":"Question","acceptedAnswer":{"text":"You can use the bonus on slots, which contribute 100% to the wagering requirement. Table games contribute only 10%.","@type":"Answer"}},{"name":"How long do I have to use the bonus and free spins?","@type":"Question","acceptedAnswer":{"text":"The bonus and free spins are valid for 45 days. If not used within this timeframe, they will expire.\n\n---\n\nPlease gamble responsibly. Bonus terms and conditions apply. Offers are subject to change. Minimum age requirements (18+/21+) apply. For more information, visit [responsible gambling](https://cryptobonuslist.com/responsible-gambling).","@type":"Answer"}}]}]
----
-# Casino Information
 casino: "free-spinza-casino"
 casinoName: "Free Spinza Casino"
 casinoReviewUrl: "/casinos/free-spinza-casino"
 casinoType: "Instant Play, Live Casino, Mobile, Sports"
 website: "https://freespinza.com"
-
-# Bonus Details
 bonus: "250% up to €2500 + 100 Free Spins"
 bonusType: "Welcome Bonus"
 bonusPercentage: "250%"
@@ -55,14 +49,10 @@ exclusive: true
 verified: true
 expires_at: 2026-12-31T23:59:59.000Z
 claim_url: "https://freespinza.com/claim"
-
-# Ratings
 ourRating: 7.3
 playerRating: 4.7
 playerRatingCount: "3"
 rating: 7.3
-
-# Pros and Cons
 pros:
   - "Massive 250% bonus up to €2500"
   - "100 free spins included"
@@ -72,8 +62,6 @@ cons:
   - "45x wagering requirement"
   - "Slow withdrawal processing"
   - "No cryptocurrencies accepted"
-
-# Additional Casino Details (optional but recommended)
 established: "2025"
 licences: "Malta Gaming Authority"
 currencies: "Euros, US dollars, Australian dollars, Canadian dollars"
@@ -87,7 +75,6 @@ gameProviders: "Amatic Industries, Betsoft, Big Time Gaming, Blueprint Gaming, E
 liveChat: "Yes"
 emailSupport: "support@freespinza.com"
 vipLoyaltyProgram: "Yes"
-
 schemaJsonLd: ""
 ---
 
