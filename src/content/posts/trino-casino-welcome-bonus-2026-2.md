@@ -32,7 +32,7 @@ category: "Welcome Bonus"
 # Casino Information
 casino: "trino-casino"
 casinoName: "Trino Casino"
-casinoReviewUrl: "/casinos/trino-casino"
+casinoReviewUrl: "/casinos/trino-casino-review"
 casinoType: "Crypto Casino"
 website: "https://trinocasino.com"
 
@@ -92,7 +92,7 @@ schemaJsonLd: |
 
 # Trino Casino Welcome Bonus – 150% Up to €500 + 150 Free Spins!
 
-Trino Casino rolls out the welcome mat with a 150% match bonus up to €500 plus 150 free spins. This offer is boosted by a competitive 35x wagering requirement and supports crypto deposits like Bitcoin, Ethereum, and Tether. 
+Trino Casino rolls out the welcome mat with a 150% match bonus up to €500 plus 150 free spins. This offer is boosted by a competitive 35x wagering requirement and supports crypto deposits like Bitcoin, Ethereum, and Tether.
 
 This bonus is perfect for new players looking to explore a wide variety of games with enhanced funds. Available to claim upon your first deposit, the offer stands out for its generous match percentage and crypto-friendly options.
 
@@ -168,6 +168,6 @@ The bonus can be used on slots, which contribute 100% to wagering. Table games c
 
 ### How long do I have to use the bonus and free spins?
 
-You have 30 days to use the bonus and 7 days for the free spins. After this, unused bonuses and spins will expire. 
+You have 30 days to use the bonus and 7 days for the free spins. After this, unused bonuses and spins will expire.
 
 [Bonus terms and wagering requirements apply. Offers are subject to change. Minimum age requirements apply (18+/21+). Always gamble responsibly. Visit our **[Responsible Gambling](https://cryptobonuslist.com/responsible-gambling/)** page for help.]
