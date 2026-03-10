@@ -13,9 +13,10 @@ export async function getStaticPaths() {
         props: { affiliateUrl: post.data.website || "#", casinoName: post.data.casino || post.data.casino_name || post.data.title },
       });
     }
-    // Route by post slug — use claim_url as destination if it's a full URL, otherwise website
+    // Route by post slug — use claim_url as destination only if it's an external URL, otherwise website
     if (post.data.website || post.data.claim_url) {
-      const destination = (post.data.claim_url && post.data.claim_url.includes("/")) ? post.data.claim_url : post.data.website || "#";
+      const claimIsExternal = post.data.claim_url && (post.data.claim_url.startsWith("http://") || post.data.claim_url.startsWith("https://"));
+      const destination = claimIsExternal ? post.data.claim_url : post.data.website || "#";
       paths.push({
         params: { slug: post.data.slug },
         props: { affiliateUrl: destination, casinoName: post.data.casino || post.data.casino_name || post.data.title },

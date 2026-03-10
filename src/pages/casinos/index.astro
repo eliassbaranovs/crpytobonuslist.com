@@ -1,47 +1,179 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isReview, isBonus, sortByDate } from "../../lib/posts";
+import { getReviews, getRatingBg, getReviewUrl, getClaimUrl } from "../../lib/casino-filters";
 
 const allPosts = await getCollection("posts");
-const reviews = sortByDate(allPosts.filter(isReview));
-const bonuses = sortByDate(allPosts.filter(isBonus));
+const reviews = getReviews(allPosts);
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Crypto Casino Reviews",
+  "description": "Honest, deposit-tested crypto casino reviews. Ratings, withdrawal speeds, bonus breakdowns, and everything you need before you play.",
+  "url": "https://cryptobonuslist.com/casinos/",
+  "numberOfItems": reviews.length,
+  "itemListElement": reviews.map((r, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "url": `https://cryptobonuslist.com${getReviewUrl(r)}`,
+    "name": r.data.casino_name || r.data.casinoName || r.data.title
+  }))
+});
 ---
 
-<Layout title="Crypto Casinos | CryptoBonusList" description="Crypto casino directory. The ones worth your time and BTC.">
-  <section class="px-6 py-12">
-    <div class="max-w-7xl mx-auto">
-      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
-        CRYPTO <span class="text-[#8A2BE2]">CASINOS</span>
-      </h1>
-      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
-        {reviews.length > 0
-          ? "Full casino reviews tested with real deposits. Withdrawal times, support quality, and the details that matter."
-          : "Full casino directory coming soon. For now, check the bonus reviews for details on individual platforms."}
-      </p>
+<Layout
+  title="Crypto Casino Reviews 2026 | Tested and Rated | CryptoBonusList"
+  description="Honest, deposit-tested crypto casino reviews. Ratings, withdrawal speeds, bonus breakdowns, and everything you need before you play."
+>
+  <script type="application/ld+json" set:html={jsonLd} />
 
+  <!-- Hero -->
+  <section class="px-6 pt-16 pb-10">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-5xl md:text-7xl font-black tracking-tight mb-6">
+        CRYPTO CASINO <span class="text-[#39FF14]">REVIEWS</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg md:text-xl max-w-3xl leading-relaxed mb-4">
+        Every casino on this page was tested with real crypto deposits. We checked withdrawal speeds, bonus terms, game libraries, and support quality so you do not have to gamble on where you gamble.
+      </p>
+      <p class="font-[JetBrains_Mono] text-sm text-[#FAFF00]">
+        {reviews.length} casinos reviewed and rated on a 0-10 scale
+      </p>
+    </div>
+  </section>
+
+  <!-- Casino Cards -->
+  <section class="px-6 pb-16">
+    <div class="max-w-7xl mx-auto">
       {reviews.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {reviews.map((review) => (
-            <a href={`/casinos/${review.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-              <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-2">{review.data.title}</h2>
-              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-3 line-clamp-3">{review.data.description}</p>
-              {review.data.ourRating && (
-                <div class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">Rating: {review.data.ourRating}/10</div>
-              )}
-            </a>
-          ))}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {reviews.map((review) => {
+            const name = review.data.casino_name || review.data.casinoName || review.data.title;
+            const rating = review.data.ourRating || 0;
+            const ratingBg = getRatingBg(rating);
+            const pros = (review.data.pros || []).slice(0, 3);
+            const wagering = review.data.wageringRequirements || "N/A";
+            const bonus = review.data.bonus || "No bonus listed";
+            const licence = review.data.licences || "Unknown";
+            const established = review.data.established || "N/A";
+            const logo = review.data.logo;
+
+            return (
+              <div class="bg-[#0A0A0A] border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2] hover:shadow-[8px_8px_0px_0px_#39FF14] transition-shadow duration-200">
+                <!-- Header -->
+                <div class="flex items-start gap-5 p-6 pb-4 border-b border-white/10">
+                  {logo && (
+                    <img
+                      src={logo}
+                      alt={`${name} logo`}
+                      width="80"
+                      height="80"
+                      class="w-20 h-20 rounded-lg object-cover border border-white/20 shrink-0"
+                      loading="lazy"
+                    />
+                  )}
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-3 mb-2">
+                      <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white truncate">{name}</h2>
+                      <span class={`${ratingBg} font-[JetBrains_Mono] text-lg font-bold px-3 py-1 rounded-md shrink-0`}>
+                        {rating.toFixed(1)}
+                      </span>
+                    </div>
+                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs font-[JetBrains_Mono] text-[#D4D4D4]">
+                      <span>Est. {established}</span>
+                      <span class="text-white/30">|</span>
+                      <span>{licence}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Details -->
+                <div class="p-6 pt-4 space-y-4">
+                  <!-- Bonus -->
+                  <div>
+                    <p class="text-xs font-[JetBrains_Mono] text-[#FAFF00] uppercase tracking-wider mb-1">Welcome Bonus</p>
+                    <p class="font-[Public_Sans] text-white text-sm">{bonus}</p>
+                  </div>
+
+                  <!-- Wagering -->
+                  <div>
+                    <p class="text-xs font-[JetBrains_Mono] text-[#FAFF00] uppercase tracking-wider mb-1">Wagering</p>
+                    <p class="font-[JetBrains_Mono] text-white text-sm">{wagering}</p>
+                  </div>
+
+                  <!-- Pros -->
+                  {pros.length > 0 && (
+                    <div>
+                      <p class="text-xs font-[JetBrains_Mono] text-[#39FF14] uppercase tracking-wider mb-2">Highlights</p>
+                      <ul class="space-y-1">
+                        {pros.map((pro) => (
+                          <li class="flex items-start gap-2 text-sm font-[Public_Sans] text-[#D4D4D4]">
+                            <span class="text-[#39FF14] mt-0.5 shrink-0">+</span>
+                            <span>{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <!-- Buttons -->
+                  <div class="flex gap-3 pt-2">
+                    <a
+                      href={getReviewUrl(review)}
+                      class="flex-1 text-center font-[Space_Grotesk] font-bold text-sm py-3 border-2 border-white text-white hover:bg-white hover:text-black transition-colors"
+                    >
+                      READ REVIEW
+                    </a>
+                    <a
+                      href={getClaimUrl(review)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      class="flex-1 text-center font-[Space_Grotesk] font-bold text-sm py-3 bg-[#39FF14] text-black border-2 border-[#39FF14] hover:bg-[#2ECC0F] transition-colors"
+                    >
+                      VISIT CASINO
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bonuses.slice(0, 6).map((bonus) => (
-            <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-              <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-2">{bonus.data.title}</h2>
-              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-3 line-clamp-3">{bonus.data.description}</p>
-            </a>
-          ))}
-        </div>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg">
+          Casino reviews are on the way. Check back soon.
+        </p>
       )}
+    </div>
+  </section>
+
+  <!-- Internal Links -->
+  <section class="px-6 pb-20">
+    <div class="max-w-7xl mx-auto border-t border-white/10 pt-10">
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6">More from CryptoBonusList</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <a
+          href="/best-crypto-casinos"
+          class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#39FF14] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-shadow"
+        >
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Best Crypto Casinos</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Our top picks ranked by overall score, payouts, and player trust.</p>
+        </a>
+        <a
+          href="/methodology"
+          class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#FAFF00] hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-shadow"
+        >
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Our Methodology</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">How we test and rate every casino on CryptoBonusList.</p>
+        </a>
+        <a
+          href="/bonus"
+          class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#8A2BE2] hover:shadow-[6px_6px_0px_0px_#8A2BE2] transition-shadow"
+        >
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Crypto Bonuses</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">The latest deposit bonuses, free spins, and promo codes.</p>
+        </a>
+      </div>
     </div>
   </section>
 </Layout>

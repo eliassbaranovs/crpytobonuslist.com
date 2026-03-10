@@ -1,0 +1,184 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import {
+  getReviews,
+  acceptsCrypto,
+  getRatingBg,
+  getReviewUrl,
+  getClaimUrl,
+  getWithdrawalSpeedLabel,
+} from "../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Ethereum"));
+
+const faqItems = [
+  {
+    question: "How fast are Ethereum casino deposits?",
+    answer: "ETH deposits typically confirm within 1-5 minutes. Most casinos require 12-30 block confirmations before crediting your account.",
+  },
+  {
+    question: "Are Ethereum gas fees a problem for gambling?",
+    answer: "Gas fees vary wildly. During low-traffic periods you pay under a dollar. During congestion it can spike to $10 or more. Check gas prices before depositing small amounts since fees eat into your bankroll.",
+  },
+  {
+    question: "Do ETH casinos support ERC-20 tokens like USDT?",
+    answer: "Many do. Casinos that accept Ethereum often support popular ERC-20 tokens including USDT, USDC, and sometimes DAI. Check each casino's deposit page for the full list of supported tokens.",
+  },
+  {
+    question: "Is Ethereum gambling safe?",
+    answer: "The blockchain itself is secure. The risk comes from the casino, not the payment method. Stick to licensed, reviewed sites. Use a separate wallet for gambling, and never share your private keys.",
+  },
+  {
+    question: "What is the minimum ETH deposit at most casinos?",
+    answer: "Minimums range from 0.001 ETH to 0.01 ETH at most sites. With gas fees factored in, depositing less than $20 worth of ETH rarely makes sense.",
+  },
+];
+
+const jsonld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+});
+---
+
+<Layout
+  title="Best Ethereum Casinos 2026 | ETH Gambling Sites Reviewed"
+  description="Top Ethereum casinos ranked by real testing. ETH deposits, fast withdrawals, and honest ratings from players who use these sites."
+  jsonld={jsonld}
+>
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        BEST <span class="text-[#8A2BE2]">ETHEREUM</span> CASINOS 2026
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
+        Ethereum is the second most popular crypto for online gambling. Faster than Bitcoin, widely supported, and backed by a massive ecosystem. Here are the ETH casinos we tested and rated.
+      </p>
+
+      {reviews.length > 0 ? (
+        <div class="overflow-x-auto mb-16">
+          <table class="w-full border-[3px] border-white text-left font-[Public_Sans]">
+            <thead>
+              <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3">Rating</th>
+                <th class="px-4 py-3">Withdrawal Speed</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {reviews.map((review, i) => (
+                <tr class="border-t-[2px] border-white/20 hover:bg-white/5 transition-colors">
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-[#8A2BE2] font-bold">{i + 1}</td>
+                  <td class="px-4 py-4">
+                    <a href={getReviewUrl(review)} class="font-bold text-white hover:text-[#8A2BE2] transition-colors">
+                      {review.data.title.replace(/ Review.*$/, "")}
+                    </a>
+                  </td>
+                  <td class="px-4 py-4">
+                    <span class={`inline-block px-2 py-1 font-[JetBrains_Mono] text-sm font-bold ${getRatingBg(review.data.ourRating || 0)}`}>
+                      {review.data.ourRating}/10
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-sm">{getWithdrawalSpeedLabel(review)}</td>
+                  <td class="px-4 py-4 text-sm text-[#D4D4D4]">{review.data.bonus || "See review"}</td>
+                  <td class="px-4 py-4">
+                    <a
+                      href={getClaimUrl(review)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      class="inline-block bg-[#8A2BE2] text-white font-[Space_Grotesk] font-bold text-sm px-4 py-2 border-[2px] border-white shadow-[3px_3px_0px_0px_white] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    >
+                      CLAIM
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="border-[3px] border-[#FAFF00] bg-[#FAFF00]/10 p-6 mb-16">
+          <p class="font-[Public_Sans] text-[#FAFF00] font-bold">We have not reviewed any casinos matching this filter yet. Check back as we add more reviews.</p>
+        </div>
+      )}
+
+      <div class="max-w-4xl space-y-12 mb-16">
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#8A2BE2]">Why Use Ethereum for Gambling?</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            ETH confirmations are faster than Bitcoin. A typical deposit clears in a few minutes instead of 10-30. That means less waiting and more playing.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            The Ethereum ecosystem also gives you access to ERC-20 stablecoins like USDT and USDC. Want the speed of crypto without the price swings? Deposit a stablecoin instead of raw ETH.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            The trade-off is gas fees. When the network is busy, a single transaction costs several dollars. For bigger deposits this is negligible. For micro-stakes players it adds up fast.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#8A2BE2]">Gas Fees and Smart Timing</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Gas prices follow patterns. Weekends and late-night hours (US time) tend to have lower fees. Tools like Etherscan's gas tracker show you the current cost before you send.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Some casinos cover deposit gas fees or refund them as bonus credit. We note this in each review. It makes a real difference if you deposit often.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Layer 2 solutions like Arbitrum and Optimism are starting to show up at some gambling sites. These cut fees to pennies. We expect more casinos to adopt L2 deposits throughout 2026.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#8A2BE2]">What We Test at ETH Casinos</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            We deposit ETH, play through bonus requirements, and withdraw. Every casino on this list got a real-money test. We track how long deposits take to credit, how fast withdrawals process, and whether the bonus terms match what is advertised.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Game selection, licensing, and support quality all factor in. A flashy site with slow ETH payouts scores lower than a simple one that gets your money out in 10 minutes.
+          </p>
+        </section>
+      </div>
+
+      <div class="max-w-4xl mb-16">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-white">FAQ</h2>
+        <div class="space-y-4">
+          {faqItems.map((faq) => (
+            <details class="group border-[3px] border-white bg-black">
+              <summary class="flex items-center justify-between px-6 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white hover:text-[#8A2BE2] transition-colors">
+                {faq.question}
+                <span class="ml-4 text-[#8A2BE2] group-open:rotate-45 transition-transform text-xl">+</span>
+              </summary>
+              <div class="px-6 pb-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t-[3px] border-white pt-8">
+        <h2 class="font-[Space_Grotesk] text-xl font-bold mb-4 text-white">Related Pages</h2>
+        <div class="flex flex-wrap gap-4">
+          <a href="/bitcoin-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Bitcoin Casinos</a>
+          <a href="/solana-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Solana Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Fast Withdrawal Casinos</a>
+          <a href="/no-wagering-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Low Wagering Casinos</a>
+          <a href="/casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">All Casinos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

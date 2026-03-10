@@ -1,0 +1,278 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { getRatingBg, getReviewUrl, getClaimUrl } from "../../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const casinoA = allPosts.find(p => p.data.slug === "trino-casino-review");
+const casinoB = allPosts.find(p => p.data.slug === "free-spinza-casino");
+
+if (!casinoA || !casinoB) throw new Error("Casino data not found");
+
+const a = casinoA.data;
+const b = casinoB.data;
+
+const title = "Trino Casino vs Free Spinza Casino: Which Is Better in 2026?";
+const description = "Trino Casino vs Free Spinza Casino compared side by side. We cover bonuses, wagering, crypto support, withdrawals, and licensing to help you choose.";
+
+const hasCryptoA = (a.depositMethods || "").toLowerCase().includes("bitcoin");
+const hasCryptoB = (b.depositMethods || "").toLowerCase().includes("bitcoin");
+
+const faqItems = [
+  {
+    question: "Does Free Spinza Casino accept cryptocurrency?",
+    answer: "No. Free Spinza Casino does not support crypto deposits or withdrawals. If crypto is important to you, Trino Casino is the better pick here. It accepts Bitcoin, Ethereum, Tether, Litecoin, and more."
+  },
+  {
+    question: "Which casino has a bigger welcome bonus?",
+    answer: "Free Spinza Casino offers 250% up to EUR 2,500 plus 100 free spins. Trino Casino offers 200% up to EUR 2,000 plus a second 150% bonus and 150 free spins. Free Spinza has the higher single match, but Trino's total package is competitive."
+  },
+  {
+    question: "Which casino has a better license?",
+    answer: "Free Spinza Casino is licensed by the Malta Gaming Authority, one of the most respected regulators in online gambling. Trino Casino holds a Curacao license. Malta wins on regulatory strength."
+  },
+  {
+    question: "Are Trino Casino and Free Spinza Casino safe to play at?",
+    answer: "Both casinos are licensed and operational. Free Spinza has the stronger license (Malta). Trino Casino has a solid Curacao license. Both score 7.3/10 in our reviews."
+  }
+];
+
+const faqSchema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqItems.map(f => ({
+    "@type": "Question",
+    "name": f.question,
+    "acceptedAnswer": { "@type": "Answer", "text": f.answer }
+  }))
+});
+---
+
+<Layout title={title} description={description} jsonld={faqSchema}>
+  <main class="min-h-screen bg-[#0A0A0A] text-white font-[Public_Sans]">
+    <div class="max-w-5xl mx-auto px-4 py-12">
+
+      <!-- Breadcrumb -->
+      <nav class="text-sm text-gray-400 mb-8">
+        <a href="/" class="hover:text-[#39FF14]">Home</a>
+        <span class="mx-2">/</span>
+        <span class="text-white">Trino Casino vs Free Spinza Casino</span>
+      </nav>
+
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-5xl font-bold mb-6">
+        Trino Casino vs Free Spinza Casino: Which Is Better in 2026?
+      </h1>
+
+      <p class="text-lg text-gray-300 mb-8">
+        Both casinos score 7.3/10 in our reviews, so this one comes down to what matters most to you. Trino Casino brings crypto payments and a Curacao license. Free Spinza Casino has a Malta license and a bigger welcome bonus but no crypto support. Here is the full breakdown.
+      </p>
+
+      <!-- Quick Verdict -->
+      <div class="border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] p-6 mb-12 bg-[#111]">
+        <h2 class="font-[Space_Grotesk] text-2xl font-bold text-[#39FF14] mb-3">Quick Verdict</h2>
+        <p class="text-gray-200">
+          Both score <span class="font-[JetBrains_Mono] text-[#FAFF00]">{a.ourRating}/10</span>. Free Spinza Casino takes the edge on licensing (Malta vs Curacao) and bonus size. Trino Casino wins if you need crypto deposits and withdrawals. Crypto gamblers should go with Trino. Fiat-only players will prefer Free Spinza.
+        </p>
+      </div>
+
+      <!-- Side-by-Side Table -->
+      <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-6">Side-by-Side Comparison</h2>
+      <div class="overflow-x-auto mb-12">
+        <table class="w-full border-[3px] border-white text-left">
+          <thead>
+            <tr class="bg-[#1a1a1a]">
+              <th class="font-[Space_Grotesk] p-4 border-b-[3px] border-white">Category</th>
+              <th class="font-[Space_Grotesk] p-4 border-b-[3px] border-l-[3px] border-white">Trino Casino</th>
+              <th class="font-[Space_Grotesk] p-4 border-b-[3px] border-l-[3px] border-white">Free Spinza Casino</th>
+            </tr>
+          </thead>
+          <tbody class="font-[JetBrains_Mono] text-sm">
+            <tr class="border-b border-gray-700">
+              <td class="p-4 font-[Public_Sans] font-semibold">Rating</td>
+              <td class="p-4 border-l-[3px] border-white">
+                <span class={`px-2 py-1 font-bold ${getRatingBg(a.ourRating || 0)}`}>{a.ourRating}/10</span>
+              </td>
+              <td class="p-4 border-l-[3px] border-white">
+                <span class={`px-2 py-1 font-bold ${getRatingBg(b.ourRating || 0)}`}>{b.ourRating}/10</span>
+              </td>
+            </tr>
+            <tr class="border-b border-gray-700 bg-[#111]">
+              <td class="p-4 font-[Public_Sans] font-semibold">License</td>
+              <td class="p-4 border-l-[3px] border-white">{a.licences || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.licences || "N/A"}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4 font-[Public_Sans] font-semibold">Welcome Bonus</td>
+              <td class="p-4 border-l-[3px] border-white">{a.bonus || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.bonus || "N/A"}</td>
+            </tr>
+            <tr class="border-b border-gray-700 bg-[#111]">
+              <td class="p-4 font-[Public_Sans] font-semibold">Wagering</td>
+              <td class="p-4 border-l-[3px] border-white">{a.wageringRequirements || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.wageringRequirements || "N/A"}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4 font-[Public_Sans] font-semibold">Crypto Support</td>
+              <td class="p-4 border-l-[3px] border-white">{hasCryptoA ? "Yes" : "No"}</td>
+              <td class="p-4 border-l-[3px] border-white">{hasCryptoB ? "Yes" : "No"}</td>
+            </tr>
+            <tr class="border-b border-gray-700 bg-[#111]">
+              <td class="p-4 font-[Public_Sans] font-semibold">Withdrawal Speed</td>
+              <td class="p-4 border-l-[3px] border-white">{a.withdrawalTimes || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.withdrawalTimes || "N/A"}</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="p-4 font-[Public_Sans] font-semibold">Minimum Deposit</td>
+              <td class="p-4 border-l-[3px] border-white">{a.minimumDeposit || a.minimum_deposit || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.minimumDeposit || b.minimum_deposit || "N/A"}</td>
+            </tr>
+            <tr class="border-b border-gray-700 bg-[#111]">
+              <td class="p-4 font-[Public_Sans] font-semibold">Live Chat</td>
+              <td class="p-4 border-l-[3px] border-white">{a.liveChat || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.liveChat || "N/A"}</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-[Public_Sans] font-semibold">VIP Program</td>
+              <td class="p-4 border-l-[3px] border-white">{a.vipLoyaltyProgram || "N/A"}</td>
+              <td class="p-4 border-l-[3px] border-white">{b.vipLoyaltyProgram || "N/A"}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Category Breakdowns -->
+      <div class="space-y-12 mb-12">
+
+        <!-- Bonus Value -->
+        <section>
+          <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-4">Bonus Value</h2>
+          <p class="text-gray-300 mb-3">
+            Trino Casino offers a 200% match up to EUR 2,000 on deposit one, followed by a 150% match up to EUR 500 and 150 free spins. You need the code <span class="font-[JetBrains_Mono] text-[#39FF14]">200LUCKY</span>. Wagering is 40x. Minimum deposit for the bonus is EUR 100, which is on the steep side.
+          </p>
+          <p class="text-gray-300 mb-4">
+            Free Spinza Casino hits back with a 250% match up to EUR 2,500 plus 100 free spins. No bonus code needed. Wagering is 45x, slightly higher than Trino. The minimum deposit is only EUR 25, making it far more accessible.
+          </p>
+          <div class="border-[3px] border-[#39FF14] bg-[#0d1a0d] px-4 py-3 inline-block">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Winner: Free Spinza Casino</span> <span class="text-gray-400">- higher match percentage and lower entry point</span>
+          </div>
+        </section>
+
+        <!-- Withdrawal Speed -->
+        <section>
+          <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-4">Withdrawal Speed</h2>
+          <p class="text-gray-300 mb-3">
+            Trino Casino processes crypto withdrawals in 0-24 hours and e-wallets in the same timeframe. Bank transfers take up to 72 hours. Pending time is 0-72 hours.
+          </p>
+          <p class="text-gray-300 mb-4">
+            Free Spinza Casino does not support crypto withdrawals at all. E-wallets process in 0-24 hours and bank transfers take 3-5 days. Pending time is 0-72 hours. If you want fast crypto cashouts, Free Spinza is not an option.
+          </p>
+          <div class="border-[3px] border-[#39FF14] bg-[#0d1a0d] px-4 py-3 inline-block">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Winner: Trino Casino</span> <span class="text-gray-400">- crypto withdrawals give it the speed advantage</span>
+          </div>
+        </section>
+
+        <!-- Licensing and Trust -->
+        <section>
+          <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-4">Licensing and Trust</h2>
+          <p class="text-gray-300 mb-3">
+            Trino Casino holds a Curacao Gaming Control Board license. It is a recognized authority, though not at the top of the regulatory food chain. RNG is not independently tested.
+          </p>
+          <p class="text-gray-300 mb-4">
+            Free Spinza Casino is licensed by the Malta Gaming Authority. Malta is one of the gold-standard regulators in online gambling. RNG is tested (testing lab unspecified). This is a clear win for Free Spinza on the trust front.
+          </p>
+          <div class="border-[3px] border-[#39FF14] bg-[#0d1a0d] px-4 py-3 inline-block">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Winner: Free Spinza Casino</span> <span class="text-gray-400">- Malta license is a tier above Curacao</span>
+          </div>
+        </section>
+
+        <!-- Game Selection -->
+        <section>
+          <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-4">Game Selection</h2>
+          <p class="text-gray-300 mb-3">
+            Trino Casino works with a huge roster of providers. You get Pragmatic Play, NetEnt, Evolution Gaming, Hacksaw Gaming, Play'n GO, Big Time Gaming, and dozens more. Mobile apps for iOS and Android are a nice bonus.
+          </p>
+          <p class="text-gray-300 mb-4">
+            Free Spinza Casino has a solid but smaller provider list. Playtech, Nolimit City, and Blueprint Gaming stand out alongside the usual names. Pay'n Play is available in eligible countries. Mobile access works through the browser.
+          </p>
+          <div class="border-[3px] border-[#39FF14] bg-[#0d1a0d] px-4 py-3 inline-block">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Winner: Trino Casino</span> <span class="text-gray-400">- wider provider selection and dedicated mobile apps</span>
+          </div>
+        </section>
+
+        <!-- Support -->
+        <section>
+          <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-4">Support</h2>
+          <p class="text-gray-300 mb-3">
+            Trino Casino provides 24/7 live chat and email support. Complaint response comes within 24 hours. A dedicated VIP program adds another layer of player care.
+          </p>
+          <p class="text-gray-300 mb-4">
+            Free Spinza Casino also offers 24/7 live chat. Email support is listed as N/A, which is unusual. A VIP program with perks and rewards is available. Complaint response time is not specified.
+          </p>
+          <div class="border-[3px] border-[#39FF14] bg-[#0d1a0d] px-4 py-3 inline-block">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Winner: Trino Casino</span> <span class="text-gray-400">- email support and clear complaint response time</span>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Final Verdict -->
+      <div class="border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2] p-8 mb-12 bg-[#111]">
+        <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-6 text-[#FAFF00]">Which Casino Fits You?</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-3">Pick Trino Casino if you...</h3>
+            <ul class="space-y-2 text-gray-300">
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Need crypto deposits and withdrawals</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Want a bigger game provider roster</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Prefer dedicated mobile apps</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Value clear email and complaint support</li>
+            </ul>
+            <a href={getReviewUrl(casinoA)} class="inline-block mt-4 border-[3px] border-[#39FF14] text-[#39FF14] font-[Space_Grotesk] font-bold px-6 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">
+              Read Trino Casino Review
+            </a>
+          </div>
+          <div>
+            <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-3">Pick Free Spinza Casino if you...</h3>
+            <ul class="space-y-2 text-gray-300">
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Want a Malta-licensed casino</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Prefer a higher match bonus (250%)</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Have a smaller budget (EUR 25 min deposit)</li>
+              <li class="flex items-start gap-2"><span class="text-[#39FF14] mt-1">+</span> Do not need crypto payment options</li>
+            </ul>
+            <a href={getReviewUrl(casinoB)} class="inline-block mt-4 border-[3px] border-[#39FF14] text-[#39FF14] font-[Space_Grotesk] font-bold px-6 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">
+              Read Free Spinza Casino Review
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <section class="mb-12">
+        <h2 class="font-[Space_Grotesk] text-3xl font-bold mb-6">FAQ</h2>
+        <div class="space-y-4">
+          {faqItems.map(faq => (
+            <details class="border-[3px] border-white bg-[#111] group">
+              <summary class="font-[Space_Grotesk] font-bold p-4 cursor-pointer hover:text-[#39FF14] list-none flex justify-between items-center">
+                {faq.question}
+                <span class="text-[#39FF14] group-open:rotate-45 transition-transform text-2xl">+</span>
+              </summary>
+              <p class="px-4 pb-4 text-gray-300">{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <!-- Internal Links -->
+      <div class="border-t-[3px] border-gray-700 pt-8">
+        <h3 class="font-[Space_Grotesk] text-xl font-bold mb-4">Related Pages</h3>
+        <ul class="space-y-2 text-gray-300">
+          <li><a href={getReviewUrl(casinoA)} class="text-[#39FF14] hover:underline">Trino Casino Full Review</a></li>
+          <li><a href={getReviewUrl(casinoB)} class="text-[#39FF14] hover:underline">Free Spinza Casino Full Review</a></li>
+          <li><a href="/best-crypto-casinos" class="text-[#39FF14] hover:underline">Best Crypto Casinos 2026</a></li>
+          <li><a href="/methodology" class="text-[#39FF14] hover:underline">Our Review Methodology</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+</Layout>

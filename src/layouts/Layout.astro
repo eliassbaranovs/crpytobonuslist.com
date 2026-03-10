@@ -65,15 +65,78 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
     </a>
 
     <!-- Header -->
-    <header class="border-b-[3px] border-white px-6 py-4">
+    <header class="border-b-[3px] border-white px-6 py-4 relative z-50">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <a href="/" class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-[#39FF14] tracking-tight">
           [ CRYPTO_BONUS_LIST ]
         </a>
-        <nav aria-label="Main navigation" class="flex gap-6 text-sm font-[Public_Sans] font-semibold uppercase tracking-widest">
+        <nav aria-label="Main navigation" class="hidden md:flex gap-6 text-sm font-[Public_Sans] font-semibold uppercase tracking-widest">
+          <!-- Casinos dropdown -->
+          <div class="relative group">
+            <a href="/casinos" class="text-white hover:text-[#39FF14] transition-colors flex items-center gap-1">
+              Casinos
+              <svg class="w-3 h-3 mt-0.5 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+            <div class="absolute top-full left-0 pt-2 hidden group-hover:block">
+              <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#39FF14] min-w-55">
+                <a href="/casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">All Reviews</a>
+                <a href="/best-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Best Crypto Casinos</a>
+                <a href="/bitcoin-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Bitcoin Casinos</a>
+                <a href="/ethereum-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Ethereum Casinos</a>
+                <a href="/fast-withdrawal-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Fast Withdrawals</a>
+                <a href="/no-wagering-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">No Wagering</a>
+                <a href="/new-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider">New Casinos</a>
+              </div>
+            </div>
+          </div>
           <a href="/bonus" class="text-white hover:text-[#39FF14] transition-colors">Bonuses</a>
+          <!-- Guides dropdown -->
+          <div class="relative group">
+            <a href="/guides" class="text-white hover:text-[#39FF14] transition-colors flex items-center gap-1">
+              Guides
+              <svg class="w-3 h-3 mt-0.5 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+            <div class="absolute top-full right-0 pt-2 hidden group-hover:block">
+              <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#39FF14] min-w-70">
+                <a href="/guides" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">All Guides</a>
+                <a href="/guides/is-crypto-gambling-safe" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Is Crypto Gambling Safe?</a>
+                <a href="/guides/crypto-casino-vs-regular-casino" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Crypto vs Regular Casino</a>
+                <a href="/guides/crypto-casino-fees-explained" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Fees Explained</a>
+                <a href="/guides/is-crypto-gambling-legal" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider">Is It Legal?</a>
+                <a href="/guides/how-crypto-casino-withdrawals-work" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider">How Withdrawals Work</a>
+              </div>
+            </div>
+          </div>
           <a href="/news" class="text-white hover:text-[#39FF14] transition-colors">News</a>
-          <a href="/casinos" class="text-white hover:text-[#39FF14] transition-colors">Casinos</a>
+        </nav>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden text-white" aria-label="Open menu">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden mt-4 border-t-[3px] border-white pt-4">
+        <nav class="flex flex-col gap-1 text-sm font-[Public_Sans] font-semibold uppercase tracking-widest">
+          <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs px-2 py-1">Casinos</p>
+          <a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">All Reviews</a>
+          <a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Best Crypto Casinos</a>
+          <a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Bitcoin Casinos</a>
+          <a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Ethereum Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Fast Withdrawals</a>
+          <a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">No Wagering</a>
+          <a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">New Casinos</a>
+          <div class="border-t border-white/20 my-2"></div>
+          <a href="/bonus" class="text-white hover:text-[#39FF14] px-2 py-2">Bonuses</a>
+          <div class="border-t border-white/20 my-2"></div>
+          <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs px-2 py-1">Guides</p>
+          <a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">All Guides</a>
+          <a href="/guides/is-crypto-gambling-safe" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Is Crypto Gambling Safe?</a>
+          <a href="/guides/crypto-casino-vs-regular-casino" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Crypto vs Regular</a>
+          <a href="/guides/crypto-casino-fees-explained" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Fees Explained</a>
+          <a href="/guides/is-crypto-gambling-legal" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">Is It Legal?</a>
+          <a href="/guides/how-crypto-casino-withdrawals-work" class="text-[#D4D4D4] hover:text-[#39FF14] px-4 py-2">How Withdrawals Work</a>
+          <div class="border-t border-white/20 my-2"></div>
+          <a href="/news" class="text-white hover:text-[#39FF14] px-2 py-2">News</a>
         </nav>
       </div>
     </header>
@@ -107,9 +170,16 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
         <nav aria-label="Footer pages" class="p-8">
           <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">PAGES</p>
           <ul class="space-y-2 text-sm font-[Public_Sans]">
+            <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casino Reviews</a></li>
+            <li><a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Best Crypto Casinos</a></li>
             <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
+            <li><a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14]">Guides</a></li>
             <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14]">News</a></li>
-            <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casinos</a></li>
+            <li><a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Bitcoin Casinos</a></li>
+            <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Ethereum Casinos</a></li>
+            <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Fast Withdrawals</a></li>
+            <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">No Wagering</a></li>
+            <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">New Casinos</a></li>
           </ul>
         </nav>
         <nav aria-label="Company links" class="p-8">
@@ -142,5 +212,14 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
         </div>
       </div>
     </footer>
+    <script>
+      const btn = document.getElementById("mobile-menu-btn");
+      const menu = document.getElementById("mobile-menu");
+      if (btn && menu) {
+        btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden");
+        });
+      }
+    </script>
   </body>
 </html>

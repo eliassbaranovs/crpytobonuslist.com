@@ -1,0 +1,180 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import {
+  getReviews,
+  acceptsCrypto,
+  getRatingBg,
+  getReviewUrl,
+  getClaimUrl,
+  getWithdrawalSpeedLabel,
+} from "../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Solana"));
+
+const faqItems = [
+  {
+    question: "How fast are Solana casino deposits?",
+    answer: "Solana transactions finalize in about 400 milliseconds. Your deposit shows up almost instantly once the casino detects the confirmed transaction.",
+  },
+  {
+    question: "What are Solana transaction fees for gambling?",
+    answer: "SOL fees are fractions of a cent, typically $0.00025 or less per transaction. This makes Solana ideal for frequent deposits and withdrawals at any amount.",
+  },
+  {
+    question: "Are there many Solana casinos available?",
+    answer: "Solana casino adoption is growing but still behind Bitcoin and Ethereum. Fewer casinos support SOL natively, though the number increases each month as the ecosystem expands.",
+  },
+  {
+    question: "Is Solana reliable enough for gambling?",
+    answer: "Solana has had network outages in the past. While uptime has improved in recent years, it is worth keeping a backup payment method if you rely on SOL for deposits.",
+  },
+];
+
+const jsonld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+});
+---
+
+<Layout
+  title="Best Solana Casinos 2026 | SOL Gambling Sites Reviewed"
+  description="Solana casinos with near-instant deposits and fees under a cent. See which SOL gambling sites passed our real-money tests."
+  jsonld={jsonld}
+>
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        BEST <span class="text-[#39FF14]">SOLANA</span> CASINOS 2026
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
+        Solana brings sub-second transactions and near-zero fees to crypto gambling. No other chain matches SOL for speed. Here are the Solana casinos we tested.
+      </p>
+
+      {reviews.length > 0 ? (
+        <div class="overflow-x-auto mb-16">
+          <table class="w-full border-[3px] border-white text-left font-[Public_Sans]">
+            <thead>
+              <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3">Rating</th>
+                <th class="px-4 py-3">Withdrawal Speed</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {reviews.map((review, i) => (
+                <tr class="border-t-[2px] border-white/20 hover:bg-white/5 transition-colors">
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-[#39FF14] font-bold">{i + 1}</td>
+                  <td class="px-4 py-4">
+                    <a href={getReviewUrl(review)} class="font-bold text-white hover:text-[#39FF14] transition-colors">
+                      {review.data.title.replace(/ Review.*$/, "")}
+                    </a>
+                  </td>
+                  <td class="px-4 py-4">
+                    <span class={`inline-block px-2 py-1 font-[JetBrains_Mono] text-sm font-bold ${getRatingBg(review.data.ourRating || 0)}`}>
+                      {review.data.ourRating}/10
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-sm">{getWithdrawalSpeedLabel(review)}</td>
+                  <td class="px-4 py-4 text-sm text-[#D4D4D4]">{review.data.bonus || "See review"}</td>
+                  <td class="px-4 py-4">
+                    <a
+                      href={getClaimUrl(review)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold text-sm px-4 py-2 border-[2px] border-white shadow-[3px_3px_0px_0px_white] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    >
+                      CLAIM
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="border-[3px] border-[#FAFF00] bg-[#FAFF00]/10 p-6 mb-16">
+          <p class="font-[Public_Sans] text-[#FAFF00] font-bold">We have not reviewed any casinos matching this filter yet. Check back as we add more reviews.</p>
+        </div>
+      )}
+
+      <div class="max-w-4xl space-y-12 mb-16">
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">Why Solana for Gambling?</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Speed and cost. Solana processes thousands of transactions per second with finality in under a second. Your deposit confirms before you finish switching tabs.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Transaction fees on Solana are a fraction of a cent. You can deposit $5 or $5,000 and the fee is the same tiny amount. Compare that to Ethereum where a small deposit might cost more in gas than the deposit itself.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            The catch: fewer casinos support SOL compared to BTC and ETH. This is changing fast. SOL adoption in iGaming has grown steadily and we expect more sites to add it through 2026.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">SOL Speed vs Other Cryptos</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Bitcoin takes 10-30 minutes for a confirmation. Ethereum needs a few minutes. Solana? About 400 milliseconds. For a gambler, this means instant access to your funds.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Withdrawals benefit from the same speed. Once the casino approves your cashout, the SOL hits your wallet in seconds. No sitting around watching a blockchain explorer.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            The bottleneck is the casino's internal processing, not the blockchain. A Solana casino with a manual review process still makes you wait. The chain itself is never the slow part.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">Things to Watch For</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Solana has experienced network outages in past years. While stability has improved, keep a backup deposit method ready. No blockchain is 100% uptime.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            SOL price volatility is higher than Bitcoin. Your balance swings more. If that bothers you, look for casinos that accept SOL-based stablecoins like USDC on the Solana chain.
+          </p>
+        </section>
+      </div>
+
+      <div class="max-w-4xl mb-16">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-white">FAQ</h2>
+        <div class="space-y-4">
+          {faqItems.map((faq) => (
+            <details class="group border-[3px] border-white bg-black">
+              <summary class="flex items-center justify-between px-6 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white hover:text-[#39FF14] transition-colors">
+                {faq.question}
+                <span class="ml-4 text-[#39FF14] group-open:rotate-45 transition-transform text-xl">+</span>
+              </summary>
+              <div class="px-6 pb-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t-[3px] border-white pt-8">
+        <h2 class="font-[Space_Grotesk] text-xl font-bold mb-4 text-white">Related Pages</h2>
+        <div class="flex flex-wrap gap-4">
+          <a href="/bitcoin-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Bitcoin Casinos</a>
+          <a href="/ethereum-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Ethereum Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Fast Withdrawal Casinos</a>
+          <a href="/new-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">New Crypto Casinos</a>
+          <a href="/casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">All Casinos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

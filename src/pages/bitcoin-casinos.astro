@@ -1,0 +1,184 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import {
+  getReviews,
+  acceptsCrypto,
+  getRatingBg,
+  getReviewUrl,
+  getClaimUrl,
+  getWithdrawalSpeedLabel,
+} from "../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Bitcoin"));
+
+const faqItems = [
+  {
+    question: "Are Bitcoin casinos legal?",
+    answer: "It depends on your country. Some jurisdictions have clear crypto gambling rules, others do not. Always check local laws before depositing BTC at any online casino.",
+  },
+  {
+    question: "How fast are Bitcoin casino deposits?",
+    answer: "Most Bitcoin deposits confirm within 10 to 30 minutes, depending on network congestion and the number of confirmations required by the casino.",
+  },
+  {
+    question: "Do Bitcoin casinos require KYC?",
+    answer: "Some do, some do not. Casinos with gaming licenses often require identity verification for large withdrawals. No-KYC options exist but come with trade-offs on trust and licensing.",
+  },
+  {
+    question: "What fees do Bitcoin casinos charge?",
+    answer: "Most Bitcoin casinos charge zero deposit fees. You still pay the BTC network transaction fee, which varies based on blockchain congestion. Withdrawals are typically free or carry a small flat fee.",
+  },
+  {
+    question: "Is it safe to gamble with Bitcoin?",
+    answer: "Bitcoin transactions are irreversible, so picking a reputable casino matters more than with traditional payment methods. Stick to licensed, reviewed sites and never deposit more than you can afford to lose.",
+  },
+];
+
+const jsonld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+});
+---
+
+<Layout
+  title="Best Bitcoin Casinos 2026 | BTC Gambling Sites Reviewed"
+  description="Ranked list of the best Bitcoin casinos in 2026. Real deposits, tested withdrawals, and honest ratings from experienced players."
+  jsonld={jsonld}
+>
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        BEST <span class="text-[#39FF14]">BITCOIN</span> CASINOS 2026
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
+        Bitcoin is still the king of crypto gambling. These are the BTC casinos we tested with real money, ranked by our review scores. Every site listed here accepts Bitcoin deposits and pays out in BTC.
+      </p>
+
+      {reviews.length > 0 ? (
+        <div class="overflow-x-auto mb-16">
+          <table class="w-full border-[3px] border-white text-left font-[Public_Sans]">
+            <thead>
+              <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3">Rating</th>
+                <th class="px-4 py-3">Withdrawal Speed</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {reviews.map((review, i) => (
+                <tr class="border-t-[2px] border-white/20 hover:bg-white/5 transition-colors">
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-[#39FF14] font-bold">{i + 1}</td>
+                  <td class="px-4 py-4">
+                    <a href={getReviewUrl(review)} class="font-bold text-white hover:text-[#39FF14] transition-colors">
+                      {review.data.title.replace(/ Review.*$/, "")}
+                    </a>
+                  </td>
+                  <td class="px-4 py-4">
+                    <span class={`inline-block px-2 py-1 font-[JetBrains_Mono] text-sm font-bold ${getRatingBg(review.data.ourRating || 0)}`}>
+                      {review.data.ourRating}/10
+                    </span>
+                  </td>
+                  <td class="px-4 py-4 font-[JetBrains_Mono] text-sm">{getWithdrawalSpeedLabel(review)}</td>
+                  <td class="px-4 py-4 text-sm text-[#D4D4D4]">{review.data.bonus || "See review"}</td>
+                  <td class="px-4 py-4">
+                    <a
+                      href={getClaimUrl(review)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold text-sm px-4 py-2 border-[2px] border-white shadow-[3px_3px_0px_0px_white] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+                    >
+                      CLAIM
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="border-[3px] border-[#FAFF00] bg-[#FAFF00]/10 p-6 mb-16">
+          <p class="font-[Public_Sans] text-[#FAFF00] font-bold">We have not reviewed any casinos matching this filter yet. Check back as we add more reviews.</p>
+        </div>
+      )}
+
+      <div class="max-w-4xl space-y-12 mb-16">
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">Why Gamble With Bitcoin?</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            BTC gives you faster payouts and more privacy than bank transfers or credit cards. Most Bitcoin casinos process withdrawals in under an hour. Compare that to 3-5 business days with traditional methods.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Deposits hit your casino balance after 1-3 blockchain confirmations. No middlemen, no payment processor blocking your transaction. You send BTC, it arrives, you play.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            The downside: Bitcoin prices move. Your $100 deposit could be worth $90 or $110 by the time you withdraw. Some players see that as extra action. Others prefer stablecoins.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">How BTC Deposits and Withdrawals Work</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            Every Bitcoin casino gives you a unique deposit address. You send BTC from your wallet to that address. After the required confirmations (usually 1-3), your balance updates.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            For withdrawals, you paste your wallet address and choose the amount. Good casinos process this within minutes. Bad ones make you wait days and pile on verification requests.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Network fees depend on how busy the Bitcoin blockchain is. During peak times you might pay $5-10 in fees. During quiet periods it drops to under a dollar. The casino has no control over this.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 text-[#39FF14]">What We Look for in a Bitcoin Casino</h2>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed mb-4">
+            We deposit real BTC at every casino we review. We test withdrawal speeds, bonus terms, game selection, and customer support. No one pays for a higher ranking.
+          </p>
+          <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+            Licensing, provably fair games, and transparent bonus conditions all factor into the rating. A casino that takes your Bitcoin fast but stalls your withdrawal gets a low score, no matter how good the games look.
+          </p>
+        </section>
+      </div>
+
+      <div class="max-w-4xl mb-16">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-white">FAQ</h2>
+        <div class="space-y-4">
+          {faqItems.map((faq) => (
+            <details class="group border-[3px] border-white bg-black">
+              <summary class="flex items-center justify-between px-6 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white hover:text-[#39FF14] transition-colors">
+                {faq.question}
+                <span class="ml-4 text-[#39FF14] group-open:rotate-45 transition-transform text-xl">+</span>
+              </summary>
+              <div class="px-6 pb-4 text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <div class="border-t-[3px] border-white pt-8">
+        <h2 class="font-[Space_Grotesk] text-xl font-bold mb-4 text-white">Related Pages</h2>
+        <div class="flex flex-wrap gap-4">
+          <a href="/ethereum-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Ethereum Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Fast Withdrawal Casinos</a>
+          <a href="/new-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">New Crypto Casinos</a>
+          <a href="/no-wagering-crypto-casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">Low Wagering Casinos</a>
+          <a href="/casinos" class="font-[Public_Sans] text-sm text-[#39FF14] border-[2px] border-[#39FF14] px-4 py-2 hover:bg-[#39FF14] hover:text-black transition-colors">All Casinos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

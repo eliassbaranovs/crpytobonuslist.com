@@ -1,12 +1,33 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About CryptoBonusList",
+  "description": "Independent crypto casino review site. Real deposits, real testing, honest ratings.",
+  "url": "https://cryptobonuslist.com/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "CryptoBonusList",
+    "url": "https://cryptobonuslist.com",
+    "foundingDate": "2025",
+    "description": "Independent crypto casino review and bonus comparison site.",
+    "ethicsPolicy": "https://cryptobonuslist.com/affiliate-disclosure",
+    "publishingPrinciples": "https://cryptobonuslist.com/methodology"
+  }
+});
 ---
 
-<Layout title="About Us | CryptoBonusList" description="Who runs CryptoBonusList and why it exists. No corporate fluff.">
-  <section class="px-6 py-12">
+<Layout
+  title="About CryptoBonusList | Crypto Casino Reviews Done Right"
+  description="Who we are, how we test, and why we built CryptoBonusList. Independent crypto casino reviews with real deposits and honest ratings."
+  jsonld={schemaJsonLd}
+>
+  <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-8">
-        ABOUT <span class="text-[#39FF14]">US</span>
+        ABOUT <span class="text-[#39FF14]">CRYPTOBONUSLIST</span>
       </h1>
 
       <div class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-10">
@@ -14,7 +35,7 @@ import Layout from "../layouts/Layout.astro";
           CryptoBonusList started because we got tired of reading the same recycled bonus reviews on every affiliate site. Copy-paste descriptions, inflated ratings, zero useful information.
         </p>
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg leading-relaxed">
-          We built something different. Every bonus on this site is reviewed by people who have deposited, played through the wagering, and dealt with the withdrawal process firsthand.
+          We built something different. Every casino and bonus on this site is reviewed by people who have deposited, played through the wagering, and dealt with the withdrawal process firsthand.
         </p>
       </div>
 
@@ -23,13 +44,52 @@ import Layout from "../layouts/Layout.astro";
       </h2>
       <div class="space-y-4 mb-10">
         <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          We review crypto casino bonuses. Welcome packages, no-deposit offers, reload deals, rakeback programs. If a casino runs a bonus for crypto depositors, we look at it.
+          We review crypto casinos and their bonuses. Welcome packages, no-deposit offers, reload deals, rakeback programs. If a casino runs a promotion for crypto depositors, we look at it.
         </p>
         <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          The focus is on the numbers. Wagering requirements, max bet limits, game contributions, withdrawal caps. The stuff that determines whether a bonus is worth taking or not.
+          The focus is on the numbers. Wagering requirements, max bet limits, game contributions, withdrawal caps, KYC processes, payout speeds. The stuff that determines whether a casino or bonus is worth your time.
         </p>
         <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          We also cover crypto gambling news. Regulation changes, network fee updates, new coin support at casinos. Anything that affects how you deposit, play, and withdraw.
+          We also cover crypto gambling news and publish <a href="/guides" class="text-[#39FF14] underline underline-offset-4 decoration-2">guides</a> for players who want to understand how things work before putting money in.
+        </p>
+      </div>
+
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+        HOW WE TEST
+      </h2>
+      <div class="space-y-4 mb-10">
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Every review follows the same four-step process. We deposit real crypto, claim the bonus as a new player, play through the wagering requirements, and attempt a withdrawal. No shortcuts, no copy-pasting from casino websites.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          We document deposit times, KYC friction, support responsiveness, game fairness, and withdrawal speed down to the hour. The full breakdown is on our <a href="/methodology" class="text-[#39FF14] underline underline-offset-4 decoration-2">methodology page</a>.
+        </p>
+      </div>
+
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+        EDITORIAL STANDARDS
+      </h2>
+      <div class="space-y-4 mb-10">
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Ratings use a 0 to 10 scale across documented criteria. The scoring system is the same for every casino, regardless of the affiliate deal behind it. A casino paying a higher commission gets the same scrutiny as one paying nothing.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Reviews include pros and cons. If a casino has slow withdrawals or aggressive wagering terms, that goes in. We do not remove negatives because a partner asked nicely.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Content is updated when casino conditions change. Bonus terms get modified, withdrawal policies shift, licenses get revoked. We track these changes and update reviews so the information stays accurate.
+        </p>
+      </div>
+
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
+        THE TEAM
+      </h2>
+      <div class="space-y-4 mb-10">
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Small team. Everyone plays at crypto casinos with their own money. Some of us have been in the space since the early days of Bitcoin gambling. Others joined when the Ethereum casino wave picked up.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          Every review carries a byline. You know who wrote it and you can check their track record. Full profiles are on the <a href="/team" class="text-[#39FF14] underline underline-offset-4 decoration-2">team page</a>.
         </p>
       </div>
 
@@ -41,34 +101,22 @@ import Layout from "../layouts/Layout.astro";
           Affiliate links. When you click through to a casino from our site and sign up, we get a commission. That is the business model. No subscriptions, no premium content, no paywalls.
         </p>
         <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          This does not change how we review bonuses. A bad bonus with a high commission is still a bad bonus. We would rather send you somewhere useful and keep you coming back.
-        </p>
-      </div>
-
-      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
-        THE TEAM
-      </h2>
-      <div class="space-y-4 mb-10">
-        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          Small team. Everyone plays at crypto casinos. Some of us have been in the space since the early days of Bitcoin gambling. Others joined when the Ethereum casino wave picked up.
-        </p>
-        <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          We do not publish bylines or staff bios. The content speaks for itself. If a review is accurate and useful, it does not matter who wrote it.
+          This does not change how we review casinos. A bad casino with a high commission is still a bad casino. We would rather send you somewhere worth your time and keep you coming back. Full details in our <a href="/affiliate-disclosure" class="text-[#39FF14] underline underline-offset-4 decoration-2">affiliate disclosure</a>.
         </p>
       </div>
 
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
         WHAT WE DO NOT DO
       </h2>
-      <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#FAFF00]">
+      <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#FAFF00] mb-10">
         <ul class="space-y-3 text-[#D4D4D4] font-[Public_Sans]">
           <li class="flex items-start gap-3">
             <span class="text-[#FAFF00] font-bold mt-0.5">X</span>
-            <span>Rate casinos on a 1-10 scale with no explanation</span>
+            <span>Publish reviews for casinos we have not tested with real deposits</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="text-[#FAFF00] font-bold mt-0.5">X</span>
-            <span>Publish reviews for casinos we have not tested</span>
+            <span>Accept payment to change a rating or remove negative points</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="text-[#FAFF00] font-bold mt-0.5">X</span>
@@ -76,20 +124,20 @@ import Layout from "../layouts/Layout.astro";
           </li>
           <li class="flex items-start gap-3">
             <span class="text-[#FAFF00] font-bold mt-0.5">X</span>
-            <span>Guarantee winnings or promise results</span>
+            <span>Guarantee winnings or promise results from any bonus</span>
           </li>
           <li class="flex items-start gap-3">
             <span class="text-[#FAFF00] font-bold mt-0.5">X</span>
-            <span>Accept payment to change a review</span>
+            <span>List casinos without verifiable licensing</span>
           </li>
         </ul>
       </div>
 
-      <div class="mt-10">
+      <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#39FF14]">
         <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-          Questions or feedback? Reach out through the <a href="/contact" class="text-[#39FF14] underline underline-offset-4 decoration-2">contact page</a>.
+          Questions or feedback? Reach out through the <a href="/contact" class="text-[#39FF14] underline underline-offset-4 decoration-2">contact page</a>. If something is wrong in a review, tell us. We fix it.
         </p>
       </div>
     </div>
-  </section>
+  </article>
 </Layout>

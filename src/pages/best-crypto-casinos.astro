@@ -1,0 +1,414 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { getReviews, getRatingBg, getReviewUrl, getClaimUrl, getWithdrawalSpeedLabel } from "../lib/casino-filters";
+
+const allPosts = await getCollection("posts");
+const reviews = getReviews(allPosts);
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a crypto casino?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A crypto casino is an online gambling platform that accepts cryptocurrency deposits and withdrawals. Most support Bitcoin, Ethereum, and Litecoin. Some operate fully on-chain with provably fair games."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are crypto casinos safe to use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Safety depends on the operator. Licensed crypto casinos with provably fair systems and transparent ownership are the safest options. Always check the license, read reviews, and start with small deposits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How fast are crypto casino withdrawals?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most crypto casinos process withdrawals in under 1 hour. Some offer instant payouts. This is much faster than traditional casinos that take 3-5 business days for bank transfers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do crypto casinos require KYC verification?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some do, some do not. Licensed casinos often require KYC for larger withdrawals. Several crypto-native platforms allow anonymous play with no verification at all."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What cryptocurrencies do online casinos accept?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bitcoin (BTC) is accepted almost everywhere. Ethereum (ETH), Litecoin (LTC), Tether (USDT), and Dogecoin (DOGE) are also common. Some casinos support 50+ different tokens."
+      }
+    }
+  ]
+});
+---
+
+<Layout
+  title="Best Crypto Casinos 2026 | CryptoBonusList"
+  description="Ranked list of the best crypto casinos in 2026. Tested with real deposits. Compared by rating, bonuses, withdrawal speed, and licensing."
+  jsonld={schemaJsonLd}
+>
+  <!-- Hero -->
+  <section class="px-6 py-16 border-b-[3px] border-white">
+    <div class="max-w-7xl mx-auto">
+      <p class="font-[JetBrains_Mono] text-[#39FF14] text-sm mb-4 tracking-wider">&gt; UPDATED MARCH 2026</p>
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
+        BEST CRYPTO <span class="text-[#39FF14]">CASINOS</span> 2026
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg md:text-xl max-w-3xl leading-relaxed">
+        We deposited real crypto at every casino on this list. Tested withdrawals, played the games, and talked to support.
+        These are the ones that passed. Sorted by our rating, highest first.
+      </p>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="px-6 py-12 border-b-[3px] border-white">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
+        CRYPTO CASINO <span class="text-[#8A2BE2]">COMPARISON TABLE</span>
+      </h2>
+
+      {reviews.length > 0 ? (
+        <div class="overflow-x-auto border-[3px] border-white">
+          <table class="w-full min-w-[900px] text-left">
+            <thead>
+              <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
+                <th class="px-4 py-3 w-16">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3 w-24">Rating</th>
+                <th class="px-4 py-3">License</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3 w-28">Wagering</th>
+                <th class="px-4 py-3 w-32">Withdrawals</th>
+                <th class="px-4 py-3 w-40">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="font-[Public_Sans] text-sm">
+              {reviews.map((review, i) => {
+                const rating = review.data.ourRating || 0;
+                const ratingBg = getRatingBg(rating);
+                const licence = review.data.licences || "N/A";
+                const bonus = review.data.bonus || review.data.maxBonus || "No bonus listed";
+                const wagering = review.data.wageringRequirements || review.data.wagering || "N/A";
+                const speed = getWithdrawalSpeedLabel(review);
+                const reviewUrl = getReviewUrl(review);
+                const claimUrl = getClaimUrl(review);
+                const casinoName = review.data.casino_name || review.data.casinoName || review.data.title.replace(/ Review.*$/i, "");
+
+                return (
+                  <tr class={`border-t-[2px] border-white/20 ${i % 2 === 0 ? "bg-[#0A0A0A]" : "bg-[#111111]"} hover:bg-[#1a1a1a] transition-colors`}>
+                    <td class="px-4 py-4 font-[JetBrains_Mono] font-bold text-[#39FF14] text-lg">{i + 1}</td>
+                    <td class="px-4 py-4">
+                      <div class="flex items-center gap-3">
+                        {review.data.logo && (
+                          <img src={review.data.logo} alt={`${casinoName} logo`} width="32" height="32" class="rounded" loading="lazy" />
+                        )}
+                        <span class="font-[Space_Grotesk] font-bold text-white">{casinoName}</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-4">
+                      <span class={`${ratingBg} font-[JetBrains_Mono] font-bold px-2 py-1 text-sm`}>
+                        {rating.toFixed(1)}
+                      </span>
+                    </td>
+                    <td class="px-4 py-4 text-[#D4D4D4] text-xs">{licence}</td>
+                    <td class="px-4 py-4 text-[#FAFF00] font-[JetBrains_Mono] text-xs">{bonus}</td>
+                    <td class="px-4 py-4 font-[JetBrains_Mono] text-xs text-[#D4D4D4]">{wagering}</td>
+                    <td class="px-4 py-4 font-[JetBrains_Mono] text-xs text-[#D4D4D4]">{speed}</td>
+                    <td class="px-4 py-4">
+                      <div class="flex gap-2">
+                        <a href={reviewUrl} class="text-xs font-bold border-[2px] border-white px-3 py-1 text-white hover:bg-white hover:text-black transition-colors">
+                          Review
+                        </a>
+                        <a href={claimUrl} target="_blank" rel="noopener noreferrer nofollow" class="text-xs font-bold bg-[#39FF14] text-black px-3 py-1 border-[2px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors">
+                          Visit
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="border-[3px] border-white p-8 text-center">
+          <p class="text-[#D4D4D4] font-[Public_Sans]">Casino reviews are being finalized. Check back soon.</p>
+        </div>
+      )}
+
+      <p class="text-[#D4D4D4] text-xs font-[Public_Sans] mt-4">
+        Ratings are on a 0-10 scale. Last updated March 2026. See our <a href="/methodology" class="text-[#39FF14] hover:underline">review methodology</a> for scoring details.
+      </p>
+    </div>
+  </section>
+
+  <!-- Individual Casino Cards -->
+  {reviews.length > 0 && (
+    <section class="px-6 py-12 border-b-[3px] border-white">
+      <div class="max-w-7xl mx-auto">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
+          DETAILED <span class="text-[#39FF14]">BREAKDOWN</span>
+        </h2>
+
+        <div class="space-y-8">
+          {reviews.map((review, i) => {
+            const rating = review.data.ourRating || 0;
+            const ratingBg = getRatingBg(rating);
+            const bonus = review.data.bonus || review.data.maxBonus || "Check site for current offers";
+            const wagering = review.data.wageringRequirements || review.data.wagering || "N/A";
+            const speed = getWithdrawalSpeedLabel(review);
+            const pros = review.data.pros || [];
+            const reviewUrl = getReviewUrl(review);
+            const claimUrl = getClaimUrl(review);
+            const casinoName = review.data.casino_name || review.data.casinoName || review.data.title.replace(/ Review.*$/i, "");
+
+            return (
+              <div class="bg-black border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] p-6 md:p-8">
+                <div class="flex flex-col md:flex-row md:items-start gap-6">
+                  <!-- Left: Logo + Rating -->
+                  <div class="flex flex-col items-center gap-3 md:w-40 shrink-0">
+                    {review.data.logo ? (
+                      <img src={review.data.logo} alt={`${casinoName} logo`} width="80" height="80" class="rounded" loading="lazy" />
+                    ) : (
+                      <div class="w-20 h-20 bg-[#1a1a1a] border-[2px] border-white/30 flex items-center justify-center font-[Space_Grotesk] font-bold text-2xl text-[#39FF14]">
+                        {i + 1}
+                      </div>
+                    )}
+                    <span class={`${ratingBg} font-[JetBrains_Mono] font-bold px-3 py-1 text-lg`}>
+                      {rating.toFixed(1)}/10
+                    </span>
+                  </div>
+
+                  <!-- Middle: Info -->
+                  <div class="flex-1">
+                    <h3 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white mb-2">
+                      #{i + 1} {casinoName}
+                    </h3>
+                    <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4 line-clamp-3">
+                      {review.data.description}
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                      <div>
+                        <p class="text-[#D4D4D4] text-xs font-[Public_Sans] uppercase tracking-wider">Bonus</p>
+                        <p class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold">{bonus}</p>
+                      </div>
+                      <div>
+                        <p class="text-[#D4D4D4] text-xs font-[Public_Sans] uppercase tracking-wider">Wagering</p>
+                        <p class="text-white font-[JetBrains_Mono] text-sm font-bold">{wagering}</p>
+                      </div>
+                      <div>
+                        <p class="text-[#D4D4D4] text-xs font-[Public_Sans] uppercase tracking-wider">Crypto Payouts</p>
+                        <p class="text-white font-[JetBrains_Mono] text-sm font-bold">{speed}</p>
+                      </div>
+                    </div>
+
+                    {pros.length > 0 && (
+                      <ul class="space-y-1 mb-4">
+                        {pros.slice(0, 4).map((pro) => (
+                          <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
+                            <span class="text-[#39FF14] font-bold shrink-0">+</span>
+                            <span>{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <!-- Right: Actions -->
+                  <div class="flex flex-row md:flex-col gap-3 md:w-40 shrink-0">
+                    <a href={claimUrl} target="_blank" rel="noopener noreferrer nofollow" class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#39FF14] text-black px-4 py-3 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
+                      VISIT CASINO
+                    </a>
+                    <a href={reviewUrl} class="flex-1 text-center font-[Space_Grotesk] font-bold border-[3px] border-white text-white px-4 py-3 hover:bg-white hover:text-black transition-colors text-sm">
+                      READ REVIEW
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- What Makes a Good Crypto Casino -->
+  <section class="px-6 py-12 border-b-[3px] border-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
+        WHAT MAKES A GOOD <span class="text-[#39FF14]">CRYPTO CASINO</span>
+      </h2>
+      <div class="space-y-4 font-[Public_Sans] text-[#D4D4D4] leading-relaxed">
+        <p>
+          A good crypto casino does three things well: it pays out fast, it treats your funds with respect, and it does not make you jump through hoops.
+        </p>
+        <p>
+          Speed is the biggest draw. When you win at a crypto casino, your withdrawal should hit your wallet in minutes, not days. Any platform that holds your coins for 48+ hours is a red flag.
+        </p>
+        <p>
+          Licensing matters too. A Curacao or MGA license gives you some recourse if things go wrong. Unlicensed casinos work fine until they do not. We always note the license status in our reviews.
+        </p>
+        <p>
+          Game fairness is non-negotiable. The best operators use provably fair algorithms or partner with audited game providers like Pragmatic Play, Evolution, and Hacksaw Gaming. You should be able to verify every bet.
+        </p>
+        <p>
+          The bonus terms need to be reasonable. A 200% deposit match sounds great until you see a 60x wagering requirement. We look for offers with 35x or lower. Anything above 45x is tough to clear.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Rank Crypto Casinos -->
+  <section class="px-6 py-12 border-b-[3px] border-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
+        HOW WE <span class="text-[#8A2BE2]">RANK</span> CRYPTO CASINOS
+      </h2>
+      <div class="space-y-4 font-[Public_Sans] text-[#D4D4D4] leading-relaxed">
+        <p>
+          Every casino on this list was tested with a real crypto deposit. We do not accept paid placements or let casinos buy their spot on the rankings.
+        </p>
+        <p>
+          Our rating system scores casinos from 0 to 10 across multiple categories: withdrawal speed, bonus value, game selection, support quality, license status, and user experience. The final score is a weighted average with withdrawal speed and trust factors carrying the most weight.
+        </p>
+        <p>
+          We re-test every casino on this page at least once per quarter. Scores go up or down based on current performance. A casino that was great six months ago might slip if their support quality drops or they change withdrawal policies.
+        </p>
+        <p>
+          Player feedback also factors in. We monitor complaint forums, social channels, and our own reader reports. A pattern of unresolved player complaints will lower any score, regardless of how good the product looks on paper.
+        </p>
+        <p>
+          For the full breakdown, check our <a href="/methodology" class="text-[#39FF14] hover:underline">review methodology</a> page.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Crypto vs Regular Casinos -->
+  <section class="px-6 py-12 border-b-[3px] border-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
+        CRYPTO VS <span class="text-[#FAFF00]">REGULAR</span> CASINOS
+      </h2>
+      <div class="space-y-4 font-[Public_Sans] text-[#D4D4D4] leading-relaxed">
+        <p>
+          The biggest difference is speed. Crypto withdrawals process in minutes. Bank transfers and card cashouts at traditional casinos take 3 to 5 business days. Sometimes longer.
+        </p>
+        <p>
+          Privacy is another factor. Traditional casinos need your full ID, proof of address, and bank details before they let you withdraw. Many crypto casinos skip all of that. Some require KYC above a certain threshold, but the bar is usually much higher than fiat sites.
+        </p>
+        <p>
+          Deposit limits tend to be more flexible with crypto. No bank blocking your gambling transaction. No card issuer declining the charge. You send coins directly from your wallet to the casino.
+        </p>
+        <p>
+          On the downside, crypto casinos have less regulatory oversight in most markets. If something goes wrong at a licensed fiat casino, you have a clear complaints process. At an offshore crypto casino, your options are more limited.
+        </p>
+        <p>
+          The game selection is roughly equal now. A few years ago, crypto casinos had fewer titles. Today, the top platforms carry 3,000+ games from the same providers you would find at any major online casino.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="px-6 py-12 border-b-[3px] border-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
+        FREQUENTLY ASKED <span class="text-[#39FF14]">QUESTIONS</span>
+      </h2>
+
+      <div class="space-y-4">
+        <details class="group border-[3px] border-white bg-black">
+          <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+            <span>What is a crypto casino?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl">+</span>
+          </summary>
+          <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+            A crypto casino is an online gambling platform that accepts cryptocurrency for deposits and withdrawals. Most support Bitcoin, Ethereum, and Litecoin. Some operate fully on-chain with provably fair games that let you verify the outcome of every bet independently.
+          </div>
+        </details>
+
+        <details class="group border-[3px] border-white bg-black">
+          <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+            <span>Are crypto casinos safe to use?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl">+</span>
+          </summary>
+          <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+            Safety depends on the operator. Licensed crypto casinos with provably fair systems and transparent ownership are the safest options. Always check the license, read reviews, and start with small deposits before committing larger amounts. Stick to the casinos on our ranked list for the lowest risk.
+          </div>
+        </details>
+
+        <details class="group border-[3px] border-white bg-black">
+          <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+            <span>How fast are crypto casino withdrawals?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl">+</span>
+          </summary>
+          <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+            Most crypto casinos process withdrawals in under 1 hour. The fastest platforms offer instant payouts confirmed on-chain within minutes. This is much faster than traditional casinos, where bank transfers take 3 to 5 business days.
+          </div>
+        </details>
+
+        <details class="group border-[3px] border-white bg-black">
+          <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+            <span>Do crypto casinos require KYC verification?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl">+</span>
+          </summary>
+          <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+            It varies. Some licensed casinos require full KYC for withdrawals above a certain limit. Other crypto-native platforms allow fully anonymous play with no verification at all. Our reviews always specify the KYC policy for each casino.
+          </div>
+        </details>
+
+        <details class="group border-[3px] border-white bg-black">
+          <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+            <span>What cryptocurrencies do online casinos accept?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl">+</span>
+          </summary>
+          <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+            Bitcoin (BTC) is accepted at nearly every crypto casino. Ethereum (ETH), Litecoin (LTC), Tether (USDT), and Dogecoin (DOGE) are also widely supported. Some platforms accept 50+ different tokens including Solana, Ripple, and various altcoins.
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Internal Links -->
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6">
+        KEEP <span class="text-[#8A2BE2]">READING</span>
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/methodology" class="border-[3px] border-white p-5 bg-black hover:bg-[#111111] transition-colors shadow-[4px_4px_0px_0px_#39FF14]">
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Review Methodology</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">How we test and score every casino.</p>
+        </a>
+        <a href="/casinos" class="border-[3px] border-white p-5 bg-black hover:bg-[#111111] transition-colors shadow-[4px_4px_0px_0px_#8A2BE2]">
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">All Casino Reviews</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Full directory of every reviewed platform.</p>
+        </a>
+        <a href="/bonus" class="border-[3px] border-white p-5 bg-black hover:bg-[#111111] transition-colors shadow-[4px_4px_0px_0px_#FAFF00]">
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Crypto Bonuses</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">The best deposit bonuses and free spins.</p>
+        </a>
+        <a href="/guides" class="border-[3px] border-white p-5 bg-black hover:bg-[#111111] transition-colors shadow-[4px_4px_0px_0px_#39FF14]">
+          <p class="font-[Space_Grotesk] font-bold text-white mb-1">Crypto Guides</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Learn the basics before you play.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
