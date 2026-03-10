@@ -13,19 +13,20 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const d = post.data;
 
-const lastUpdated = post.data.updatedAt || post.data.publishedAt;
+const lastUpdated = d.updatedAt || d.publishedAt;
 const lastUpdatedFormatted = lastUpdated
   ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
   : null;
 
 const allPosts = await getCollection("posts");
-const currentTags = post.data.tags || [];
-const currentType = post.data.bonusType;
+const currentTags = d.tags || [];
+const currentType = d.bonusType;
 
 const relatedBonuses = allPosts
   .filter(isBonus)
-  .filter((b) => b.data.slug !== post.data.slug)
+  .filter((b) => b.data.slug !== d.slug)
   .filter((b) => {
     if (currentTags.length > 0 && b.data.tags) {
       if (b.data.tags.some((tag: string) => currentTags.includes(tag))) return true;
@@ -38,25 +39,107 @@ const relatedBonuses = allPosts
 const displayRelated =
   relatedBonuses.length > 0
     ? relatedBonuses
-    : allPosts.filter(isBonus).filter((b) => b.data.slug !== post.data.slug).slice(0, 3);
+    : allPosts.filter(isBonus).filter((b) => b.data.slug !== d.slug).slice(0, 3);
 
-const jsonld = post.data.schema_jsonld || "";
-const claimUrl = post.data.claim_url
-  ? `/go/${post.data.claim_url}`
-  : post.data.website
-    ? `/go/${post.data.slug}`
+const claimUrl = d.claim_url
+  ? `/go/${d.claim_url}`
+  : d.website
+    ? `/go/${d.slug}`
     : null;
 
-const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+const robots = d.robots || (d.noIndex ? "noindex, nofollow" : "index, follow");
+
+// Canonical: always derive from actual route
+const canonical = `https://cryptobonuslist.com/bonus/${d.slug}`;
+
+// Build JSON-LD from frontmatter
+const siteUrl = "https://cryptobonuslist.com";
+const pageUrl = `${siteUrl}/bonus/${d.slug}`;
+
+const articleSchema: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: d.title,
+  description: d.description,
+  url: pageUrl,
+  datePublished: d.publishedAt ? new Date(d.publishedAt).toISOString() : undefined,
+  dateModified: lastUpdated ? new Date(lastUpdated).toISOString() : undefined,
+  mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+  publisher: { "@type": "Organization", name: "cryptobonuslist.com", url: siteUrl },
+};
+if (d.author) {
+  articleSchema.author = { "@type": "Person", name: d.author, ...(d.authorSlug ? { url: `${siteUrl}/team/${d.authorSlug}` } : {}) };
+}
+if (d.image) {
+  articleSchema.image = { "@type": "ImageObject", url: d.image.startsWith("http") ? d.image : `${siteUrl}${d.image}`, width: d.imageWidth || 1792, height: d.imageHeight || 1024, ...(d.imageAlt ? { caption: d.imageAlt } : {}) };
+}
+if (d.tags?.length) articleSchema.keywords = d.tags.join(", ");
+
+const schemas: Record<string, any>[] = [articleSchema];
+
+// Product + AggregateRating + Offer
+if (d.ourRating || d.playerRating) {
+  const prodSchema: Record<string, any> = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: d.casino_name || d.casinoName || d.title,
+    description: d.description,
+  };
+  if (d.playerRating && d.playerRatingCount) {
+    prodSchema.aggregateRating = { "@type": "AggregateRating", ratingValue: String(d.playerRating), bestRating: "10", worstRating: "0", ratingCount: String(d.playerRatingCount) };
+  } else if (d.ourRating) {
+    prodSchema.aggregateRating = { "@type": "AggregateRating", ratingValue: String(d.ourRating), bestRating: "10", worstRating: "0", ratingCount: "1" };
+  }
+  if (d.bonus) {
+    prodSchema.offers = { "@type": "Offer", name: d.bonus, description: d.description, ...(d.expires_at ? { validThrough: new Date(d.expires_at).toISOString() } : {}), ...(d.code ? { discountCode: d.code } : {}), availability: "https://schema.org/InStock" };
+  }
+  schemas.push(prodSchema);
+}
+
+// FAQ schema from faqs field
+if (d.faqs && d.faqs.length > 0) {
+  schemas.push({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: d.faqs.map((faq: { question: string; answer: string }) => ({
+      "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  });
+}
+
+const jsonld = JSON.stringify(schemas);
+
+// Casino info rows - only populated ones render
+const casinoName = d.casino_name || d.casinoName;
+const infoRows: { label: string; value: string }[] = [];
+if (d.established) infoRows.push({ label: "Established", value: d.established });
+if (d.licences) infoRows.push({ label: "Licences", value: d.licences });
+if (d.currencies) infoRows.push({ label: "Currencies", value: d.currencies });
+if (d.depositMethods || d.deposit_methods) infoRows.push({ label: "Deposit Methods", value: (d.depositMethods || d.deposit_methods)! });
+if (d.withdrawalMethods || d.withdrawal_methods) infoRows.push({ label: "Withdrawal Methods", value: (d.withdrawalMethods || d.withdrawal_methods)! });
+if (d.withdrawalTimes || d.withdrawal_time) infoRows.push({ label: "Withdrawal Time", value: (d.withdrawalTimes || d.withdrawal_time)! });
+if (d.withdrawalFees) infoRows.push({ label: "Withdrawal Fees", value: d.withdrawalFees });
+if (d.minimumDeposit || d.minimum_deposit) infoRows.push({ label: "Min Deposit", value: (d.minimumDeposit || d.minimum_deposit)! });
+if (d.minimumWithdrawalAmount) infoRows.push({ label: "Min Withdrawal", value: d.minimumWithdrawalAmount });
+if (d.gameProviders || d.game_providers) infoRows.push({ label: "Game Providers", value: (d.gameProviders || d.game_providers)! });
+if (d.liveChat || d.live_chat) infoRows.push({ label: "Live Chat", value: (d.liveChat || d.live_chat)! });
+if (d.emailSupport || d.email_support) infoRows.push({ label: "Email Support", value: (d.emailSupport || d.email_support)! });
+if (d.vipLoyaltyProgram) infoRows.push({ label: "VIP Program", value: d.vipLoyaltyProgram });
+
+const expiresFormatted = d.expires_at
+  ? new Date(d.expires_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+
+const reviewUrl = d.casinoReviewUrl || null;
 ---
 
 <Layout
-  title={post.data.seoTitle}
-  description={post.data.description}
+  title={d.seoTitle}
+  description={d.description}
   jsonld={jsonld}
   ogType="article"
-  ogImage={post.data.image || "/favicon.svg"}
-  canonical={post.data.canonical || undefined}
+  ogImage={d.image || "/favicon.svg"}
+  canonical={canonical}
   robots={robots}
 >
   <article class="px-6 py-12 pb-24 md:pb-12">
@@ -68,63 +151,76 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
           <li class="text-[#D4D4D4]">/</li>
-          <li class="text-white" aria-current="page">{post.data.title}</li>
+          <li class="text-white" aria-current="page">{d.title}</li>
         </ol>
       </nav>
 
-      {lastUpdatedFormatted && (
-        <div class="mb-4 inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-4 py-2">
-          <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
-          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
-        </div>
-      )}
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        {lastUpdatedFormatted && (
+          <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-4 py-2">
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
+            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
+          </div>
+        )}
+        {expiresFormatted && (
+          <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#FAFF00] px-4 py-2">
+            <span class="text-[#FAFF00] font-[JetBrains_Mono] text-xs font-bold">VALID UNTIL:</span>
+            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{expiresFormatted}</span>
+          </div>
+        )}
+      </div>
 
       <!-- Banner -->
       <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14]">
         <div class="flex items-center justify-between gap-4 mb-4">
           <div class="flex items-center gap-3">
-            {post.data.bonusType && (
+            {d.bonusType && (
               <span class="inline-block bg-[#8A2BE2] text-white text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
-                {post.data.bonusType}
+                {d.bonusType}
               </span>
             )}
-            {post.data.verified && (
+            {d.verified && (
               <span class="inline-block bg-[#39FF14] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
                 VERIFIED
+              </span>
+            )}
+            {d.exclusive && (
+              <span class="inline-block bg-[#FAFF00] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+                EXCLUSIVE
               </span>
             )}
           </div>
         </div>
 
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
-          {post.data.title}
+          {d.title}
         </h1>
 
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{post.data.description}</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{d.description}</p>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          {post.data.bonus && (
+          {d.bonus && (
             <div class="border-2 border-[#39FF14] p-3">
               <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">BONUS AMOUNT</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.bonus}</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{d.bonus}</div>
             </div>
           )}
-          {post.data.freeSpins && Number(post.data.freeSpins) > 0 && (
+          {d.freeSpins && Number(d.freeSpins) > 0 && (
             <div class="border-2 border-[#39FF14] p-3">
               <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">FREE SPINS</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.freeSpins}</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{d.freeSpins}</div>
             </div>
           )}
-          {post.data.wageringRequirements && (
+          {d.wageringRequirements && (
             <div class="border-2 border-white p-3">
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">WAGERING</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.wageringRequirements}</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{d.wageringRequirements}</div>
             </div>
           )}
-          {(post.data.minimum_deposit || post.data.minimumDeposit) && (
+          {(d.minimum_deposit || d.minimumDeposit) && (
             <div class="border-2 border-white p-3">
               <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">MIN DEPOSIT</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{post.data.minimum_deposit || post.data.minimumDeposit}</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold">{d.minimum_deposit || d.minimumDeposit}</div>
             </div>
           )}
         </div>
@@ -141,37 +237,56 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
         )}
 
         <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
-          {post.data.casino_name && (
-            <div class="text-white font-[JetBrains_Mono]">
-              <span class="text-[#FAFF00]">Casino:</span> {post.data.casino_name.replace(/Bonus:.*$/, "").trim()}
-            </div>
-          )}
-          {post.data.ourRating && (
-            <div class="flex items-center gap-2">
-              <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
-              <span class="text-white font-[Space_Grotesk] font-bold text-2xl">{post.data.ourRating}</span>
-              <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
-            </div>
-          )}
+          <div class="flex items-center gap-4">
+            {casinoName && (
+              <div class="text-white font-[JetBrains_Mono]">
+                <span class="text-[#FAFF00]">Casino:</span>{" "}
+                {reviewUrl ? (
+                  <a href={reviewUrl} class="text-[#39FF14] hover:underline">{casinoName}</a>
+                ) : (
+                  <span>{casinoName}</span>
+                )}
+              </div>
+            )}
+          </div>
+          <div class="flex items-center gap-4 flex-wrap">
+            {d.ourRating && (
+              <div class="flex items-center gap-2">
+                <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
+                <span class="text-white font-[Space_Grotesk] font-bold text-2xl">{d.ourRating}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
+              </div>
+            )}
+            {d.playerRating && (
+              <div class="flex items-center gap-2">
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">PLAYERS:</span>
+                <span class="text-white font-[Space_Grotesk] font-bold text-lg">{d.playerRating}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
+                {d.playerRatingCount && (
+                  <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">({d.playerRatingCount} votes)</span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {post.data.code && post.data.code.trim() !== "" && (
+        {d.code && d.code.trim() !== "" && (
           <div class="mt-4 p-4 bg-[#39FF14] border-[3px] border-black">
             <span class="text-black font-[JetBrains_Mono] text-sm font-bold">BONUS CODE:</span>
-            <span class="text-black font-[Space_Grotesk] text-xl font-bold ml-2">{post.data.code}</span>
+            <span class="text-black font-[Space_Grotesk] text-xl font-bold ml-2">{d.code}</span>
           </div>
         )}
       </div>
 
-      {(post.data.pros || post.data.cons) && (
+      {(d.pros || d.cons) && (
         <div class="grid md:grid-cols-2 gap-6 mb-8">
-          {post.data.pros && (
+          {d.pros && d.pros.length > 0 && (
             <div class="border-[3px] border-[#39FF14] bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4 flex items-center gap-2">
                 PROS
               </h3>
               <ul class="space-y-2">
-                {post.data.pros.map((pro: string) => (
+                {d.pros.map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-[#39FF14] mt-1">+</span>
                     <span>{pro.trim()}</span>
@@ -180,13 +295,13 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
               </ul>
             </div>
           )}
-          {post.data.cons && (
+          {d.cons && d.cons.length > 0 && (
             <div class="border-[3px] border-white bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4 flex items-center gap-2">
                 CONS
               </h3>
               <ul class="space-y-2">
-                {post.data.cons.map((con: string) => (
+                {d.cons.map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-white mt-1">-</span>
                     <span>{con.trim()}</span>
@@ -199,17 +314,41 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
       )}
 
       <!-- Cover Image -->
-      {post.data.image && (
+      {d.image && (
         <div class="mb-8">
           <img
-            src={post.data.image}
-            alt={post.data.imageAlt}
-            width={post.data.imageWidth}
-            height={post.data.imageHeight}
+            src={d.image}
+            alt={d.imageAlt}
+            width={d.imageWidth}
+            height={d.imageHeight}
             loading="eager"
             fetchpriority="high"
             class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
           />
+        </div>
+      )}
+
+      <!-- Casino Info Table -->
+      {infoRows.length > 0 && (
+        <div class="mb-8 border-[3px] border-white bg-black">
+          <div class="bg-[#1a1a1a] border-b-[3px] border-white px-6 py-3 flex items-center justify-between">
+            <h2 class="font-[Space_Grotesk] text-lg font-bold text-[#FAFF00]">
+              {casinoName ? `${casinoName} Details` : "Casino Details"}
+            </h2>
+            {reviewUrl && (
+              <a href={reviewUrl} class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold hover:underline">
+                FULL REVIEW &rarr;
+              </a>
+            )}
+          </div>
+          <div class="divide-y divide-[#333]">
+            {infoRows.map((row) => (
+              <div class="grid grid-cols-3 px-6 py-3">
+                <div class="text-[#FAFF00] font-[JetBrains_Mono] text-xs font-bold col-span-1">{row.label}</div>
+                <div class="text-[#D4D4D4] font-[Public_Sans] text-sm col-span-2">{row.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -231,12 +370,12 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div class="flex items-center gap-3">
             <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
-            {post.data.authorSlug ? (
-              <a href={`/team/${post.data.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
-                {post.data.author}
+            {d.authorSlug ? (
+              <a href={`/team/${d.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
+                {d.author}
               </a>
             ) : (
-              <span class="text-white font-[Space_Grotesk] font-bold">{post.data.author}</span>
+              <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
             )}
           </div>
           {lastUpdatedFormatted && (
