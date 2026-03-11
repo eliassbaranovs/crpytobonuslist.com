@@ -1,13 +1,15 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { getRatingBg, getReviewUrl, getClaimUrl } from "../../lib/casino-filters";
+import { getRatingBg, getReviewUrl } from "../../lib/casino-filters";
 
 const allPosts = await getCollection("posts");
 const casinoA = allPosts.find(p => p.data.slug === "trino-casino-review");
 const casinoB = allPosts.find(p => p.data.slug === "starz-spins-casino-review");
 
-if (!casinoA || !casinoB) throw new Error("Casino data not found");
+if (!casinoA || !casinoB) {
+  return Astro.redirect("/404");
+}
 
 const a = casinoA.data;
 const b = casinoB.data;

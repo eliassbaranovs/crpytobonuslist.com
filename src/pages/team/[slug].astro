@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isBonus, getPostUrl, getAllNews } from "../../lib/posts";
+import { getAllNews, isBonus } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const authors = await getCollection("authors");

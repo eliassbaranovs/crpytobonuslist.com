@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { isBonus, isReview, isGuide, sortByDate, getPostUrl, getAllNews } from "../lib/posts";
+import { getAllNews, getPostUrl, isBonus, isGuide, isReview, sortByDate } from "../lib/posts";
 
 const allPosts = await getCollection("posts");
 const latestBonuses = sortByDate(allPosts.filter(isBonus)).slice(0, 3);
