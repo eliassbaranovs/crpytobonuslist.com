@@ -1,8 +1,34 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { getAllNews, isBonus } from "../../lib/posts";
 
 const authors = await getCollection("authors");
+
+// Sort authors by join date (newest first)
+const sortedAuthors = authors.sort((a, b) => 
+  new Date(b.data.joinedAt).getTime() - new Date(a.data.joinedAt).getTime()
+);
+
+// Load all content for dynamic counting
+const allPosts = await getCollection("posts");
+const allNewsItems = await getAllNews();
+
+// Calculate contribution counts for each author
+const authorStats = sortedAuthors.map((author) => {
+  const bonusCount = allPosts.filter(isBonus).filter(
+    (b) => b.data.authorSlug === author.data.slug || b.data.author === author.data.name
+  ).length;
+  const newsCount = allNewsItems.filter(
+    (n) => n.data.authorSlug === author.data.slug || n.data.author === author.data.name
+  ).length;
+  return {
+    author,
+    bonusCount,
+    newsCount,
+    totalCount: bonusCount + newsCount
+  };
+});
 ---
 
 <Layout title="Our Team | CryptoBonusList" description="Meet the people behind CryptoBonusList. Crypto gambling analysts and writers who test casinos with real money.">
@@ -16,10 +42,10 @@ const authors = await getCollection("authors");
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {authors.map((author) => (
+        {authorStats.map(({ author, bonusCount, newsCount, totalCount }) => (
           <a
             href={`/team/${author.data.slug}`}
-            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]"
+            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14] hover:shadow-[8px_8px_0px_0px_#39FF14] transition-all"
           >
             <div class="flex gap-4 items-start">
               {author.data.avatar && (
@@ -37,9 +63,14 @@ const authors = await getCollection("authors");
                 <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs uppercase tracking-wider mb-3">
                   {author.data.role}
                 </p>
-                <p class="text-[#D4D4D4] font-[Public_Sans] text-sm line-clamp-3">
+                <p class="text-[#D4D4D4] font-[Public_Sans] text-sm line-clamp-3 mb-3">
                   {author.data.bio}
                 </p>
+                {totalCount > 0 && (
+                  <p class="text-[#8A2BE2] font-[JetBrains_Mono] text-xs">
+                    {totalCount} {totalCount === 1 ? 'contribution' : 'contributions'}
+                  </p>
+                )}
               </div>
             </div>
           </a>

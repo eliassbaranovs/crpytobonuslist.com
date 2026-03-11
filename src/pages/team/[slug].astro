@@ -21,6 +21,15 @@ const authorNews = allNewsItems.filter(
   (n) => n.data.authorSlug === author.data.slug || n.data.author === author.data.name
 );
 
+// Dynamic statistics
+const totalBonuses = authorBonuses.length;
+const totalNews = authorNews.length;
+const totalContributions = totalBonuses + totalNews;
+const bonusesToShow = 6;
+const newsToShow = 4;
+const hasMoreBonuses = totalBonuses > bonusesToShow;
+const hasMoreNews = totalNews > newsToShow;
+
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Person",
@@ -57,42 +66,76 @@ const schemaJsonLd = JSON.stringify({
             ))}
           </div>
         )}
-        <p class="mt-4 text-[#D4D4D4] font-[JetBrains_Mono] text-xs">
-          Team member since {new Date(author.data.joinedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-        </p>
+        <div class="mt-6 flex flex-wrap gap-4 text-[#D4D4D4] font-[JetBrains_Mono] text-xs">
+          <p>Team member since {new Date(author.data.joinedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+          {totalContributions > 0 && (
+            <p class="text-[#39FF14]">
+              {totalContributions} {totalContributions === 1 ? 'contribution' : 'contributions'}
+              {totalBonuses > 0 && totalNews > 0 && ` (${totalBonuses} ${totalBonuses === 1 ? 'bonus' : 'bonuses'}, ${totalNews} ${totalNews === 1 ? 'article' : 'articles'})`}
+            </p>
+          )}
+        </div>
       </header>
 
-      {authorBonuses.length > 0 && (
-        <section class="mb-12">
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2">
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6 border-b-[3px] border-[#39FF14] pb-2">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">
             BONUSES BY {author.data.name.toUpperCase()}
+            {totalBonuses > 0 && <span class="text-[#39FF14] text-lg ml-2">({totalBonuses})</span>}
           </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {authorBonuses.slice(0, 6).map((bonus) => (
-              <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]">
-                <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">{bonus.data.title}</h3>
-                {bonus.data.bonus && <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm">{bonus.data.bonus}</p>}
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+        </div>
+        {totalBonuses > 0 ? (
+          <>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {authorBonuses.slice(0, bonusesToShow).map((bonus) => (
+                <a href={`/bonus/${bonus.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]">
+                  <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">{bonus.data.title}</h3>
+                  {bonus.data.bonus && <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm">{bonus.data.bonus}</p>}
+                </a>
+              ))}
+            </div>
+            {hasMoreBonuses && (
+              <div class="mt-6 text-center">
+                <a href="/bonus" class="inline-block bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold px-6 py-3 uppercase tracking-wider hover:bg-white transition-colors">
+                  View All {totalBonuses} Bonuses →
+                </a>
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="text-[#D4D4D4] font-[Public_Sans] italic">No bonuses reviewed yet. Coming soon!</p>
+        )}
+      </section>
 
-      {authorNews.length > 0 && (
-        <section>
-          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 border-b-[3px] border-[#39FF14] pb-2">
+      <section>
+        <div class="flex items-center justify-between mb-6 border-b-[3px] border-[#39FF14] pb-2">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">
             NEWS BY {author.data.name.toUpperCase()}
+            {totalNews > 0 && <span class="text-[#39FF14] text-lg ml-2">({totalNews})</span>}
           </h2>
-          <div class="space-y-4">
-            {authorNews.slice(0, 4).map((news) => (
-              <a href={`/news/${news.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#8A2BE2]">
-                <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">{news.data.title}</h3>
-                <p class="text-[#D4D4D4] font-[Public_Sans] text-sm line-clamp-2">{news.data.description}</p>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+        </div>
+        {totalNews > 0 ? (
+          <>
+            <div class="space-y-4">
+              {authorNews.slice(0, newsToShow).map((news) => (
+                <a href={`/news/${news.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#8A2BE2]">
+                  <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">{news.data.title}</h3>
+                  <p class="text-[#D4D4D4] font-[Public_Sans] text-sm line-clamp-2">{news.data.description}</p>
+                </a>
+              ))}
+            </div>
+            {hasMoreNews && (
+              <div class="mt-6 text-center">
+                <a href="/news" class="inline-block bg-[#8A2BE2] text-white font-[JetBrains_Mono] font-bold px-6 py-3 uppercase tracking-wider hover:bg-[#39FF14] hover:text-black transition-colors">
+                  View All {totalNews} Articles →
+                </a>
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="text-[#D4D4D4] font-[Public_Sans] italic">No articles published yet. Coming soon!</p>
+        )}
+      </section>
     </div>
   </article>
 </Layout>
