@@ -74,10 +74,10 @@ function isActive(prefix: string): boolean {
     </a>
 
     <!-- Header -->
-    <header class="border-b-[3px] border-white px-6 py-4 relative z-50">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <a href="/" class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-[#39FF14] tracking-tight">
-          [ CRYPTO_BONUS_LIST ]
+    <header class="border-b-[3px] border-white px-6 h-14 md:h-16 relative z-50">
+      <div class="max-w-7xl mx-auto flex items-center justify-between h-full">
+        <a href="/" class="block shrink-0 h-full py-2">
+          <img src="/cryptobonuslist.png" alt="CryptoBonusList" class="h-full w-auto object-contain" />
         </a>
         <nav aria-label="Main navigation" class="hidden md:flex gap-6 text-sm font-[Public_Sans] font-semibold uppercase tracking-widest">
           <!-- Casinos dropdown -->
@@ -194,15 +194,15 @@ function isActive(prefix: string): boolean {
     <!-- Footer -->
     <footer class="border-t-[3px] border-white mt-16">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white">
-        <div class="p-8">
-          <p class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-4">[ CRYPTO_BONUS_LIST ]</p>
+        <div class="px-8 pt-6 pb-8">
+          <a href="/" class="block mb-3"><img src="/cryptobonuslist.png" alt="CryptoBonusList" class="h-12 w-auto" /></a>
           <p class="text-[#D4D4D4] text-sm font-[Public_Sans] leading-relaxed">
             Crypto casino bonuses, reviewed by people who use them. No fluff. No hype.
           </p>
         </div>
         <nav aria-label="Footer pages" class="p-8">
           <p class="font-[Space_Grotesk] text-lg font-bold text-white mb-4">PAGES</p>
-          <ul class="space-y-2 text-sm font-[Public_Sans]">
+          <ul class="columns-2 gap-x-6 space-y-2 text-sm font-[Public_Sans]">
             <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casino Reviews</a></li>
             <li><a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Best Crypto Casinos</a></li>
             <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
@@ -236,6 +236,25 @@ function isActive(prefix: string): boolean {
             <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14]">Terms & Conditions</a></li>
           </ul>
         </nav>
+      </div>
+      <div class="border-t-[3px] border-white/20 py-8">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-8 md:gap-12 flex-wrap px-6">
+          <a href="/responsible-gambling" class="opacity-50 hover:opacity-80 transition-opacity" title="18+ Only">
+            <img src="/18years_over.webp" alt="18+ Only" class="h-8 w-auto" loading="lazy" />
+          </a>
+          <a href="https://www.gamcare.org.uk/" target="_blank" rel="noopener noreferrer" class="opacity-50 hover:opacity-80 transition-opacity" title="GamCare">
+            <img src="/gamcare.webp" alt="GamCare" class="h-8 w-auto" loading="lazy" />
+          </a>
+          <a href="https://www.gambleaware.org/" target="_blank" rel="noopener noreferrer" class="opacity-50 hover:opacity-80 transition-opacity" title="GambleAware">
+            <img src="/gamble-aware.webp" alt="GambleAware" class="h-8 w-auto" loading="lazy" />
+          </a>
+          <a href="https://gamblersanonymous.org/" target="_blank" rel="noopener noreferrer" class="opacity-50 hover:opacity-80 transition-opacity" title="Gamblers Anonymous">
+            <img src="/gamblers-anonymous.webp" alt="Gamblers Anonymous" class="h-8 w-auto" loading="lazy" />
+          </a>
+          <a href="https://responsiblegambling.org/" target="_blank" rel="noopener noreferrer" class="opacity-50 hover:opacity-80 transition-opacity" title="Responsible Gambling Council">
+            <img src="/responsible-gambling-council.webp" alt="Responsible Gambling Council" class="h-8 w-auto" loading="lazy" />
+          </a>
+        </div>
       </div>
       <div class="border-t-[3px] border-white p-6">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
