@@ -4,9 +4,9 @@ slug: "stake-us"
 description: "Stake.us review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "Stake.us Review 2026 – Legit or Not? Our Honest Verdict"
 excerpt: "Stake.us is a leading US sweepstakes casino offering a massive game library and robust VIP program, but its redemption process includes a 3x playthrough and a 24-hour request limit that slows down pay"
-publishedAt: 2026-03-12T17:42:59.321Z
+publishedAt: 2026-03-12T21:34:19.532Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T17:42:59.321Z
+updatedAt: 2026-03-12T21:34:19.532Z
 tags:
   - "Stake.us"
   - "casino review"
