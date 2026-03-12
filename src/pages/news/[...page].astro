@@ -14,11 +14,39 @@ interface Props {
 }
 
 const { page } = Astro.props;
+
+// Compute reading time + relative date for each article
+const now = new Date();
+function getRelativeTime(date: Date): string {
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) {
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    return diffHours === 0 ? "Just now" : diffHours + "h ago";
+  }
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return diffDays + "d ago";
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return weeks + "w ago";
+  }
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function getReadingTime(article: AnyPost): string {
+  if (article.data.readingTime) return article.data.readingTime;
+  const wc = article.body ? article.body.split(/\s+/).filter(Boolean).length : 0;
+  return (Math.ceil(wc / 200) || 1) + " min read";
+}
+
+// First featured article on page 1
+const featuredArticle = page.currentPage === 1 ? page.data.find((a) => a.data.featured) || page.data[0] : null;
+const restArticles = featuredArticle ? page.data.filter((a) => a !== featuredArticle) : page.data;
 ---
 
 <Layout title="Crypto Casino News | CryptoBonusList" description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.">
   <section class="px-6 py-12">
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
         CRYPTO <span class="text-[#FAFF00]">NEWS</span>
       </h1>
@@ -26,34 +54,103 @@ const { page } = Astro.props;
         What is moving in crypto gambling. Regulation shifts, new features, network changes, and the updates that affect how you deposit and play.
       </p>
 
-      <div class="space-y-0">
-        {page.data.map((article, i) => (
-          <a
-            href={`/news/${article.data.slug}`}
-            class:list={[
-              "card-brutal block bg-black border-[3px] border-white p-6",
-              i > 0 && "-mt-[3px]",
-              "shadow-none hover:shadow-[6px_6px_0px_0px_#FAFF00] hover:z-10 hover:relative transition-all"
-            ]}
-          >
-            <div class="flex items-center gap-4 mb-2">
-              <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] font-bold">
-                {new Date(article.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </span>
-              <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">{article.data.author}</span>
+      {/* Hero / Featured Card (page 1 only) */}
+      {featuredArticle && (
+        <a
+          href={`/news/${featuredArticle.data.slug}`}
+          class="group block bg-black border-[3px] border-white mb-8 shadow-[6px_6px_0px_0px_#FAFF00] hover:shadow-[8px_8px_0px_0px_#39FF14] transition-all"
+        >
+          {featuredArticle.data.image && (
+            <div class="relative overflow-hidden">
+              <img
+                src={featuredArticle.data.image}
+                alt={featuredArticle.data.imageAlt || featuredArticle.data.title}
+                width={featuredArticle.data.imageWidth}
+                height={featuredArticle.data.imageHeight}
+                loading="eager"
+                fetchpriority="high"
+                class="w-full h-auto border-b-[3px] border-white group-hover:scale-[1.02] transition-transform duration-300"
+              />
+              <div class="absolute top-0 left-0 flex gap-2 p-3">
+                <span class="bg-[#FAFF00] text-black font-[Space_Grotesk] font-bold text-xs px-3 py-1 tracking-wider">FEATURED</span>
+                {featuredArticle.data.category && (
+                  <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xs px-3 py-1">{featuredArticle.data.category}</span>
+                )}
+              </div>
             </div>
-            <h2 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white mb-2">{article.data.title}</h2>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-3">{article.data.description}</p>
+          )}
+          <div class="p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-3 flex-wrap">
+              <span class="text-[#39FF14] text-sm font-[JetBrains_Mono] font-bold">
+                {getRelativeTime(new Date(featuredArticle.data.publishDate || featuredArticle.data.publishedAt))}
+              </span>
+              <span class="text-[#D4D4D4] text-xs">&bull;</span>
+              <span class="text-[#D4D4D4] text-sm font-[JetBrains_Mono]">{getReadingTime(featuredArticle)}</span>
+              <span class="text-[#D4D4D4] text-xs">&bull;</span>
+              <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">{featuredArticle.data.author}</span>
+            </div>
+            <h2 class="font-[Space_Grotesk] text-2xl md:text-4xl font-bold text-white mb-3 leading-tight group-hover:text-[#FAFF00] transition-colors">{featuredArticle.data.title}</h2>
+            <p class="text-[#D4D4D4] text-base font-[Public_Sans] mb-4 line-clamp-3">{featuredArticle.data.description}</p>
             <div class="flex flex-wrap gap-2">
-              {article.data.tags.map((tag: string) => (
+              {featuredArticle.data.tags.map((tag: string) => (
                 <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">{tag}</span>
               ))}
+            </div>
+          </div>
+        </a>
+      )}
+
+      {/* Rest of articles — grid cards with full image */}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+        {restArticles.map((article) => (
+          <a
+            href={`/news/${article.data.slug}`}
+            class="group block bg-black border-[3px] border-white shadow-none hover:shadow-[6px_6px_0px_0px_#FAFF00] hover:z-10 hover:relative transition-all"
+          >
+            {article.data.image && (
+              <div class="relative overflow-hidden">
+                <img
+                  src={article.data.image}
+                  alt={article.data.imageAlt || article.data.title}
+                  width={article.data.imageWidth}
+                  height={article.data.imageHeight}
+                  loading="lazy"
+                  class="w-full h-auto border-b-[3px] border-white group-hover:scale-[1.02] transition-transform duration-300"
+                />
+                {article.data.category && (
+                  <div class="absolute top-0 left-0 p-2">
+                    <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xs px-2 py-0.5">{article.data.category}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            <div class="p-5">
+              <div class="flex items-center gap-3 mb-2 flex-wrap">
+                <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] font-bold">
+                  {getRelativeTime(new Date(article.data.publishDate || article.data.publishedAt))}
+                </span>
+                <span class="text-[#D4D4D4] text-xs">&bull;</span>
+                <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">{getReadingTime(article)}</span>
+              </div>
+              <h2 class="font-[Space_Grotesk] text-lg md:text-xl font-bold text-white mb-2 leading-snug group-hover:text-[#FAFF00] transition-colors">{article.data.title}</h2>
+              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] line-clamp-2 mb-3">{article.data.description}</p>
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-2">
+                  {article.data.tags.slice(0, 3).map((tag: string) => (
+                    <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00]/40 px-2 py-0.5">{tag}</span>
+                  ))}
+                  {article.data.tags.length > 3 && (
+                    <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">+{article.data.tags.length - 3}</span>
+                  )}
+                </div>
+                <span class="text-[#D4D4D4] text-xs font-[Public_Sans] shrink-0">{article.data.author}</span>
+              </div>
             </div>
           </a>
         ))}
       </div>
 
-      <!-- Pagination Navigation -->
+      {/* Pagination Navigation */}
       {(page.url.prev || page.url.next) && (
         <nav class="flex justify-between items-center mt-12 pt-8 border-t-[3px] border-white">
           <div>
@@ -62,11 +159,11 @@ const { page } = Astro.props;
                 href={page.url.prev}
                 class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
               >
-                ← Previous
+                &larr; Previous
               </a>
             ) : (
               <span class="inline-block opacity-30 px-6 py-3 font-[Space_Grotesk] font-bold text-[#D4D4D4]">
-                ← Previous
+                &larr; Previous
               </span>
             )}
           </div>
@@ -81,11 +178,11 @@ const { page } = Astro.props;
                 href={page.url.next}
                 class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
               >
-                Next →
+                Next &rarr;
               </a>
             ) : (
               <span class="inline-block opacity-30 px-6 py-3 font-[Space_Grotesk] font-bold text-[#D4D4D4]">
-                Next →
+                Next &rarr;
               </span>
             )}
           </div>

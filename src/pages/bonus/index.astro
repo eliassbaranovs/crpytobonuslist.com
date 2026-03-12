@@ -9,7 +9,7 @@ const bonuses = sortByDate(allPosts.filter(isBonus));
 
 <Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.">
   <section class="px-6 py-12">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
         CRYPTO <span class="text-[#39FF14]">BONUSES</span>
       </h1>
@@ -17,37 +17,138 @@ const bonuses = sortByDate(allPosts.filter(isBonus));
         Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers. Reviewed with the numbers that matter.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bonuses.map((bonus) => (
-          <a
-            href={`/bonus/${bonus.data.slug}`}
-            class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]"
-          >
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex gap-2">
-                  {bonus.data.bonusType && (
-                    <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                      {bonus.data.bonusType}
-                    </span>
-                  )}
-                  {bonus.data.verified && (
-                    <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
-                      VERIFIED
-                    </span>
-                  )}
+      <div class="space-y-6">
+        {bonuses.map((bonus) => {
+          const d = bonus.data;
+          const casinoName = d.casino_name || d.casinoName;
+          const claimUrl = d.claim_url
+            ? (d.claim_url.includes("/") ? `/go/${d.slug}` : `/go/${d.claim_url}`)
+            : d.website ? `/go/${d.slug}` : null;
+
+          return (
+            <div class="border-[3px] border-white bg-black shadow-[6px_6px_0px_0px_#39FF14]">
+              {/* Top row: badges */}
+              <div class="flex items-center gap-2 px-5 pt-5 pb-0 flex-wrap">
+                {d.bonusType && (
+                  <span class="bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                    {d.bonusType}
+                  </span>
+                )}
+                {d.verified && (
+                  <span class="bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                    VERIFIED
+                  </span>
+                )}
+                {d.exclusive && (
+                  <span class="bg-[#FAFF00] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                    EXCLUSIVE
+                  </span>
+                )}
+                {d.ourRating && (
+                  <span class="ml-auto flex items-center gap-1">
+                    <span class="text-[#FAFF00] font-[Space_Grotesk] font-bold text-xl">{d.ourRating}</span>
+                    <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">/10</span>
+                  </span>
+                )}
               </div>
-            </div>
-            <h2 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{bonus.data.title}</h2>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">{bonus.data.description}</p>
-            <div class="flex items-center gap-2 flex-wrap">
-              {bonus.data.bonus && (
-                <div class="text-white text-xs font-[JetBrains_Mono] border border-white px-2 py-1 inline-block">
-                  {bonus.data.bonus}
+
+              {/* Main content row */}
+              <div class="flex flex-col md:flex-row gap-5 p-5">
+                {/* Left: logo + casino name */}
+                <div class="flex md:flex-col items-center md:items-start gap-3 md:w-36 shrink-0">
+                  {d.logo ? (
+                    <img src={d.logo} alt={casinoName || d.title} class="w-16 h-16 md:w-20 md:h-20 object-contain border-2 border-white bg-white" />
+                  ) : d.image ? (
+                    <div class="w-16 h-16 md:w-20 md:h-20 overflow-hidden border-2 border-white">
+                      <img src={d.image} alt={d.title} class="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div class="w-16 h-16 md:w-20 md:h-20 border-2 border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center">
+                      <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-lg">{(casinoName || d.title).charAt(0)}</span>
+                    </div>
+                  )}
+                  {casinoName && (
+                    <span class="text-white font-[Space_Grotesk] font-bold text-sm">{casinoName}</span>
+                  )}
+                </div>
+
+                {/* Middle: title, description, quick stats */}
+                <div class="flex-1 min-w-0">
+                  <a href={`/bonus/${d.slug}`} class="group">
+                    <h2 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white mb-2 leading-snug group-hover:text-[#39FF14] transition-colors">{d.title}</h2>
+                  </a>
+                  <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-2">{d.description}</p>
+
+                  {/* Stats row */}
+                  <div class="flex flex-wrap gap-3 mb-4">
+                    {d.bonus && (
+                      <div class="border border-[#39FF14] px-3 py-1.5">
+                        <div class="text-[#39FF14] text-[10px] font-[JetBrains_Mono] font-bold leading-none mb-0.5">BONUS</div>
+                        <div class="text-white font-[JetBrains_Mono] font-bold text-sm leading-tight">{d.bonus}</div>
+                      </div>
+                    )}
+                    {d.freeSpins && d.freeSpins !== "None" && d.freeSpins !== "0" && (
+                      <div class="border border-[#39FF14] px-3 py-1.5">
+                        <div class="text-[#39FF14] text-[10px] font-[JetBrains_Mono] font-bold leading-none mb-0.5">FREE SPINS</div>
+                        <div class="text-white font-[JetBrains_Mono] font-bold text-sm leading-tight">{d.freeSpins}</div>
+                      </div>
+                    )}
+                    {d.wageringRequirements && (
+                      <div class="border border-white/40 px-3 py-1.5">
+                        <div class="text-[#FAFF00] text-[10px] font-[JetBrains_Mono] font-bold leading-none mb-0.5">WAGERING</div>
+                        <div class="text-white font-[JetBrains_Mono] font-bold text-sm leading-tight">{d.wageringRequirements}</div>
+                      </div>
+                    )}
+                    {(d.minimumDeposit || d.minimum_deposit) && (
+                      <div class="border border-white/40 px-3 py-1.5">
+                        <div class="text-[#FAFF00] text-[10px] font-[JetBrains_Mono] font-bold leading-none mb-0.5">MIN DEPOSIT</div>
+                        <div class="text-white font-[JetBrains_Mono] font-bold text-sm leading-tight">{d.minimumDeposit || d.minimum_deposit}</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Code badge */}
+                  {d.code && d.code.trim() !== "" && (
+                    <div class="inline-flex items-center gap-2 bg-[#39FF14]/10 border border-[#39FF14] px-3 py-1 mb-3">
+                      <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">CODE:</span>
+                      <span class="text-white font-[Space_Grotesk] font-bold text-sm">{d.code}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right: CTA */}
+                <div class="flex flex-col items-stretch md:items-end justify-center gap-3 md:w-48 shrink-0">
+                  {claimUrl && (
+                    <a
+                      href={claimUrl}
+                      class="block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-3 text-center border-[3px] border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_#000] transition-all uppercase tracking-wide"
+                    >
+                      CLAIM BONUS
+                    </a>
+                  )}
+                  <a
+                    href={`/bonus/${d.slug}`}
+                    class="block text-center text-[#D4D4D4] font-[JetBrains_Mono] text-xs hover:text-[#39FF14] transition-colors underline underline-offset-4"
+                  >
+                    Read Full Review
+                  </a>
+                </div>
+              </div>
+
+              {/* Bottom: pros preview */}
+              {d.pros && d.pros.length > 0 && (
+                <div class="border-t border-white/10 px-5 py-3 flex flex-wrap gap-x-6 gap-y-1">
+                  {d.pros.slice(0, 3).map((pro: string) => (
+                    <span class="text-[#D4D4D4] text-xs font-[Public_Sans] flex items-center gap-1.5">
+                      <span class="text-[#39FF14]">+</span>
+                      <span class="line-clamp-1">{pro.trim()}</span>
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
-          </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>

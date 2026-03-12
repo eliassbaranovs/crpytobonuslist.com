@@ -69,7 +69,7 @@ const schemaJsonLd = JSON.stringify({
   description="Crypto casino bonuses tested with real deposits. Welcome bonuses, free spins, cashback deals. Wagering requirements broken down so you know what you are getting."
   jsonld={schemaJsonLd}
 >
-  <!-- Hero -->
+  {/* Hero */}
   <section class="px-6 py-16 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
       <p class="font-[JetBrains_Mono] text-[#39FF14] text-sm mb-4 tracking-wider">&gt; UPDATED MARCH 2026</p>
@@ -82,7 +82,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Bonus Comparison Table -->
+  {/* Bonus Comparison Table */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
@@ -91,42 +91,86 @@ const schemaJsonLd = JSON.stringify({
 
       {bonuses.length > 0 ? (
         <div class="overflow-x-auto border-[3px] border-white">
-          <table class="w-full min-w-[900px] text-left">
+          <table class="w-full min-w-[1000px] text-left">
             <thead>
               <tr class="bg-white text-black font-[Space_Grotesk] text-sm uppercase tracking-wider">
-                <th class="px-4 py-3 w-16">#</th>
-                <th class="px-4 py-3">Casino / Bonus</th>
-                <th class="px-4 py-3">Bonus Amount</th>
-                <th class="px-4 py-3 w-28">Wagering</th>
-                <th class="px-4 py-3 w-28">Type</th>
-                <th class="px-4 py-3 w-44">Actions</th>
+                <th class="px-4 py-3 w-12">#</th>
+                <th class="px-4 py-3">Casino</th>
+                <th class="px-4 py-3">Bonus</th>
+                <th class="px-4 py-3 w-28">Free Spins</th>
+                <th class="px-4 py-3 w-24">Wagering</th>
+                <th class="px-4 py-3 w-20">Rating</th>
+                <th class="px-4 py-3 w-48">Actions</th>
               </tr>
             </thead>
             <tbody class="font-[Public_Sans] text-sm">
               {bonuses.map((bonus, i) => {
-                const bonusAmount = bonus.data.bonus || bonus.data.maxBonus || "See site";
-                const wagering = bonus.data.wageringRequirements || "N/A";
-                const bonusType = bonus.data.bonusType || "Bonus";
+                const d = bonus.data;
+                const casinoName = d.casino_name || d.casinoName;
+                const bonusAmount = d.bonus || d.maxBonus || "See site";
+                const wagering = d.wageringRequirements || "N/A";
+                const bonusType = d.bonusType || "Bonus";
                 const detailsUrl = getPostUrl(bonus);
-                const claimUrl = `/go/${bonus.data.slug}`;
+                const claimUrl = `/go/${d.slug}`;
+                const freeSpins = d.freeSpins && d.freeSpins !== "None" && d.freeSpins !== "0" ? d.freeSpins : null;
 
                 return (
                   <tr class={`border-t-[2px] border-white/20 ${i % 2 === 0 ? "bg-[#0A0A0A]" : "bg-[#111111]"} hover:bg-[#1a1a1a] transition-colors`}>
                     <td class="px-4 py-4 font-[JetBrains_Mono] font-bold text-[#39FF14] text-lg">{i + 1}</td>
                     <td class="px-4 py-4">
-                      <span class="font-[Space_Grotesk] font-bold text-white line-clamp-1">{bonus.data.title}</span>
+                      <div class="flex items-center gap-3">
+                        {d.logo ? (
+                          <img src={d.logo} alt={casinoName || d.title} class="w-10 h-10 object-contain border border-white bg-white shrink-0" />
+                        ) : (
+                          <div class="w-10 h-10 border border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center shrink-0">
+                            <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm">{(casinoName || d.title).charAt(0)}</span>
+                          </div>
+                        )}
+                        <div class="min-w-0">
+                          <span class="font-[Space_Grotesk] font-bold text-white block leading-tight line-clamp-1">{casinoName || d.title}</span>
+                          <span class="inline-block bg-[#8A2BE2] text-white text-[10px] font-[JetBrains_Mono] font-bold px-1.5 py-0.5 uppercase mt-1">{bonusType}</span>
+                          {d.verified && (
+                            <span class="inline-block bg-[#39FF14] text-black text-[10px] font-[JetBrains_Mono] font-bold px-1.5 py-0.5 uppercase mt-1 ml-1">VERIFIED</span>
+                          )}
+                          {d.exclusive && (
+                            <span class="inline-block bg-[#FAFF00] text-black text-[10px] font-[JetBrains_Mono] font-bold px-1.5 py-0.5 uppercase mt-1 ml-1">EXCLUSIVE</span>
+                          )}
+                        </div>
+                      </div>
                     </td>
-                    <td class="px-4 py-4 text-[#FAFF00] font-[JetBrains_Mono] text-xs">{bonusAmount}</td>
+                    <td class="px-4 py-4">
+                      <div class="text-[#FAFF00] font-[JetBrains_Mono] font-bold text-sm">{bonusAmount}</div>
+                      {d.code && d.code.trim() !== "" && (
+                        <div class="mt-1 inline-flex items-center gap-1 bg-[#39FF14]/10 border border-[#39FF14]/40 px-1.5 py-0.5">
+                          <span class="text-[#39FF14] font-[JetBrains_Mono] text-[10px] font-bold">CODE:</span>
+                          <span class="text-white font-[JetBrains_Mono] text-[10px] font-bold">{d.code}</span>
+                        </div>
+                      )}
+                    </td>
+                    <td class="px-4 py-4">
+                      {freeSpins ? (
+                        <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">{freeSpins}</span>
+                      ) : (
+                        <span class="text-[#D4D4D4]/50 font-[JetBrains_Mono] text-xs">&mdash;</span>
+                      )}
+                    </td>
                     <td class="px-4 py-4 font-[JetBrains_Mono] text-xs text-[#D4D4D4]">{wagering}</td>
                     <td class="px-4 py-4">
-                      <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-2 py-1 uppercase">{bonusType}</span>
+                      {d.ourRating ? (
+                        <div class="flex items-center gap-1">
+                          <span class="text-[#FAFF00] font-[Space_Grotesk] font-bold text-lg">{d.ourRating}</span>
+                          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-[10px]">/10</span>
+                        </div>
+                      ) : (
+                        <span class="text-[#D4D4D4]/50 font-[JetBrains_Mono] text-xs">&mdash;</span>
+                      )}
                     </td>
                     <td class="px-4 py-4">
                       <div class="flex gap-2">
-                        <a href={detailsUrl} class="text-xs font-bold border-[2px] border-white px-3 py-1 text-white hover:bg-white hover:text-black transition-colors">
-                          Details
+                        <a href={detailsUrl} class="text-xs font-bold border-[2px] border-white px-3 py-1.5 text-white hover:bg-white hover:text-black transition-colors font-[JetBrains_Mono]">
+                          Review
                         </a>
-                        <a href={claimUrl} target="_blank" rel="noopener noreferrer nofollow" class="text-xs font-bold bg-[#39FF14] text-black px-3 py-1 border-[2px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors">
+                        <a href={claimUrl} target="_blank" rel="noopener noreferrer nofollow" class="text-xs font-bold bg-[#39FF14] text-black px-3 py-1.5 border-[2px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors font-[JetBrains_Mono]">
                           Claim
                         </a>
                       </div>
@@ -149,7 +193,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Welcome Bonuses -->
+  {/* Welcome Bonuses */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
@@ -169,7 +213,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Free Spins -->
+  {/* Free Spins */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
@@ -189,7 +233,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Cashback Offers -->
+  {/* Cashback Offers */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
@@ -209,7 +253,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- No Deposit Bonuses -->
+  {/* No Deposit Bonuses */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
@@ -229,7 +273,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- How to Claim a Crypto Casino Bonus -->
+  {/* How to Claim a Crypto Casino Bonus */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
@@ -260,7 +304,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Common Bonus Mistakes -->
+  {/* Common Bonus Mistakes */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6">
@@ -293,7 +337,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- FAQ Section -->
+  {/* FAQ Section */}
   <section class="px-6 py-12 border-b-[3px] border-white">
     <div class="max-w-4xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8">
@@ -364,7 +408,7 @@ const schemaJsonLd = JSON.stringify({
     </div>
   </section>
 
-  <!-- Keep Reading -->
+  {/* Keep Reading */}
   <section class="px-6 py-12">
     <div class="max-w-7xl mx-auto">
       <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6">

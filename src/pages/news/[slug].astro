@@ -1,5 +1,5 @@
 ---
-import { render } from "astro:content";
+import { render, getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { getAllNews } from "../../lib/posts";
 
@@ -16,13 +16,12 @@ const { Content } = await render(post);
 
 const jsonld = post.data.schema_jsonld;
 const lastUpdated = post.data.updatedAt || post.data.publishedAt;
-// Use publishDate (static) instead of publishedAt (auto-generated) for accurate relative time
 const publishedDate = new Date(post.data.publishDate || post.data.publishedAt);
 const now = new Date();
 const diffMs = now.getTime() - publishedDate.getTime();
 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-const wordCount = post.body ? post.body.split(/\s+/).filter(Boolean).length : 0;
+const wordCount = post.data.wordCount || (post.body ? post.body.split(/\s+/).filter(Boolean).length : 0);
 const readingTime = post.data.readingTime || (Math.ceil(wordCount / 200) || 1) + " min read";
 
 const wasUpdated = lastUpdated.getTime() - publishedDate.getTime() > 86400000;
@@ -42,14 +41,19 @@ if (diffDays === 0) {
   relativeTime = publishedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+const absoluteDate = publishedDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+
+// Author data
+const authors = await getCollection("authors");
+const authorData = authors.find((a) => a.data.slug === post.data.authorSlug);
+
+// Related news
 const newsItems = await getAllNews();
 const currentTags = post.data.tags || [];
-
 const relatedNews = newsItems
   .filter((n) => n.data.slug !== post.data.slug)
   .filter((n) => currentTags.length > 0 && n.data.tags?.some((tag: string) => currentTags.includes(tag)))
   .slice(0, 3);
-
 const displayRelated = relatedNews.length > 0 ? relatedNews : newsItems.filter((n) => n.data.slug !== post.data.slug).slice(0, 3);
 
 const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
@@ -64,56 +68,25 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
   canonical={post.data.canonical || undefined}
   robots={robots}
 >
-  <article class="px-6 py-12">
+  {/* Reading progress bar */}
+  <div id="progress-bar" class="fixed top-0 left-0 h-[3px] bg-[#39FF14] z-[100] transition-all duration-100" style="width: 0%"></div>
+
+  <article class="px-6 py-10">
     <div class="max-w-4xl mx-auto">
-      <!-- Breadcrumbs -->
+      {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
         <ol class="flex flex-wrap items-center gap-2">
           <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14]">News</a></li>
           <li class="text-[#D4D4D4]">/</li>
-          <li class="text-white" aria-current="page">{post.data.title}</li>
+          <li class="text-white truncate max-w-[300px]" aria-current="page">{post.data.title}</li>
         </ol>
       </nav>
 
-      <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#FAFF00]">
-        {post.data.featured && (
-          <div class="mb-4">
-            <span class="inline-block bg-[#FAFF00] text-black font-[Space_Grotesk] font-bold text-xs px-3 py-1 tracking-wider">FEATURED</span>
-          </div>
-        )}
-        <div class="flex items-center gap-4 mb-4 flex-wrap">
-          <span class="text-[#39FF14] text-sm font-[JetBrains_Mono] font-bold">{relativeTime}</span>
-          {wasUpdated && (
-            <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] font-bold border border-[#FAFF00] px-2 py-0.5">
-              Updated {lastUpdated.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-            </span>
-          )}
-          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">&bull;</span>
-          <span class="text-[#D4D4D4] text-sm font-[JetBrains_Mono]">{readingTime}</span>
-          <span class="text-[#D4D4D4] text-sm font-[Public_Sans]">&bull;</span>
-          {post.data.authorSlug ? (
-            <a href={`/team/${post.data.authorSlug}`} class="text-[#39FF14] text-sm font-[Public_Sans] font-bold hover:underline">
-              {post.data.author}
-            </a>
-          ) : (
-            <span class="text-white text-sm font-[Public_Sans] font-bold">{post.data.author}</span>
-          )}
-        </div>
-        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
-        {post.data.excerpt && (
-          <p class="text-[#D4D4D4] text-lg font-[Public_Sans] leading-relaxed mb-4">{post.data.excerpt}</p>
-        )}
-        <div class="flex flex-wrap gap-2">
-          {post.data.tags.map((tag: string) => (
-            <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] border border-[#FAFF00] px-3 py-1">{tag}</span>
-          ))}
-        </div>
-      </header>
-
+      {/* Hero image */}
       {post.data.image && (
-        <div class="mb-8">
+        <div class="relative">
           <img
             src={post.data.image}
             alt={post.data.imageAlt}
@@ -121,40 +94,172 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
             height={post.data.imageHeight}
             loading="eager"
             fetchpriority="high"
-            class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
+            class="w-full h-auto border-[3px] border-white"
           />
+          {/* Badges overlay */}
+          <div class="absolute top-0 left-0 flex gap-2 p-3">
+            {post.data.featured && (
+              <span class="bg-[#FAFF00] text-black font-[Space_Grotesk] font-bold text-xs px-3 py-1 tracking-wider">FEATURED</span>
+            )}
+            {post.data.category && (
+              <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xs px-3 py-1">{post.data.category}</span>
+            )}
+          </div>
         </div>
       )}
 
+      {/* Article header — connected to image */}
+      <header class={`border-[3px] border-white bg-black p-6 md:p-8 ${post.data.image ? '-mt-[3px]' : 'shadow-[6px_6px_0px_0px_#FAFF00]'} mb-8`}>
+        {/* Meta row */}
+        <div class="flex items-center gap-3 mb-4 flex-wrap text-sm">
+          <time datetime={publishedDate.toISOString()} class="text-[#39FF14] font-[JetBrains_Mono] font-bold" title={absoluteDate}>
+            {relativeTime}
+          </time>
+          {wasUpdated && (
+            <span class="text-[#FAFF00] font-[JetBrains_Mono] font-bold border border-[#FAFF00] px-2 py-0.5 text-xs">
+              Updated {lastUpdated.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            </span>
+          )}
+          <span class="text-[#D4D4D4]">&bull;</span>
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono]">{readingTime}</span>
+          <span class="text-[#D4D4D4]">&bull;</span>
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono]">{wordCount.toLocaleString()} words</span>
+        </div>
+
+        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
+
+        <p class="text-[#D4D4D4] text-lg font-[Public_Sans] leading-relaxed mb-5">{post.data.description}</p>
+
+        {/* Tags */}
+        <div class="flex flex-wrap gap-2 mb-5">
+          {post.data.tags.map((tag: string) => (
+            <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] border border-[#FAFF00] px-3 py-1">{tag}</span>
+          ))}
+        </div>
+
+        {/* Author bar */}
+        <div class="flex items-center gap-4 pt-5 border-t border-white/20">
+          {authorData?.data.avatar ? (
+            <img src={authorData.data.avatar} alt={post.data.author} class="w-12 h-12 border-2 border-[#39FF14] object-cover" />
+          ) : (
+            <div class="w-12 h-12 border-2 border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center">
+              <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-lg">{post.data.author.charAt(0)}</span>
+            </div>
+          )}
+          <div>
+            {post.data.authorSlug ? (
+              <a href={`/team/${post.data.authorSlug}`} class="text-[#39FF14] font-[Public_Sans] font-bold text-sm hover:underline">
+                {post.data.author}
+              </a>
+            ) : (
+              <span class="text-white font-[Public_Sans] font-bold text-sm">{post.data.author}</span>
+            )}
+            {authorData?.data.role && (
+              <p class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">{authorData.data.role}</p>
+            )}
+          </div>
+          <div class="ml-auto text-right hidden sm:block">
+            <time datetime={publishedDate.toISOString()} class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">
+              {absoluteDate}
+            </time>
+          </div>
+        </div>
+      </header>
+
+      {/* Article body */}
       <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
         prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
-        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#FAFF00] prose-h2:pb-2
+        prose-h1:text-3xl prose-h1:mt-0 prose-h1:mb-6 prose-h1:border-b-[3px] prose-h1:border-[#FAFF00] prose-h1:pb-3
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#FAFF00] prose-h2:pb-2
         prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4
-        prose-li:text-[#D4D4D4]
+        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4 prose-p:text-[17px]
+        prose-li:text-[#D4D4D4] prose-li:text-[17px] prose-li:leading-relaxed
         prose-strong:text-white
         prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
         prose-blockquote:border-l-4 prose-blockquote:border-[#FAFF00] prose-blockquote:bg-[#1a1a1a] prose-blockquote:p-4 prose-blockquote:text-[#FAFF00]
+        prose-a:text-[#39FF14] prose-a:underline prose-a:decoration-[#39FF14] prose-a:underline-offset-4 prose-a:decoration-2
+        prose-img:border-[3px] prose-img:border-white prose-img:shadow-[4px_4px_0px_0px_#FAFF00]
+        prose-hr:border-[#FAFF00] prose-hr:border-t-[3px] prose-hr:my-10
       ">
         <Content />
       </div>
 
+      {/* Author card (full) */}
+      {authorData && (
+        <div class="mt-12 border-[3px] border-white bg-black p-6 md:p-8">
+          <div class="flex items-start gap-5">
+            {authorData.data.avatar ? (
+              <img src={authorData.data.avatar} alt={authorData.data.name} class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] object-cover shrink-0" />
+            ) : (
+              <div class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center shrink-0">
+                <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-2xl">{authorData.data.name.charAt(0)}</span>
+              </div>
+            )}
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-1 flex-wrap">
+                <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold tracking-wider">WRITTEN BY</span>
+              </div>
+              <a href={`/team/${authorData.data.slug}`} class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white hover:text-[#39FF14] transition-colors">
+                {authorData.data.name}
+              </a>
+              {authorData.data.role && (
+                <p class="text-[#D4D4D4] text-sm font-[JetBrains_Mono] mt-1">{authorData.data.role}</p>
+              )}
+              {authorData.data.bio && (
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mt-3 leading-relaxed">{authorData.data.bio}</p>
+              )}
+              {authorData.data.expertise && authorData.data.expertise.length > 0 && (
+                <div class="flex flex-wrap gap-2 mt-3">
+                  {authorData.data.expertise.map((exp: string) => (
+                    <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14]/40 px-2 py-0.5">{exp}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Related news */}
       {displayRelated.length > 0 && (
         <aside class="mt-12 pt-8 border-t-[3px] border-white">
           <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">RELATED NEWS</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {displayRelated.map((related) => (
-              <a href={`/news/${related.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#FAFF00]">
-                <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-2">
-                  {new Date(related.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              <a href={`/news/${related.data.slug}`} class="group block bg-black border-[3px] border-white shadow-none hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all">
+                {related.data.image && (
+                  <div class="overflow-hidden border-b-[3px] border-white">
+                    <img
+                      src={related.data.image}
+                      alt={related.data.imageAlt || related.data.title}
+                      width={related.data.imageWidth}
+                      height={related.data.imageHeight}
+                      loading="lazy"
+                      class="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+                    />
+                  </div>
+                )}
+                <div class="p-4">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] font-bold">
+                      {new Date(related.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </span>
+                    {related.data.readingTime && (
+                      <>
+                        <span class="text-[#D4D4D4] text-xs">&bull;</span>
+                        <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">{related.data.readingTime}</span>
+                      </>
+                    )}
+                  </div>
+                  <h3 class="font-[Space_Grotesk] text-sm font-bold text-white line-clamp-2 group-hover:text-[#FAFF00] transition-colors">{related.data.title}</h3>
                 </div>
-                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white line-clamp-2">{related.data.title}</h3>
               </a>
             ))}
           </div>
         </aside>
       )}
 
+      {/* Back to news */}
       <div class="mt-12 pt-8 border-t-[3px] border-white">
         <a href="/news" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-6 py-3 border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FAFF00] transition-all">
           BACK TO NEWS
@@ -162,4 +267,16 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
       </div>
     </div>
   </article>
+
+  {/* Reading progress script */}
+  <script>
+    const bar = document.getElementById('progress-bar');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docH > 0 ? Math.min((window.scrollY / docH) * 100, 100) : 0;
+        bar.style.width = pct + '%';
+      }, { passive: true });
+    }
+  </script>
 </Layout>

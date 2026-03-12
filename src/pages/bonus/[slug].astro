@@ -20,6 +20,10 @@ const lastUpdatedFormatted = lastUpdated
   ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
   : null;
 
+// Author data
+const authors = await getCollection("authors");
+const authorData = authors.find((a) => a.data.slug === d.authorSlug);
+
 const allPosts = await getCollection("posts");
 const currentTags = d.tags || [];
 const currentType = d.bonusType;
@@ -131,6 +135,9 @@ const expiresFormatted = d.expires_at
   : null;
 
 const reviewUrl = d.casinoReviewUrl || null;
+
+const wordCount = d.wordCount || (post.body ? post.body.split(/\s+/).filter(Boolean).length : 0);
+const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min read";
 ---
 
 <Layout
@@ -142,89 +149,136 @@ const reviewUrl = d.casinoReviewUrl || null;
   canonical={canonical}
   robots={robots}
 >
-  <article class="px-6 py-12 pb-24 md:pb-12">
+  {/* Reading progress bar */}
+  <div id="progress-bar" class="fixed top-0 left-0 h-[3px] bg-[#39FF14] z-[100] transition-all duration-100" style="width: 0%"></div>
+
+  <article class="px-6 py-10 pb-24 md:pb-12">
     <div class="max-w-4xl mx-auto">
-      <!-- Breadcrumbs -->
+      {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
         <ol class="flex flex-wrap items-center gap-2">
           <li><a href="/" class="text-[#D4D4D4] hover:text-[#39FF14]">Home</a></li>
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14]">Bonuses</a></li>
           <li class="text-[#D4D4D4]">/</li>
-          <li class="text-white" aria-current="page">{d.title}</li>
+          <li class="text-white truncate max-w-[300px]" aria-current="page">{d.title}</li>
         </ol>
       </nav>
 
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-        {lastUpdatedFormatted && (
-          <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-4 py-2">
-            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
-            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
-          </div>
-        )}
-        {expiresFormatted && (
-          <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#FAFF00] px-4 py-2">
-            <span class="text-[#FAFF00] font-[JetBrains_Mono] text-xs font-bold">VALID UNTIL:</span>
-            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{expiresFormatted}</span>
-          </div>
-        )}
-      </div>
-
-      <!-- Banner -->
-      <div class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14]">
-        <div class="flex items-center justify-between gap-4 mb-4">
-          <div class="flex items-center gap-3">
+      {/* Hero image */}
+      {d.image && (
+        <div class="relative">
+          <img
+            src={d.image}
+            alt={d.imageAlt}
+            width={d.imageWidth}
+            height={d.imageHeight}
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-auto border-[3px] border-white"
+          />
+          {/* Badges overlay */}
+          <div class="absolute top-0 left-0 flex gap-2 p-3">
             {d.bonusType && (
-              <span class="inline-block bg-[#8A2BE2] text-white text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+              <span class="bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
                 {d.bonusType}
               </span>
             )}
             {d.verified && (
-              <span class="inline-block bg-[#39FF14] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+              <span class="bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
                 VERIFIED
               </span>
             )}
             {d.exclusive && (
-              <span class="inline-block bg-[#FAFF00] text-black text-sm font-[JetBrains_Mono] font-bold px-4 py-2 uppercase tracking-wider">
+              <span class="bg-[#FAFF00] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
                 EXCLUSIVE
               </span>
             )}
           </div>
+          {/* Rating overlay */}
+          {d.ourRating && (
+            <div class="absolute top-0 right-0 p-3">
+              <div class="bg-black/80 border-2 border-[#FAFF00] px-3 py-2 flex items-center gap-1.5">
+                <span class="text-[#FAFF00] font-[Space_Grotesk] font-bold text-2xl">{d.ourRating}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">/10</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main bonus banner — connected to image */}
+      <div class={`border-[3px] border-white bg-black p-6 md:p-8 mb-8 shadow-[6px_6px_0px_0px_#39FF14] ${d.image ? '-mt-[3px]' : ''}`}>
+        {/* Meta row */}
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          {lastUpdatedFormatted && (
+            <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-3 py-1.5">
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
+              <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
+            </div>
+          )}
+          {expiresFormatted && (
+            <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#FAFF00] px-3 py-1.5">
+              <span class="text-[#FAFF00] font-[JetBrains_Mono] text-xs font-bold">VALID UNTIL:</span>
+              <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{expiresFormatted}</span>
+            </div>
+          )}
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{readingTime}</span>
         </div>
 
-        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">
-          {d.title}
-        </h1>
+        {/* Title row with logo */}
+        <div class="flex items-start gap-4 mb-4">
+          {d.logo && (
+            <img src={d.logo} alt={casinoName || d.title} class="w-14 h-14 md:w-16 md:h-16 object-contain border-2 border-white bg-white shrink-0 mt-1" />
+          )}
+          <div class="flex-1">
+            <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight">
+              {d.title}
+            </h1>
+          </div>
+        </div>
 
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{d.description}</p>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {/* Stats grid */}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {d.bonus && (
             <div class="border-2 border-[#39FF14] p-3">
-              <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">BONUS AMOUNT</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{d.bonus}</div>
+              <div class="text-[#39FF14] text-[10px] font-[JetBrains_Mono] font-bold mb-1">BONUS AMOUNT</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold text-sm">{d.bonus}</div>
             </div>
           )}
-          {d.freeSpins && Number(d.freeSpins) > 0 && (
+          {d.freeSpins && d.freeSpins !== "None" && d.freeSpins !== "0" && (
             <div class="border-2 border-[#39FF14] p-3">
-              <div class="text-[#39FF14] text-xs font-[JetBrains_Mono] mb-1">FREE SPINS</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{d.freeSpins}</div>
+              <div class="text-[#39FF14] text-[10px] font-[JetBrains_Mono] font-bold mb-1">FREE SPINS</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold text-sm">{d.freeSpins}</div>
             </div>
           )}
           {d.wageringRequirements && (
             <div class="border-2 border-white p-3">
-              <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">WAGERING</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{d.wageringRequirements}</div>
+              <div class="text-[#FAFF00] text-[10px] font-[JetBrains_Mono] font-bold mb-1">WAGERING</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold text-sm">{d.wageringRequirements}</div>
             </div>
           )}
           {(d.minimum_deposit || d.minimumDeposit) && (
             <div class="border-2 border-white p-3">
-              <div class="text-[#FAFF00] text-xs font-[JetBrains_Mono] mb-1">MIN DEPOSIT</div>
-              <div class="text-white font-[JetBrains_Mono] font-bold">{d.minimum_deposit || d.minimumDeposit}</div>
+              <div class="text-[#FAFF00] text-[10px] font-[JetBrains_Mono] font-bold mb-1">MIN DEPOSIT</div>
+              <div class="text-white font-[JetBrains_Mono] font-bold text-sm">{d.minimum_deposit || d.minimumDeposit}</div>
             </div>
           )}
         </div>
 
+        {/* Bonus code */}
+        {d.code && d.code.trim() !== "" && (
+          <div class="mb-6 p-4 bg-[#39FF14] border-[3px] border-black flex items-center justify-between">
+            <div>
+              <span class="text-black font-[JetBrains_Mono] text-sm font-bold">BONUS CODE:</span>
+              <span class="text-black font-[Space_Grotesk] text-xl font-bold ml-2">{d.code}</span>
+            </div>
+          </div>
+        )}
+
+        {/* CTA */}
         {claimUrl && (
           <div class="mb-6">
             <a
@@ -236,10 +290,11 @@ const reviewUrl = d.casinoReviewUrl || null;
           </div>
         )}
 
+        {/* Casino + rating footer */}
         <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
           <div class="flex items-center gap-4">
             {casinoName && (
-              <div class="text-white font-[JetBrains_Mono]">
+              <div class="text-white font-[JetBrains_Mono] text-sm">
                 <span class="text-[#FAFF00]">Casino:</span>{" "}
                 {reviewUrl ? (
                   <a href={reviewUrl} class="text-[#39FF14] hover:underline">{casinoName}</a>
@@ -250,45 +305,37 @@ const reviewUrl = d.casinoReviewUrl || null;
             )}
           </div>
           <div class="flex items-center gap-4 flex-wrap">
-            {d.ourRating && (
+            {d.ourRating && !d.image && (
               <div class="flex items-center gap-2">
                 <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
                 <span class="text-white font-[Space_Grotesk] font-bold text-2xl">{d.ourRating}</span>
                 <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
               </div>
             )}
-            {d.playerRating && (
+            {d.playerRating && Number(d.playerRating) > 0 && (
               <div class="flex items-center gap-2">
                 <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">PLAYERS:</span>
                 <span class="text-white font-[Space_Grotesk] font-bold text-lg">{d.playerRating}</span>
                 <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
-                {d.playerRatingCount && (
+                {d.playerRatingCount && Number(d.playerRatingCount) > 0 && (
                   <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">({d.playerRatingCount} votes)</span>
                 )}
               </div>
             )}
           </div>
         </div>
-
-        {d.code && d.code.trim() !== "" && (
-          <div class="mt-4 p-4 bg-[#39FF14] border-[3px] border-black">
-            <span class="text-black font-[JetBrains_Mono] text-sm font-bold">BONUS CODE:</span>
-            <span class="text-black font-[Space_Grotesk] text-xl font-bold ml-2">{d.code}</span>
-          </div>
-        )}
       </div>
 
+      {/* Pros & Cons */}
       {(d.pros || d.cons) && (
         <div class="grid md:grid-cols-2 gap-6 mb-8">
           {d.pros && d.pros.length > 0 && (
             <div class="border-[3px] border-[#39FF14] bg-black p-6">
-              <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4 flex items-center gap-2">
-                PROS
-              </h3>
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4">PROS</h3>
               <ul class="space-y-2">
                 {d.pros.map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
-                    <span class="text-[#39FF14] mt-1">+</span>
+                    <span class="text-[#39FF14] mt-0.5 shrink-0">+</span>
                     <span>{pro.trim()}</span>
                   </li>
                 ))}
@@ -297,13 +344,11 @@ const reviewUrl = d.casinoReviewUrl || null;
           )}
           {d.cons && d.cons.length > 0 && (
             <div class="border-[3px] border-white bg-black p-6">
-              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4 flex items-center gap-2">
-                CONS
-              </h3>
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4">CONS</h3>
               <ul class="space-y-2">
                 {d.cons.map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
-                    <span class="text-white mt-1">-</span>
+                    <span class="text-[#D4D4D4] mt-0.5 shrink-0">&minus;</span>
                     <span>{con.trim()}</span>
                   </li>
                 ))}
@@ -313,22 +358,7 @@ const reviewUrl = d.casinoReviewUrl || null;
         </div>
       )}
 
-      <!-- Cover Image -->
-      {d.image && (
-        <div class="mb-8">
-          <img
-            src={d.image}
-            alt={d.imageAlt}
-            width={d.imageWidth}
-            height={d.imageHeight}
-            loading="eager"
-            fetchpriority="high"
-            class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00]"
-          />
-        </div>
-      )}
-
-      <!-- Casino Info Table -->
+      {/* Casino Info Table */}
       {infoRows.length > 0 && (
         <div class="mb-8 border-[3px] border-white bg-black">
           <div class="bg-[#1a1a1a] border-b-[3px] border-white px-6 py-3 flex items-center justify-between">
@@ -352,54 +382,124 @@ const reviewUrl = d.casinoReviewUrl || null;
         </div>
       )}
 
-      <!-- Content -->
+      {/* Content */}
       <div class="prose prose-invert prose-brutal max-w-none font-[Public_Sans]
         prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
-        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#39FF14] prose-h2:pb-2
+        prose-h1:text-3xl prose-h1:mt-0 prose-h1:mb-6 prose-h1:border-b-[3px] prose-h1:border-[#39FF14] prose-h1:pb-3
+        prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#39FF14] prose-h2:pb-2
         prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4
-        prose-li:text-[#D4D4D4]
+        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4 prose-p:text-[17px]
+        prose-li:text-[#D4D4D4] prose-li:text-[17px] prose-li:leading-relaxed
         prose-strong:text-white
         prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
+        prose-blockquote:border-l-4 prose-blockquote:border-[#39FF14] prose-blockquote:bg-[#1a1a1a] prose-blockquote:p-4 prose-blockquote:text-[#FAFF00]
+        prose-a:text-[#39FF14] prose-a:underline prose-a:decoration-[#39FF14] prose-a:underline-offset-4 prose-a:decoration-2
+        prose-img:border-[3px] prose-img:border-white prose-img:shadow-[4px_4px_0px_0px_#39FF14]
+        prose-hr:border-[#39FF14] prose-hr:border-t-[3px] prose-hr:my-10
       ">
         <Content />
       </div>
 
-      <!-- Author & Info -->
-      <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <div class="flex items-center gap-3">
-            <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
-            {d.authorSlug ? (
-              <a href={`/team/${d.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
-                {d.author}
-              </a>
+      {/* Mid-article CTA */}
+      {claimUrl && (
+        <div class="mt-10 mb-4 border-[3px] border-[#39FF14] bg-black p-6 text-center">
+          <p class="text-white font-[Space_Grotesk] font-bold text-lg md:text-xl mb-4">
+            Ready to claim the {casinoName || ""} bonus?
+          </p>
+          <a
+            href={claimUrl}
+            class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-10 py-4 text-lg border-[3px] border-black shadow-[6px_6px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_#000] transition-all uppercase tracking-wide"
+          >
+            CLAIM BONUS NOW
+          </a>
+        </div>
+      )}
+
+      {/* Author card */}
+      {authorData ? (
+        <div class="mt-8 border-[3px] border-white bg-black p-6 md:p-8">
+          <div class="flex items-start gap-5">
+            {authorData.data.avatar ? (
+              <img src={authorData.data.avatar} alt={authorData.data.name} class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] object-cover shrink-0" />
             ) : (
-              <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
+              <div class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center shrink-0">
+                <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-2xl">{authorData.data.name.charAt(0)}</span>
+              </div>
+            )}
+            <div class="flex-1">
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold tracking-wider">REVIEWED BY</span>
+              <a href={`/team/${authorData.data.slug}`} class="block font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white hover:text-[#39FF14] transition-colors mt-1">
+                {authorData.data.name}
+              </a>
+              {authorData.data.role && (
+                <p class="text-[#D4D4D4] text-sm font-[JetBrains_Mono] mt-1">{authorData.data.role}</p>
+              )}
+              {authorData.data.bio && (
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mt-3 leading-relaxed">{authorData.data.bio}</p>
+              )}
+              {authorData.data.expertise && authorData.data.expertise.length > 0 && (
+                <div class="flex flex-wrap gap-2 mt-3">
+                  {authorData.data.expertise.map((exp: string) => (
+                    <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] border border-[#39FF14]/40 px-2 py-0.5">{exp}</span>
+                  ))}
+                </div>
+              )}
+              {lastUpdatedFormatted && (
+                <p class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs mt-3">Last updated: {lastUpdatedFormatted}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
+              {d.authorSlug ? (
+                <a href={`/team/${d.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
+                  {d.author}
+                </a>
+              ) : (
+                <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
+              )}
+            </div>
+            {lastUpdatedFormatted && (
+              <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last updated: {lastUpdatedFormatted}</div>
             )}
           </div>
-          {lastUpdatedFormatted && (
-            <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last updated: {lastUpdatedFormatted}</div>
-          )}
-        </div>
-      </aside>
+        </aside>
+      )}
 
-      <!-- Related -->
+      {/* Related bonuses */}
       {displayRelated.length > 0 && (
         <section class="mt-12 pt-8 border-t-[3px] border-white">
           <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">SIMILAR BONUSES</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {displayRelated.map((related) => (
-              <a href={`/bonus/${related.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#39FF14]">
-                {related.data.bonusType && (
-                  <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-2 py-1 uppercase tracking-wider mb-2">
-                    {related.data.bonusType}
-                  </span>
+              <a href={`/bonus/${related.data.slug}`} class="group block bg-black border-[3px] border-white shadow-none hover:shadow-[6px_6px_0px_0px_#39FF14] transition-all">
+                {related.data.image && (
+                  <div class="overflow-hidden border-b-[3px] border-white">
+                    <img
+                      src={related.data.image}
+                      alt={related.data.imageAlt || related.data.title}
+                      width={related.data.imageWidth}
+                      height={related.data.imageHeight}
+                      loading="lazy"
+                      class="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+                    />
+                  </div>
                 )}
-                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white mb-2 line-clamp-2">{related.data.title}</h3>
-                {related.data.bonus && (
-                  <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">{related.data.bonus}</p>
-                )}
+                <div class="p-4">
+                  {related.data.bonusType && (
+                    <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-2 py-0.5 uppercase tracking-wider mb-2">
+                      {related.data.bonusType}
+                    </span>
+                  )}
+                  <h3 class="font-[Space_Grotesk] text-sm font-bold text-white mb-2 line-clamp-2 group-hover:text-[#39FF14] transition-colors">{related.data.title}</h3>
+                  {related.data.bonus && (
+                    <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold">{related.data.bonus}</p>
+                  )}
+                </div>
               </a>
             ))}
           </div>
@@ -414,7 +514,7 @@ const reviewUrl = d.casinoReviewUrl || null;
     </div>
   </article>
 
-  <!-- Sticky Mobile CTA -->
+  {/* Sticky Mobile CTA */}
   {claimUrl && (
     <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
       <a href={claimUrl} class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF]">
@@ -422,4 +522,16 @@ const reviewUrl = d.casinoReviewUrl || null;
       </a>
     </div>
   )}
+
+  {/* Reading progress script */}
+  <script>
+    const bar = document.getElementById('progress-bar');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docH > 0 ? Math.min((window.scrollY / docH) * 100, 100) : 0;
+        bar.style.width = pct + '%';
+      }, { passive: true });
+    }
+  </script>
 </Layout>
