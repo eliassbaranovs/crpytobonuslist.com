@@ -1,7 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isReview } from "../../lib/posts";
+import { isReview, sortByDate } from "../../lib/posts";
+import { getReviewUrl, getClaimUrl, getRatingBg } from "../../lib/casino-filters";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -29,6 +30,13 @@ const robots = d.robots || (d.noIndex ? "noindex, nofollow" : "index, follow");
 const authors = await getCollection("authors");
 const authorData = authors.find((a) => a.data.slug === d.authorSlug);
 
+// CTA URL - use /go/{slug} redirect pattern
+const claimUrl = d.claim_url
+  ? (d.claim_url.includes("/") ? `/go/${d.slug}` : `/go/${d.claim_url}`)
+  : d.website
+    ? `/go/${d.slug}`
+    : null;
+
 // Format crypto withdrawal speed for display
 const cryptoPayoutLabel = (() => {
   if (!d.cryptoWithdrawalSpeedMinutes) return null;
@@ -37,6 +45,18 @@ const cryptoPayoutLabel = (() => {
   const hrs = Math.round(mins / 60);
   return hrs === 1 ? "1 hour" : `${hrs} hours`;
 })();
+
+// Related reviews - 3 other casino reviews, sorted by date
+const allPosts = await getCollection("posts");
+const relatedReviews = sortByDate(
+  allPosts
+    .filter(isReview)
+    .filter((r) => r.data.slug !== d.slug && !r.data.draft)
+).slice(0, 3);
+
+// Reading time
+const wordCount = d.wordCount || (post.body ? post.body.split(/\s+/).filter(Boolean).length : 0);
+const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min read";
 
 // Build JSON-LD programmatically
 const schemas: Record<string, any>[] = [];
@@ -161,7 +181,10 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
   canonical={canonical}
   robots={robots}
 >
-  <article class="px-6 py-12">
+  {/* Reading progress bar */}
+  <div id="progress-bar" class="fixed top-0 left-0 h-[3px] bg-[#8A2BE2] z-[100] transition-all duration-100" style="width: 0%"></div>
+
+  <article class="px-6 py-12 pb-24 md:pb-12">
     <div class="max-w-4xl mx-auto">
       <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
         <ol class="flex flex-wrap items-center gap-2">
@@ -169,18 +192,80 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casinos</a></li>
           <li class="text-[#D4D4D4]">/</li>
-          <li class="text-white" aria-current="page">{d.title}</li>
+          <li class="text-white truncate max-w-[300px]" aria-current="page">{d.title}</li>
         </ol>
       </nav>
 
-      <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#8A2BE2]">
-        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{d.title}</h1>
+      {/* Hero image */}
+      {d.image && (
+        <div class="relative">
+          <img
+            src={d.image}
+            alt={d.imageAlt}
+            width={d.imageWidth}
+            height={d.imageHeight}
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-auto border-[3px] border-white"
+          />
+          {/* Badges overlay */}
+          <div class="absolute top-0 left-0 flex gap-2 p-3">
+            {d.verified && (
+              <span class="bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                VERIFIED
+              </span>
+            )}
+            {d.exclusive && (
+              <span class="bg-[#FAFF00] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                EXCLUSIVE
+              </span>
+            )}
+          </div>
+          {/* Rating overlay */}
+          {d.ourRating && (
+            <div class="absolute top-0 right-0 p-3">
+              <div class="bg-black/80 border-2 border-[#FAFF00] px-3 py-2 flex items-center gap-1.5">
+                <span class="text-[#FAFF00] font-[Space_Grotesk] font-bold text-2xl">{d.ourRating}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">/10</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <header class={`border-[3px] border-white bg-black p-6 md:p-8 mb-8 shadow-[6px_6px_0px_0px_#8A2BE2] ${d.image ? '-mt-[3px]' : ''}`}>
+        {/* Meta row */}
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          {lastUpdatedFormatted && (
+            <div class="inline-flex items-center gap-2 bg-[#1a1a1a] border border-[#333] px-3 py-1.5">
+              <span class="text-[#8A2BE2] font-[JetBrains_Mono] text-xs font-bold">LAST TESTED:</span>
+              <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{lastUpdatedFormatted}</span>
+            </div>
+          )}
+          <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{readingTime}</span>
+        </div>
+
+        {/* Title row with logo */}
+        <div class="flex items-start gap-4 mb-4">
+          {d.logo && (
+            <img src={d.logo} alt={d.casinoName || d.title} class="w-14 h-14 md:w-16 md:h-16 object-contain border-2 border-white bg-white shrink-0 mt-1" />
+          )}
+          <div class="flex-1">
+            <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight">
+              {d.title}
+            </h1>
+          </div>
+        </div>
+
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{d.description}</p>
+
         {d.best_for && (
           <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm mb-4">BEST FOR: {d.best_for}</p>
         )}
-        <div class="flex flex-wrap items-center gap-6 mb-4">
-          {d.ourRating && (
+
+        {/* Stats row */}
+        <div class="flex flex-wrap items-center gap-6 mb-6">
+          {d.ourRating && !d.image && (
             <div class="flex items-center gap-2">
               <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
               <span class="text-white font-[Space_Grotesk] font-bold text-3xl">{d.ourRating}</span>
@@ -207,9 +292,37 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             </div>
           )}
         </div>
-        {lastUpdatedFormatted && (
-          <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last Tested: {lastUpdatedFormatted}</div>
+
+        {/* CTA Button */}
+        {claimUrl && (
+          <div class="mb-4">
+            <a
+              href={claimUrl}
+              class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-5 text-center text-xl md:text-2xl border-[3px] border-black shadow-[8px_8px_0px_0px_#000000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_#000000] transition-all uppercase tracking-wide"
+            >
+              VISIT CASINO
+            </a>
+          </div>
         )}
+
+        {/* Casino + rating footer */}
+        <div class="flex items-center justify-between flex-wrap gap-4 pt-4 border-t-2 border-[#333]">
+          <div class="flex items-center gap-4">
+            {d.playerRating && Number(d.playerRating) > 0 && (
+              <div class="flex items-center gap-2">
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">PLAYERS:</span>
+                <span class="text-white font-[Space_Grotesk] font-bold text-lg">{d.playerRating}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
+                {d.playerRatingCount && Number(d.playerRatingCount) > 0 && (
+                  <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">({d.playerRatingCount} votes)</span>
+                )}
+              </div>
+            )}
+          </div>
+          {d.website && (
+            <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">{d.website}</span>
+          )}
+        </div>
       </header>
 
       {d.acceptedCryptos && d.acceptedCryptos.length > 0 && (
@@ -220,33 +333,29 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         </div>
       )}
 
-      {d.image && (
-        <div class="mb-8">
-          <img src={d.image} alt={d.imageAlt} width={d.imageWidth} height={d.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2]" />
-        </div>
-      )}
-
       {(d.pros || d.cons) && (
         <div class="grid md:grid-cols-2 gap-6 mb-8">
-          {d.pros && (
+          {d.pros && d.pros.length > 0 && (
             <div class="border-[3px] border-[#39FF14] bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4">PROS</h3>
               <ul class="space-y-2">
                 {d.pros.map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
-                    <span class="text-[#39FF14] mt-1">+</span><span>{pro.trim()}</span>
+                    <span class="text-[#39FF14] mt-0.5 shrink-0">+</span>
+                    <span>{pro.trim()}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
-          {d.cons && (
+          {d.cons && d.cons.length > 0 && (
             <div class="border-[3px] border-white bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4">CONS</h3>
               <ul class="space-y-2">
                 {d.cons.map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
-                    <span class="text-white mt-1">-</span><span>{con.trim()}</span>
+                    <span class="text-[#D4D4D4] mt-0.5 shrink-0">&minus;</span>
+                    <span>{con.trim()}</span>
                   </li>
                 ))}
               </ul>
@@ -275,12 +384,170 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         prose-headings:font-[Space_Grotesk] prose-headings:text-white prose-headings:font-bold
         prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b-[3px] prose-h2:border-[#8A2BE2] prose-h2:pb-2
         prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
-        prose-p:text-[#D4D4D4] prose-p:leading-relaxed prose-p:mb-4
-        prose-li:text-[#D4D4D4] prose-strong:text-white
+        prose-p:text-[#D4D4D4] prose-p:text-[17px] prose-p:leading-relaxed prose-p:mb-4
+        prose-li:text-[#D4D4D4] prose-li:text-[17px] prose-li:leading-relaxed
+        prose-strong:text-white
         prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
+        prose-blockquote:border-l-[3px] prose-blockquote:border-[#8A2BE2] prose-blockquote:bg-[#1a1a1a] prose-blockquote:py-4 prose-blockquote:px-6
+        prose-a:text-[#8A2BE2] prose-a:underline prose-a:decoration-[#8A2BE2]/50 hover:prose-a:text-[#39FF14]
+        prose-img:border-[2px] prose-img:border-white prose-img:shadow-[6px_6px_0px_0px_#8A2BE2]
+        prose-hr:border-[#8A2BE2]
       ">
         <Content />
       </div>
+
+      {/* Mid-article CTA */}
+      {claimUrl && (
+        <div class="mt-10 mb-4 border-[3px] border-[#8A2BE2] bg-black p-6 text-center">
+          <p class="text-white font-[Space_Grotesk] font-bold text-lg md:text-xl mb-4">
+            Ready to try {d.casinoName || d.title}?
+          </p>
+          <a
+            href={claimUrl}
+            class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-10 py-4 text-lg border-[3px] border-black shadow-[6px_6px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_#000] transition-all uppercase tracking-wide"
+          >
+            VISIT CASINO
+          </a>
+        </div>
+      )}
+
+      {/* Author card */}
+      {authorData ? (
+        <div class="mt-8 border-[3px] border-white bg-black p-6 md:p-8">
+          <div class="flex items-start gap-5">
+            {authorData.data.avatar ? (
+              <img src={authorData.data.avatar} alt={authorData.data.name} class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#8A2BE2] object-cover shrink-0" />
+            ) : (
+              <div class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#8A2BE2] bg-[#1a1a1a] flex items-center justify-center shrink-0">
+                <span class="text-[#8A2BE2] font-[Space_Grotesk] font-bold text-2xl">{authorData.data.name.charAt(0)}</span>
+              </div>
+            )}
+            <div class="flex-1">
+              <span class="text-[#8A2BE2] font-[JetBrains_Mono] text-xs font-bold tracking-wider">REVIEWED BY</span>
+              <a href={`/team/${authorData.data.slug}`} class="block font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white hover:text-[#8A2BE2] transition-colors mt-1">
+                {authorData.data.name}
+              </a>
+              {authorData.data.role && (
+                <p class="text-[#D4D4D4] text-sm font-[JetBrains_Mono] mt-1">{authorData.data.role}</p>
+              )}
+              {authorData.data.bio && (
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mt-3 leading-relaxed">{authorData.data.bio}</p>
+              )}
+              {authorData.data.expertise && authorData.data.expertise.length > 0 && (
+                <div class="flex flex-wrap gap-2 mt-3">
+                  {authorData.data.expertise.map((exp: string) => (
+                    <span class="text-[#8A2BE2] text-xs font-[JetBrains_Mono] border border-[#8A2BE2]/40 px-2 py-0.5">{exp}</span>
+                  ))}
+                </div>
+              )}
+              {lastUpdatedFormatted && (
+                <p class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs mt-3">Last updated: {lastUpdatedFormatted}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div class="flex items-center gap-3">
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
+              {d.authorSlug ? (
+                <a href={`/team/${d.authorSlug}`} class="text-[#8A2BE2] font-[Space_Grotesk] font-bold hover:underline">
+                  {d.author}
+                </a>
+              ) : (
+                <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
+              )}
+            </div>
+            {lastUpdatedFormatted && (
+              <div class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">Last updated: {lastUpdatedFormatted}</div>
+            )}
+          </div>
+        </aside>
+      )}
+
+      {/* Related Reviews */}
+      {relatedReviews.length > 0 && (
+        <section class="mt-12 pt-8 border-t-[3px] border-white">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">RELATED REVIEWS</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {relatedReviews.map((review) => {
+              const name = review.data.casino_name || review.data.casinoName || review.data.title;
+              const rating = review.data.ourRating || 0;
+              const ratingBg = getRatingBg(rating);
+              const pros = (review.data.pros || []).slice(0, 2);
+              const bonus = review.data.bonus;
+
+              return (
+                <a href={`/casinos/${review.data.slug}`} class="group block bg-black border-[3px] border-white shadow-none hover:shadow-[6px_6px_0px_0px_#8A2BE2] transition-all">
+                  {review.data.image && (
+                    <div class="overflow-hidden border-b-[3px] border-white">
+                      <img
+                        src={review.data.image}
+                        alt={review.data.imageAlt || review.data.title}
+                        width={review.data.imageWidth}
+                        height={review.data.imageHeight}
+                        loading="lazy"
+                        class="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div class="p-4">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                      <h3 class="font-[Space_Grotesk] text-sm font-bold text-white line-clamp-2 group-hover:text-[#8A2BE2] transition-colors">{name}</h3>
+                      {rating > 0 && (
+                        <span class={`${ratingBg} font-[JetBrains_Mono] text-xs font-bold px-2 py-0.5 shrink-0`}>
+                          {rating.toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                    {bonus && (
+                      <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold mb-2">{bonus}</p>
+                    )}
+                    {pros.length > 0 && (
+                      <ul class="space-y-1">
+                        {pros.map((pro) => (
+                          <li class="flex items-start gap-1.5 text-xs font-[Public_Sans] text-[#D4D4D4]">
+                            <span class="text-[#39FF14] mt-0.5 shrink-0">+</span>
+                            <span class="line-clamp-1">{pro}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <div class="mt-12 pt-8 border-t-[3px] border-white">
+        <a href="/casinos" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-6 py-3 border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#8A2BE2] transition-all">
+          BACK TO CASINO REVIEWS
+        </a>
+      </div>
     </div>
   </article>
+
+  {/* Sticky Mobile CTA */}
+  {claimUrl && (
+    <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
+      <a href={claimUrl} class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF] uppercase">
+        VISIT CASINO
+      </a>
+    </div>
+  )}
+
+  {/* Reading progress script */}
+  <script>
+    const bar = document.getElementById('progress-bar');
+    if (bar) {
+      window.addEventListener('scroll', () => {
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docH > 0 ? Math.min((window.scrollY / docH) * 100, 100) : 0;
+        bar.style.width = pct + '%';
+      }, { passive: true });
+    }
+  </script>
 </Layout>

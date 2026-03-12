@@ -48,7 +48,42 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers. Reviewed with the numbers that matter.
       </p>
 
-      <div class="space-y-6">
+      <!-- Filter Controls -->
+      <div class="flex flex-wrap gap-4 mb-8 p-6 border-[3px] border-white bg-[#0A0A0A]" id="bonus-filters">
+        <div>
+          <label class="block text-[#D4D4D4] text-xs uppercase font-[JetBrains_Mono] mb-2" for="sort-select">Sort by</label>
+          <select id="sort-select" class="bg-[#1a1a1a] text-white border-[2px] border-white px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer focus:outline-none focus:border-[#39FF14]" aria-label="Sort bonuses">
+            <option value="date">Newest First</option>
+            <option value="rating">Highest Rated</option>
+            <option value="title">A-Z</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[#D4D4D4] text-xs uppercase font-[JetBrains_Mono] mb-2">Bonus Type</label>
+          <div class="flex flex-wrap gap-2" id="type-filters" role="group" aria-label="Filter by bonus type">
+            <button data-filter="all" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-[#39FF14] text-black border-[#39FF14] font-bold" aria-pressed="true">All</button>
+            <button data-filter="Welcome Bonus" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Welcome</button>
+            <button data-filter="No Deposit" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">No Deposit</button>
+            <button data-filter="Free Spins" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Free Spins</button>
+            <button data-filter="Reload" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Reload</button>
+            <button data-filter="Cashback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Cashback</button>
+            <button data-filter="Rakeback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Rakeback</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter status -->
+      <p id="filter-status" class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs uppercase mb-6" aria-live="polite">
+        Showing {bonuses.length} of {bonuses.length} bonuses
+      </p>
+
+      <!-- No results message (hidden by default) -->
+      <div id="no-results" class="hidden border-[3px] border-white/30 bg-[#1a1a1a] p-10 text-center mb-6">
+        <p class="text-[#D4D4D4] font-[Space_Grotesk] text-lg">No bonuses match your filters.</p>
+        <button id="reset-filters" class="mt-4 bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-2 border-[2px] border-black uppercase text-sm cursor-pointer hover:translate-x-0.5 hover:translate-y-0.5 transition-transform">Reset Filters</button>
+      </div>
+
+      <div class="space-y-6" id="bonus-grid">
         {bonuses.map((bonus) => {
           const d = bonus.data;
           const casinoName = d.casino_name || d.casinoName;
@@ -57,7 +92,13 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             : d.website ? `/go/${d.slug}` : null;
 
           return (
-            <div class="border-[3px] border-white bg-black shadow-[6px_6px_0px_0px_#39FF14]">
+            <div
+              class="bonus-card border-[3px] border-white bg-black shadow-[6px_6px_0px_0px_#39FF14]"
+              data-rating={d.ourRating ?? d.rating ?? 0}
+              data-date={new Date(d.publishedAt).toISOString()}
+              data-bonus-type={d.bonusType || ""}
+              data-title={d.title}
+            >
               {/* Top row: badges */}
               <div class="flex items-center gap-2 px-5 pt-5 pb-0 flex-wrap">
                 {d.bonusType && (
@@ -184,3 +225,107 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
     </div>
   </section>
 </Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.getElementById('bonus-grid');
+    const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
+    const typeButtons = document.querySelectorAll('#type-filters button');
+    const statusEl = document.getElementById('filter-status');
+    const noResults = document.getElementById('no-results');
+    const resetBtn = document.getElementById('reset-filters');
+
+    if (!grid || !sortSelect || !statusEl || !noResults) return;
+
+    let activeType = 'all';
+
+    const ACTIVE_CLASSES = ['bg-[#39FF14]', 'text-black', 'border-[#39FF14]', 'font-bold'];
+    const INACTIVE_CLASSES = ['bg-transparent', 'text-[#D4D4D4]', 'border-white', 'hover:border-[#39FF14]', 'hover:text-[#39FF14]'];
+
+    function setActiveButton(btn: Element) {
+      typeButtons.forEach(b => {
+        ACTIVE_CLASSES.forEach(c => b.classList.remove(c));
+        INACTIVE_CLASSES.forEach(c => b.classList.add(c));
+        b.setAttribute('aria-pressed', 'false');
+      });
+      INACTIVE_CLASSES.forEach(c => btn.classList.remove(c));
+      ACTIVE_CLASSES.forEach(c => btn.classList.add(c));
+      btn.setAttribute('aria-pressed', 'true');
+    }
+
+    function getCards(): HTMLElement[] {
+      return Array.from(grid!.querySelectorAll('.bonus-card'));
+    }
+
+    function applyFilters() {
+      const cards = getCards();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const bonusType = card.dataset.bonusType || '';
+        const matchesType = activeType === 'all' || bonusType.toLowerCase() === activeType.toLowerCase();
+
+        if (matchesType) {
+          card.style.display = '';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      statusEl!.textContent = `Showing ${visibleCount} of ${cards.length} bonuses`;
+
+      if (visibleCount === 0) {
+        noResults!.classList.remove('hidden');
+      } else {
+        noResults!.classList.add('hidden');
+      }
+    }
+
+    function applySorting() {
+      const cards = getCards();
+      const sortBy = sortSelect.value;
+
+      cards.sort((a, b) => {
+        if (sortBy === 'date') {
+          return new Date(b.dataset.date || '').getTime() - new Date(a.dataset.date || '').getTime();
+        }
+        if (sortBy === 'rating') {
+          return (parseFloat(b.dataset.rating || '0')) - (parseFloat(a.dataset.rating || '0'));
+        }
+        if (sortBy === 'title') {
+          return (a.dataset.title || '').localeCompare(b.dataset.title || '');
+        }
+        return 0;
+      });
+
+      // Re-append in sorted order
+      cards.forEach(card => grid!.appendChild(card));
+    }
+
+    // Event: sort change
+    sortSelect.addEventListener('change', () => {
+      applySorting();
+      applyFilters();
+    });
+
+    // Event: type filter buttons
+    typeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeType = (btn as HTMLElement).dataset.filter || 'all';
+        setActiveButton(btn);
+        applyFilters();
+      });
+    });
+
+    // Event: reset filters
+    resetBtn?.addEventListener('click', () => {
+      activeType = 'all';
+      sortSelect.value = 'date';
+      const allBtn = document.querySelector('#type-filters button[data-filter="all"]');
+      if (allBtn) setActiveButton(allBtn);
+      applySorting();
+      applyFilters();
+    });
+  });
+</script>
