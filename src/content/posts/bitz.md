@@ -4,9 +4,9 @@ slug: "bitz"
 description: "Bitz review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "Bitz Review 2026 – Legit or Not? Our Honest Verdict"
 excerpt: "Bitz is a capable offshore crypto casino with a massive game library and fast payouts, but its value is diminished by steep bonus wagering requirements and a weak Anjouan licence."
-publishedAt: 2026-03-12T17:57:48.965Z
+publishedAt: 2026-03-12T21:34:08.263Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T17:57:48.965Z
+updatedAt: 2026-03-12T21:34:08.263Z
 tags:
   - "Bitz"
   - "casino review"
