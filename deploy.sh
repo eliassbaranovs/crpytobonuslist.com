@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DEPLOYPATH=/home/exparboc/cryptobonuslist.com
+# NOTE: "crpytobonuslist" typo matches the actual server directory name - do not change
 REPOPATH=/home/exparboc/repositories/crpytobonuslist.com
 
 echo "========================================" >> $REPOPATH/deploy.log
@@ -13,9 +14,9 @@ if command -v node &> /dev/null; then
     echo "Node.js version: $(node --version)" >> $REPOPATH/deploy.log
     echo "NPM version: $(npm --version)" >> $REPOPATH/deploy.log
 
-    # Install dependencies
+    # Install all dependencies (devDependencies like Astro and Tailwind are needed for build)
     echo "Installing dependencies..." >> $REPOPATH/deploy.log
-    npm install --production 2>> $REPOPATH/deploy.log
+    npm install 2>> $REPOPATH/deploy.log
 
     # Build the site
     echo "Building Astro site..." >> $REPOPATH/deploy.log
@@ -27,15 +28,15 @@ if command -v node &> /dev/null; then
         rm -rf $DEPLOYPATH/*
         cp -r $REPOPATH/dist/* $DEPLOYPATH/
 
-        echo "✓ Deployment successful at $(date)" >> $REPOPATH/deploy.log
+        echo "Deployment successful at $(date)" >> $REPOPATH/deploy.log
         echo "========================================" >> $REPOPATH/deploy.log
     else
-        echo "✗ ERROR: dist folder not found after build" >> $REPOPATH/deploy.log
+        echo "ERROR: dist folder not found after build" >> $REPOPATH/deploy.log
         echo "========================================" >> $REPOPATH/deploy.log
         exit 1
     fi
 else
-    echo "✗ ERROR: Node.js not found on server" >> $REPOPATH/deploy.log
+    echo "ERROR: Node.js not found on server" >> $REPOPATH/deploy.log
     echo "Please contact hosting support to install Node.js" >> $REPOPATH/deploy.log
     echo "Or use GitHub Actions deployment method instead" >> $REPOPATH/deploy.log
     echo "========================================" >> $REPOPATH/deploy.log

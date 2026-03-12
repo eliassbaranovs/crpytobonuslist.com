@@ -61,7 +61,6 @@ const siteUrl = "https://cryptobonuslist.com";
 const pageUrl = `${siteUrl}/bonus/${d.slug}`;
 
 const articleSchema: Record<string, any> = {
-  "@context": "https://schema.org",
   "@type": "Article",
   headline: d.title,
   description: d.description,
@@ -84,7 +83,6 @@ const schemas: Record<string, any>[] = [articleSchema];
 // Product + AggregateRating + Offer
 if (d.ourRating || d.playerRating) {
   const prodSchema: Record<string, any> = {
-    "@context": "https://schema.org",
     "@type": "Product",
     name: d.casino_name || d.casinoName || d.title,
     description: d.description,
@@ -103,7 +101,6 @@ if (d.ourRating || d.playerRating) {
 // FAQ schema from faqs field
 if (d.faqs && d.faqs.length > 0) {
   schemas.push({
-    "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: d.faqs.map((faq: { question: string; answer: string }) => ({
       "@type": "Question", name: faq.question, acceptedAnswer: { "@type": "Answer", text: faq.answer },
@@ -111,7 +108,17 @@ if (d.faqs && d.faqs.length > 0) {
   });
 }
 
-const jsonld = JSON.stringify(schemas);
+// BreadcrumbList schema
+schemas.push({
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "Bonuses", item: `${siteUrl}/bonus` },
+    { "@type": "ListItem", position: 3, name: d.title },
+  ],
+});
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 
 // Casino info rows - only populated ones render
 const casinoName = d.casino_name || d.casinoName;

@@ -14,7 +14,32 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-const jsonld = post.data.schema_jsonld;
+const slug = post.data.slug;
+const computedCanonical = `https://cryptobonuslist.com/news/${slug}`;
+
+// Build JSON-LD: merge existing schema with BreadcrumbList in @graph
+const existingSchema = post.data.schema_jsonld ? JSON.parse(post.data.schema_jsonld) : null;
+const breadcrumbLd = {
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com/" },
+    { "@type": "ListItem", "position": 2, "name": "News", "item": "https://cryptobonuslist.com/news" },
+    { "@type": "ListItem", "position": 3, "name": post.data.title, "item": computedCanonical }
+  ]
+};
+
+let graphItems: any[] = [breadcrumbLd];
+if (existingSchema) {
+  if (existingSchema["@graph"]) {
+    graphItems = [...existingSchema["@graph"], breadcrumbLd];
+  } else {
+    // Existing is a single schema object - strip @context and add to graph
+    const { "@context": _ctx, ...rest } = existingSchema;
+    graphItems = [rest, breadcrumbLd];
+  }
+}
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": graphItems });
 const lastUpdated = post.data.updatedAt || post.data.publishedAt;
 const publishedDate = new Date(post.data.publishDate || post.data.publishedAt);
 const now = new Date();
@@ -65,7 +90,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
   jsonld={jsonld}
   ogType="article"
   ogImage={post.data.image || "/favicon.svg"}
-  canonical={post.data.canonical || undefined}
+  canonical={computedCanonical}
   robots={robots}
 >
   {/* Reading progress bar */}

@@ -13,22 +13,121 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+const d = post.data;
 
-const jsonld = post.data.schema_jsonld || "";
-const lastUpdated = post.data.updatedAt || post.data.publishedAt;
+const siteUrl = "https://cryptobonuslist.com";
+const pageUrl = `${siteUrl}/casinos/${d.slug}`;
+const canonical = pageUrl;
+
+const lastUpdated = d.updatedAt || d.publishedAt;
 const lastUpdatedFormatted = lastUpdated
   ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
   : null;
-const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+const robots = d.robots || (d.noIndex ? "noindex, nofollow" : "index, follow");
+
+// Author data
+const authors = await getCollection("authors");
+const authorData = authors.find((a) => a.data.slug === d.authorSlug);
+
+// Build JSON-LD programmatically
+const schemas: Record<string, any>[] = [];
+
+// Review schema with itemReviewed as CasinoAndGamblingBusiness
+const reviewSchema: Record<string, any> = {
+  "@type": "Review",
+  name: d.seoTitle || d.title,
+  description: d.description,
+  url: pageUrl,
+  datePublished: d.publishedAt ? new Date(d.publishedAt).toISOString() : undefined,
+  dateModified: lastUpdated ? new Date(lastUpdated).toISOString() : undefined,
+  itemReviewed: {
+    "@type": "CasinoAndGamblingBusiness",
+    name: d.casino_name || d.casinoName || d.title,
+    ...(d.website ? { url: d.website } : {}),
+    ...(d.image ? { image: d.image.startsWith("http") ? d.image : `${siteUrl}${d.image}` } : {}),
+  },
+  publisher: { "@type": "Organization", name: "cryptobonuslist.com", url: siteUrl },
+};
+
+if (d.author) {
+  reviewSchema.author = {
+    "@type": "Person",
+    name: d.author,
+    ...(d.authorSlug ? { url: `${siteUrl}/team/${d.authorSlug}` } : {}),
+  };
+}
+
+if (d.ourRating) {
+  reviewSchema.reviewRating = {
+    "@type": "Rating",
+    ratingValue: String(d.ourRating),
+    bestRating: "10",
+    worstRating: "0",
+  };
+}
+
+if (d.playerRating && d.playerRatingCount) {
+  (reviewSchema.itemReviewed as Record<string, any>).aggregateRating = {
+    "@type": "AggregateRating",
+    ratingValue: String(d.playerRating),
+    bestRating: "10",
+    worstRating: "0",
+    ratingCount: String(d.playerRatingCount),
+  };
+} else if (d.ourRating) {
+  (reviewSchema.itemReviewed as Record<string, any>).aggregateRating = {
+    "@type": "AggregateRating",
+    ratingValue: String(d.ourRating),
+    bestRating: "10",
+    worstRating: "0",
+    ratingCount: "1",
+  };
+}
+
+if (d.image) {
+  reviewSchema.image = {
+    "@type": "ImageObject",
+    url: d.image.startsWith("http") ? d.image : `${siteUrl}${d.image}`,
+    width: d.imageWidth || 1792,
+    height: d.imageHeight || 1024,
+    ...(d.imageAlt ? { caption: d.imageAlt } : {}),
+  };
+}
+
+schemas.push(reviewSchema);
+
+// FAQ schema
+if (d.faqs && d.faqs.length > 0) {
+  schemas.push({
+    "@type": "FAQPage",
+    mainEntity: d.faqs.map((faq: { question: string; answer: string }) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  });
+}
+
+// BreadcrumbList schema
+schemas.push({
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "Casino Reviews", item: `${siteUrl}/casinos` },
+    { "@type": "ListItem", position: 3, name: d.title },
+  ],
+});
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 ---
 
 <Layout
-  title={post.data.seoTitle}
-  description={post.data.description}
+  title={d.seoTitle}
+  description={d.description}
   jsonld={jsonld}
   ogType="article"
-  ogImage={post.data.image || "/favicon.svg"}
-  canonical={post.data.canonical || undefined}
+  ogImage={d.image || "/favicon.svg"}
+  canonical={canonical}
   robots={robots}
 >
   <article class="px-6 py-12">
@@ -39,17 +138,17 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
           <li class="text-[#D4D4D4]">/</li>
           <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14]">Casinos</a></li>
           <li class="text-[#D4D4D4]">/</li>
-          <li class="text-white" aria-current="page">{post.data.title}</li>
+          <li class="text-white" aria-current="page">{d.title}</li>
         </ol>
       </nav>
 
       <header class="border-[3px] border-white bg-black p-8 mb-8 shadow-[6px_6px_0px_0px_#8A2BE2]">
-        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{post.data.description}</p>
-        {post.data.ourRating && (
+        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{d.title}</h1>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{d.description}</p>
+        {d.ourRating && (
           <div class="flex items-center gap-2 mb-4">
             <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">OUR RATING:</span>
-            <span class="text-white font-[Space_Grotesk] font-bold text-3xl">{post.data.ourRating}</span>
+            <span class="text-white font-[Space_Grotesk] font-bold text-3xl">{d.ourRating}</span>
             <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">/10</span>
           </div>
         )}
@@ -58,19 +157,19 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
         )}
       </header>
 
-      {post.data.image && (
+      {d.image && (
         <div class="mb-8">
-          <img src={post.data.image} alt={post.data.imageAlt} width={post.data.imageWidth} height={post.data.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2]" />
+          <img src={d.image} alt={d.imageAlt} width={d.imageWidth} height={d.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#8A2BE2]" />
         </div>
       )}
 
-      {(post.data.pros || post.data.cons) && (
+      {(d.pros || d.cons) && (
         <div class="grid md:grid-cols-2 gap-6 mb-8">
-          {post.data.pros && (
+          {d.pros && (
             <div class="border-[3px] border-[#39FF14] bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-[#39FF14] mb-4">PROS</h3>
               <ul class="space-y-2">
-                {post.data.pros.map((pro: string) => (
+                {d.pros.map((pro: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-[#39FF14] mt-1">+</span><span>{pro.trim()}</span>
                   </li>
@@ -78,11 +177,11 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
               </ul>
             </div>
           )}
-          {post.data.cons && (
+          {d.cons && (
             <div class="border-[3px] border-white bg-black p-6">
               <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-4">CONS</h3>
               <ul class="space-y-2">
-                {post.data.cons.map((con: string) => (
+                {d.cons.map((con: string) => (
                   <li class="text-[#D4D4D4] font-[Public_Sans] text-sm flex items-start gap-2">
                     <span class="text-white mt-1">-</span><span>{con.trim()}</span>
                   </li>

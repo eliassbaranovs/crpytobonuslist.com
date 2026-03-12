@@ -42,9 +42,37 @@ function getReadingTime(article: AnyPost): string {
 // First featured article on page 1
 const featuredArticle = page.currentPage === 1 ? page.data.find((a) => a.data.featured) || page.data[0] : null;
 const restArticles = featuredArticle ? page.data.filter((a) => a !== featuredArticle) : page.data;
+
+// Page title with page number for SEO
+const pageTitle = page.currentPage > 1
+  ? `Crypto Casino News - Page ${page.currentPage} | CryptoBonusList`
+  : "Crypto Casino News | CryptoBonusList";
+
+// Canonical and pagination URLs
+const siteUrl = "https://cryptobonuslist.com";
+const canonicalUrl = page.currentPage > 1
+  ? `${siteUrl}/news/${page.currentPage}`
+  : `${siteUrl}/news`;
+const prevUrl = page.url.prev ? `${siteUrl}${page.url.prev}` : null;
+const nextUrl = page.url.next ? `${siteUrl}${page.url.next}` : null;
+
+// BreadcrumbList JSON-LD
+const breadcrumbName = page.currentPage > 1 ? `News - Page ${page.currentPage}` : "News";
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${siteUrl}/` },
+    { "@type": "ListItem", "position": 2, "name": breadcrumbName, "item": canonicalUrl }
+  ]
+};
+const schemaJsonLd = JSON.stringify(breadcrumbLd);
 ---
 
-<Layout title="Crypto Casino News | CryptoBonusList" description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.">
+<Layout title={pageTitle} description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals." canonical={canonicalUrl} jsonld={schemaJsonLd}>
+  {/* rel prev/next for pagination SEO */}
+  {prevUrl && <link rel="prev" href={prevUrl} />}
+  {nextUrl && <link rel="next" href={nextUrl} />}
   <section class="px-6 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">

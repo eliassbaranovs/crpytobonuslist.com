@@ -4,26 +4,41 @@ import { getCollection } from "astro:content";
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
-  const paths = [];
+  // Use a Map to deduplicate by slug
+  const pathMap = new Map<string, { params: { slug: string }; props: { affiliateUrl: string; casinoName: string } }>();
+
   for (const post of posts) {
+    const casinoName = post.data.casinoName || post.data.casino || post.data.casino_name || post.data.title;
+
     // Route by claim_url if it's a plain slug (not a full URL)
     if (post.data.claim_url && !post.data.claim_url.includes("/")) {
-      paths.push({
-        params: { slug: post.data.claim_url },
-        props: { affiliateUrl: post.data.website || "#", casinoName: post.data.casino || post.data.casino_name || post.data.title },
-      });
+      const dest = post.data.website || "";
+      if (dest.startsWith("https://")) {
+        pathMap.set(post.data.claim_url, {
+          params: { slug: post.data.claim_url },
+          props: { affiliateUrl: dest, casinoName },
+        });
+      }
     }
-    // Route by post slug — use claim_url as destination only if it's an external URL, otherwise website
+
+    // Route by post slug
     if (post.data.website || post.data.claim_url) {
-      const claimIsExternal = post.data.claim_url && (post.data.claim_url.startsWith("http://") || post.data.claim_url.startsWith("https://"));
-      const destination = claimIsExternal ? post.data.claim_url : post.data.website || "#";
-      paths.push({
-        params: { slug: post.data.slug },
-        props: { affiliateUrl: destination, casinoName: post.data.casino || post.data.casino_name || post.data.title },
-      });
+      const claimIsExternal =
+        post.data.claim_url &&
+        post.data.claim_url.startsWith("https://");
+      const destination = claimIsExternal ? post.data.claim_url! : post.data.website || "";
+
+      // Only generate the page if destination is a valid https URL
+      if (destination.startsWith("https://")) {
+        pathMap.set(post.data.slug, {
+          params: { slug: post.data.slug },
+          props: { affiliateUrl: destination, casinoName },
+        });
+      }
     }
   }
-  return paths;
+
+  return Array.from(pathMap.values());
 }
 
 const { affiliateUrl, casinoName } = Astro.props;

@@ -85,7 +85,10 @@ const jsonld = JSON.stringify({
                   <tr class="border-t-[2px] border-white/20 hover:bg-white/5 transition-colors">
                     <td class="px-4 py-4 font-[JetBrains_Mono] text-[#39FF14] font-bold">{i + 1}</td>
                     <td class="px-4 py-4">
-                      <a href={getReviewUrl(review)} class="font-bold text-white hover:text-[#39FF14] transition-colors">
+                      <a href={getReviewUrl(review)} class="flex items-center gap-3 font-bold text-white hover:text-[#39FF14] transition-colors">
+                        {review.data.logo && (
+                          <img src={review.data.logo} alt={`${review.data.title.replace(/ Review.*$/, "")} logo`} width="32" height="32" loading="lazy" />
+                        )}
                         {review.data.title.replace(/ Review.*$/, "")}
                       </a>
                     </td>
@@ -99,7 +102,9 @@ const jsonld = JSON.stringify({
                         {wager !== null ? (wager === 0 ? "0x (none)" : wager + "x") : "Low"}
                       </span>
                     </td>
-                    <td class="px-4 py-4 text-sm text-[#D4D4D4]">{review.data.bonus || "See review"}</td>
+                    <td class="px-4 py-4 text-sm">
+                      <a href={getReviewUrl(review)} class="text-[#FAFF00] hover:underline">{review.data.bonus || "See review"}</a>
+                    </td>
                     <td class="px-4 py-4">
                       <a
                         href={getClaimUrl(review)}

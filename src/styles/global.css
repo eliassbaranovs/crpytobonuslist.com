@@ -106,3 +106,13 @@ pre {
   background: #1a1a1a;
   padding: 1rem;
 }
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  .card-brutal {
+    transition: none;
+  }
+}

@@ -162,11 +162,23 @@ const contentSchema = z
     })
     .transform((data) => ({
       ...data,
+      // Existing normalizations
       updatedAt: data.updatedAt ?? (data.lastModified ? new Date(data.lastModified) : data.publishedAt),
       image: data.image || data.coverImage || "",
       author: data.author || data.authorName || "",
       imageAlt: data.imageAlt || data.title,
       seoTitle: data.seoTitle || data.title,
+      // Normalize snake_case -> camelCase for all duplicate field pairs
+      depositMethods: data.depositMethods || data.deposit_methods || "",
+      withdrawalMethods: data.withdrawalMethods || data.withdrawal_methods || "",
+      gameProviders: data.gameProviders || data.game_providers || "",
+      casinoName: data.casinoName || data.casino_name || data.casino || "",
+      liveChat: data.liveChat || data.live_chat || "",
+      emailSupport: data.emailSupport || data.email_support || "",
+      minimumDeposit: data.minimumDeposit || data.minimum_deposit || "",
+      withdrawalTimes: data.withdrawalTimes || data.withdrawal_time || "",
+      affiliateProgram: data.affiliateProgram || data.affiliate_program || "",
+      wagering: data.wageringRequirements || data.wagering || "",
     }));
 
 // Unified posts collection - pipeline publishes to src/content/posts/{slug}.md

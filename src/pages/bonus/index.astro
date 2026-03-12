@@ -5,9 +5,40 @@ import { isBonus, sortByDate } from "../../lib/posts";
 
 const allPosts = await getCollection("posts");
 const bonuses = sortByDate(allPosts.filter(isBonus));
+
+const siteUrl = "https://cryptobonuslist.com";
+const canonical = `${siteUrl}/bonus`;
+
+const schemas: Record<string, any>[] = [];
+
+// CollectionPage + ItemList
+schemas.push({
+  "@type": "CollectionPage",
+  name: "Crypto Casino Bonuses",
+  description: "Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.",
+  url: `${siteUrl}/bonus/`,
+  numberOfItems: bonuses.length,
+  itemListElement: bonuses.map((b, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    url: `${siteUrl}/bonus/${b.data.slug}`,
+    name: b.data.title,
+  })),
+});
+
+// BreadcrumbList
+schemas.push({
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "Bonuses" },
+  ],
+});
+
+const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 ---
 
-<Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.">
+<Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed." jsonld={jsonLd} canonical={canonical}>
   <section class="px-6 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">

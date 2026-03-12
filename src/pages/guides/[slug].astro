@@ -14,8 +14,32 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
-const jsonld = post.data.schema_jsonld || "";
+const slug = post.data.slug;
+const computedCanonical = `https://cryptobonuslist.com/guides/${slug}`;
 const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+
+// Build JSON-LD: merge existing schema with BreadcrumbList in @graph
+const existingSchema = post.data.schema_jsonld ? JSON.parse(post.data.schema_jsonld) : null;
+const breadcrumbLd = {
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://cryptobonuslist.com/guides" },
+    { "@type": "ListItem", "position": 3, "name": post.data.title, "item": computedCanonical }
+  ]
+};
+
+let graphItems: any[] = [breadcrumbLd];
+if (existingSchema) {
+  if (existingSchema["@graph"]) {
+    graphItems = [...existingSchema["@graph"], breadcrumbLd];
+  } else {
+    const { "@context": _ctx, ...rest } = existingSchema;
+    graphItems = [rest, breadcrumbLd];
+  }
+}
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": graphItems });
 ---
 
 <Layout
@@ -24,7 +48,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
   jsonld={jsonld}
   ogType="article"
   ogImage={post.data.image || "/favicon.svg"}
-  canonical={post.data.canonical || undefined}
+  canonical={computedCanonical}
   robots={robots}
 >
   <article class="px-6 py-12">
