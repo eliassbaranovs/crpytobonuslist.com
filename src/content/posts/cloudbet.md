@@ -4,9 +4,9 @@ slug: "cloudbet"
 description: "CloudBet review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "CloudBet Review 2026 – Legit or Not? Our Honest Verdict"
 excerpt: "CloudBet is a long-standing crypto casino and sportsbook best for high-volume players who prioritize rakeback and extensive coin support over traditional welcome bonuses. Established in 2013, it has b"
-publishedAt: 2026-03-12T18:37:33.464Z
+publishedAt: 2026-03-12T21:33:34.424Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T18:37:33.464Z
+updatedAt: 2026-03-12T21:33:34.424Z
 tags:
   - "CloudBet"
   - "casino review"
