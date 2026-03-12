@@ -1,19 +1,19 @@
 ---
-title: "Chanced Casino Review"
+title: "Chanced Casino Review: A Legitimate Sweepstakes Site With Instant Payouts"
 slug: "chanced-casino"
 description: "Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "Chanced Casino Review 2026 – Legit or Not? Our Honest Verdic"
-excerpt: "Chanced Casino is a legitimate US sweepstakes site that excels with instant cash redemptions, a massive game library, and a valuable VIP rakeback program."
-publishedAt: 2026-03-12T18:02:31.459Z
+excerpt: "Chanced Casino is a legitimate and feature-rich sweepstakes platform that stands out for its instant cash redemptions, massive game library, and a valuable VIP rakeback program."
+publishedAt: 2026-03-12T18:31:45.054Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T18:02:31.459Z
+updatedAt: 2026-03-12T18:31:45.054Z
 tags:
   - "Chanced Casino"
   - "casino review"
   - "Crypto Casino"
   - "Online Casino"
 image: "/images/chanced-casino.webp"
-imageAlt: "Chanced Casino casino cover"
+imageAlt: "Chanced Casino casino review cover"
 imageWidth: 1792
 imageHeight: 1024
 author: "Silvia Rodriguez"
@@ -27,18 +27,17 @@ casino: "chanced-casino"
 casinoName: "Chanced Casino"
 ourRating: 8.5
 pros:
-  - "No purchase required to claim the welcome bonus of GC, SC, and Free Spins."
-  - "Instant bank transfer redemptions allow for prize collection within minutes."
-  - "Massive game library with over 1,600 slots and more than 20 live dealer tables."
-  - "A 16-level VIP program that offers valuable passive rakeback to all players."
-  - "24/7 live chat support ensures assistance is always available."
-  - "Extensive daily, weekly, and monthly promotions provide continuous value."
+  - "Generous No-Deposit Bonus: New players receive 30,000 GC, 2 SC, and 20 free spins without making a purchase."
+  - "Instant Redemption Option: The instant bank transfer method allows players to receive cash prizes within minutes."
+  - "Massive Game Library: Over 1,600 slots and more than 20 live dealer tables from top providers."
+  - "Excellent VIP Program: A 16-tier system with automatic advancement and passive rakeback for all players."
+  - "24/7 Live Chat Support: Responsive and helpful customer service is available around the clock."
 cons:
-  - "The minimum redemption amount of 100 SC ($100) is high compared to some competitors."
-  - "Cryptocurrency is accepted for purchases but cannot be used for redemptions."
-  - "The requirement for a selfie re-verification on every withdrawal can be inconvenient."
-  - "Promotional Sweeps Coins come with a 3x playthrough requirement, which is higher than the 1x for purchased SC."
-  - "The platform lacks dedicated mobile apps for iOS and Android devices."
+  - "High Redemption Minimum: Players must have at least 100 SC ($100) to request a prize redemption."
+  - "Crypto for Purchases Only: Cryptocurrency can be used to buy Gold Coins but not for redeeming prizes."
+  - "Repetitive Verification: A selfie may be required for every withdrawal, creating friction for regular players."
+  - "No Mobile App: Chanced does not offer a dedicated iOS or Android application."
+  - "Steep Promo Wagering: The 3x playthrough on promotional Sweeps Coins is higher than the standard 1x."
 acceptedCryptos: 
   - "Bitcoin"
   - "Ethereum"
@@ -47,22 +46,6 @@ cryptoWithdrawalSpeedMinutes: 1440
 wageringMultiplier: 1
 isNewCasino: false
 kycRequired: true
-faqs:
-  -
-    question: "Is Chanced Casino legit?"
-    answer: "Yes, Chanced Casino is a legitimate sweepstakes casino. It is owned and operated by Gold Coin Group LLC, a company registered in Wyoming, and functions legally under United States federal sweepstakes law. It is available to players in 38 US states."
-  -
-    question: "How fast are Chanced redemptions?"
-    answer: "Redemption speed at Chanced depends on the method chosen. The Instant Bank Transfer option can deliver funds to your account within minutes of approval. The standard ACH bank transfer option takes 1-5 business days. First-time redemptions require KYC verification, which can add an extra 24-48 hours to the process."
-  -
-    question: "Does Chanced Casino accept cryptocurrency?"
-    answer: "Chanced Casino accepts cryptocurrencies, including Bitcoin, Ethereum, and Litecoin, for the purchase of Gold Coin packages. However, it does not support cryptocurrency for prize redemptions. All redemptions are processed in USD to a bank account."
-  -
-    question: "What are the Chanced bonus playthrough requirements?"
-    answer: "The playthrough requirements vary. Sweeps Coins obtained as a bonus with a Gold Coin purchase typically have a 1x playthrough requirement. Sweeps Coins received for free through no-deposit bonuses, daily logins, or other promotions are subject to a 3x playthrough requirement before they can be redeemed."
-  -
-    question: "Does Chanced Casino require KYC verification?"
-    answer: "Yes, Chanced Casino requires mandatory KYC (Know Your Customer) verification before you can process your first prize redemption. This involves submitting a valid photo ID and proof of address. The casino may also require a selfie re-verification for each subsequent withdrawal request to ensure account security.\n\nRemember to gamble responsibly. Casino terms and conditions apply. Minimum age 18+/21+. Visit [GambleAware](https://www.gambleaware.org/) for more information."
 casino_name: "Chanced Casino"
 established: "2023"
 company: "Gold Coin Group LLC"
@@ -107,7 +90,7 @@ game_providers:
 canonical: "https://cryptobonuslist.com/posts/chanced-casino"
 logo: "/images/logos/chanced-casino.png"
 schemaJsonLd: |
-  [{"url":"https://cryptobonuslist.com/posts/chanced-casino","@type":"Review","author":{"url":"https://cryptobonuslist.com/authors/silvia-rodriguez","name":"Silvia Rodriguez","@type":"Person","image":"https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/images/author-headshots/silvia-rodriguez_profile.png","jobTitle":"expert","knowsAbout":["crypto casino bonuses","wagering requirements","iGaming promotions","no deposit bonuses","VIP programs","crypto payments"],"description":"Silvia Rodriguez is a crypto gambling analyst and bonus specialist with deep expertise in iGaming promotions, wagering mechanics, and player value optimization. She has reviewed over 500 crypto casino bonus offers and tracks the market daily to identify the best deals for players. Her work focuses on translating complex bonus T&Cs into clear, actionable advice.","hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Certified iGaming Compliance Specialist"},{"@type":"EducationalOccupationalCredential","credentialCategory":"Former affiliate manager at two top-50 crypto casinos"}]},"@context":"https://schema.org","headline":"Chanced Casino Review","keywords":"Chanced Casino, casino review, Sweepstakes Social Casino","publisher":{"url":"https://cryptobonuslist.com","name":"cryptobonuslist.com","@type":"Organization"},"wordCount":3299,"description":"Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing.","dateModified":"2026-03-12T18:01:37.912Z","itemReviewed":{"name":"Chanced Casino","@type":"Organization"},"reviewRating":{"@type":"Rating","bestRating":10,"ratingValue":8.5,"worstRating":0},"timeRequired":"PT17M","datePublished":"2026-03-12T18:01:37.912Z","negativeNotes":["The minimum redemption amount of 100 SC ($100) is high compared to some competitors.","Cryptocurrency is accepted for purchases but cannot be used for redemptions.","The requirement for a selfie re-verification on every withdrawal can be inconvenient.","Promotional Sweeps Coins come with a 3x playthrough requirement, which is higher than the 1x for purchased SC.","The platform lacks dedicated mobile apps for iOS and Android devices."],"positiveNotes":["No purchase required to claim the welcome bonus of GC, SC, and Free Spins.","Instant bank transfer redemptions allow for prize collection within minutes.","Massive game library with over 1,600 slots and more than 20 live dealer tables.","A 16-level VIP program that offers valuable passive rakeback to all players.","24/7 live chat support ensures assistance is always available.","Extensive daily, weekly, and monthly promotions provide continuous value."],"mainEntityOfPage":{"@id":"https://cryptobonuslist.com/posts/chanced-casino","@type":"WebPage"}},{"name":"No Deposit Welcome Bonus","@type":"Offer","price":"2100000","@context":"https://schema.org","category":"Casino Bonus","description":"Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing.","availability":"https://schema.org/InStock","priceCurrency":"EUR","termsOfService":"Wagering: 1x playthrough on standard Sweeps Coins; 3x playthrough on promotional Sweeps Coins","eligibleTransactionVolume":{"@type":"PriceSpecification","price":"5","priceCurrency":"EUR"}},{"@type":"FAQPage","@context":"https://schema.org","mainEntity":[{"name":"Is Chanced Casino legit?","@type":"Question","acceptedAnswer":{"text":"Yes, Chanced Casino is a legitimate sweepstakes casino. It is owned and operated by Gold Coin Group LLC, a company registered in Wyoming, and functions legally under United States federal sweepstakes law. It is available to players in 38 US states.","@type":"Answer"}},{"name":"How fast are Chanced redemptions?","@type":"Question","acceptedAnswer":{"text":"Redemption speed at Chanced depends on the method chosen. The Instant Bank Transfer option can deliver funds to your account within minutes of approval. The standard ACH bank transfer option takes 1-5 business days. First-time redemptions require KYC verification, which can add an extra 24-48 hours to the process.","@type":"Answer"}},{"name":"Does Chanced Casino accept cryptocurrency?","@type":"Question","acceptedAnswer":{"text":"Chanced Casino accepts cryptocurrencies, including Bitcoin, Ethereum, and Litecoin, for the purchase of Gold Coin packages. However, it does not support cryptocurrency for prize redemptions. All redemptions are processed in USD to a bank account.","@type":"Answer"}},{"name":"What are the Chanced bonus playthrough requirements?","@type":"Question","acceptedAnswer":{"text":"The playthrough requirements vary. Sweeps Coins obtained as a bonus with a Gold Coin purchase typically have a 1x playthrough requirement. Sweeps Coins received for free through no-deposit bonuses, daily logins, or other promotions are subject to a 3x playthrough requirement before they can be redeemed.","@type":"Answer"}},{"name":"Does Chanced Casino require KYC verification?","@type":"Question","acceptedAnswer":{"text":"Yes, Chanced Casino requires mandatory KYC (Know Your Customer) verification before you can process your first prize redemption. This involves submitting a valid photo ID and proof of address. The casino may also require a selfie re-verification for each subsequent withdrawal request to ensure account security.\n\nRemember to gamble responsibly. Casino terms and conditions apply. Minimum age 18+/21+. Visit [GambleAware](https://www.gambleaware.org/) for more information.","@type":"Answer"}}]}]
+  [{"url":"https://cryptobonuslist.com/posts/chanced-casino","@type":"Review","author":{"url":"https://cryptobonuslist.com/authors/silvia-rodriguez","name":"Silvia Rodriguez","@type":"Person","image":"https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/images/author-headshots/silvia-rodriguez_profile.png","jobTitle":"expert","knowsAbout":["crypto casino bonuses","wagering requirements","iGaming promotions","no deposit bonuses","VIP programs","crypto payments"],"description":"Silvia Rodriguez is a crypto gambling analyst and bonus specialist with deep expertise in iGaming promotions, wagering mechanics, and player value optimization. She has reviewed over 500 crypto casino bonus offers and tracks the market daily to identify the best deals for players. Her work focuses on translating complex bonus T&Cs into clear, actionable advice.","hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Certified iGaming Compliance Specialist"},{"@type":"EducationalOccupationalCredential","credentialCategory":"Former affiliate manager at two top-50 crypto casinos"}]},"@context":"https://schema.org","headline":"Chanced Casino Review: A Legitimate Sweepstakes Site With Instant Payouts","keywords":"Chanced Casino, casino review, Sweepstakes Social Casino","publisher":{"url":"https://cryptobonuslist.com","name":"cryptobonuslist.com","@type":"Organization"},"wordCount":3277,"description":"Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing.","dateModified":"2026-03-12T18:13:20.921Z","itemReviewed":{"name":"Chanced Casino","@type":"Organization"},"reviewRating":{"@type":"Rating","bestRating":10,"ratingValue":8.5,"worstRating":0},"timeRequired":"PT17M","datePublished":"2026-03-12T18:13:20.921Z","negativeNotes":["High Redemption Minimum: Players must have at least 100 SC ($100) to request a prize redemption.","Crypto for Purchases Only: Cryptocurrency can be used to buy Gold Coins but not for redeeming prizes.","Repetitive Verification: A selfie may be required for every withdrawal, creating friction for regular players.","No Mobile App: Chanced does not offer a dedicated iOS or Android application.","Steep Promo Wagering: The 3x playthrough on promotional Sweeps Coins is higher than the standard 1x."],"positiveNotes":["Generous No-Deposit Bonus: New players receive 30,000 GC, 2 SC, and 20 free spins without making a purchase.","Instant Redemption Option: The instant bank transfer method allows players to receive cash prizes within minutes.","Massive Game Library: Over 1,600 slots and more than 20 live dealer tables from top providers.","Excellent VIP Program: A 16-tier system with automatic advancement and passive rakeback for all players.","24/7 Live Chat Support: Responsive and helpful customer service is available around the clock."],"mainEntityOfPage":{"@id":"https://cryptobonuslist.com/posts/chanced-casino","@type":"WebPage"}},{"name":"No Deposit Welcome Bonus","@type":"Offer","price":"2100000","@context":"https://schema.org","category":"Casino Bonus","description":"Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing.","availability":"https://schema.org/InStock","priceCurrency":"EUR","termsOfService":"Wagering: 1x playthrough on standard Sweeps Coins; 3x playthrough on promotional Sweeps Coins","eligibleTransactionVolume":{"@type":"PriceSpecification","price":"5","priceCurrency":"EUR"}}]
 lastVerified: "2026-03-12"
 sectionImages:
   - section: "chanced casino bonuses for existing play"
@@ -140,157 +123,173 @@ sectionImages:
     path: "/images/chanced-casino-657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b-chanced-casino-logo-url.png"
 website: "https://chanced.com"
 claim_url: "https://chanced.com"
-wordCount: 2609
-readingTime: "14 min read"
+wordCount: 2833
+readingTime: "15 min read"
 ---
 
-# Chanced Casino Review
+# Chanced Casino Review: A Legitimate Sweepstakes Site With Instant Payouts
 
-Chanced Casino is a legitimate US sweepstakes site that excels with instant cash redemptions, a massive game library, and a valuable VIP rakeback program.
+Chanced Casino is a legitimate and feature-rich sweepstakes platform that stands out for its instant cash redemptions, massive game library, and a valuable VIP rakeback program.
 
-### Overview
+Launched in 2023 by Gold Coin Group LLC, Chanced operates legally in the United States under federal sweepstakes law. This model allows players to enjoy casino-style games without engaging in traditional real-money gambling. It uses a dual-currency system: Gold Coins (GC) for free-play entertainment and Sweeps Coins (SC) which can be redeemed for cash prizes. The platform’s combination of a no-deposit welcome bonus, a vast selection of over 1,600 games from top-tier providers, and genuine instant withdrawal options makes it a compelling choice for US-based players.
 
-Launched in 2023, Chanced Casino operates as a sweepstakes social casino under the ownership of Gold Coin Group LLC, a company registered in Wyoming and headquartered in Texas. It functions legally within the United States federal sweepstakes framework, making it accessible in 38 states. The platform uses a dual-currency system: Gold Coins (GC) for free-to-play entertainment and Sweeps Coins (SC) which can be redeemed for cash prizes. With over 1,600 games from top-tier providers, a robust live dealer section, and the option for instant bank transfer redemptions, Chanced presents a compelling package for players seeking a modern social casino experience.
+## Chanced Casino at a Glance
 
-The casino's main strengths lie in its operational efficiency and player-centric features. New users are greeted with a no-deposit bonus, and a multi-tiered VIP program provides continuous value through passive rakeback. While the high minimum redemption threshold of 100 SC and the lack of a dedicated mobile app are notable drawbacks, the platform's overall performance, 24/7 support, and transparent operations make it a standout choice in the crowded sweepstakes market.
+Chanced Casino operates under US sweepstakes law, a legal framework that distinguishes it from traditional online casinos. This allows it to offer services in 38 US states. The platform boasts an impressive library of over 1,600 games, ensuring a diverse and engaging experience for all types of players.
 
-### Chanced Casino at a Glance
+The casino functions on a sweepstakes model with two virtual currencies. Gold Coins (GC) are used for fun play and cannot be redeemed for cash. Sweeps Coins (SC) are used for promotional play and can be redeemed for cash prizes at a rate of 1 SC to $1 USD. New players are greeted with a no-deposit bonus of 30,000 Gold Coins, 2 Sweeps Coins, and 20 Free Spins, providing immediate access to both modes of play without any initial purchase required.
 
-*   **Licence & Legality**: Operates under US Sweepstakes Law
-*   **Game Count**: 1,600+
-*   **Platform Overview**: Sweepstakes social casino using Gold Coins (GC) for fun play and Sweeps Coins (SC) for cash prize redemption (1 SC = $1 USD). Available in 38 US states and parts of Canada.
-*   **Headline Bonus**: 30,000 Gold Coins + 2 Sweeps Coins + 20 Free Spins with no deposit required on sign-up.
+## Games and Software
 
-### Games and Software
+The game library at Chanced Casino is one of its strongest assets, featuring over 1,600 titles from a roster of respected software providers. This extensive collection ensures that players have access to a wide variety of themes, mechanics, and game types, from classic slots to modern live dealer experiences. The platform is powered by industry leaders including Hacksaw Gaming, NetEnt, Relax Gaming, Pragmatic Play, BGaming, and 3 Oaks Gaming.
 
-Chanced Casino provides a vast and diverse game library featuring over 1,600 titles from some of the industry's most respected software developers. The portfolio is powered by giants like Hacksaw Gaming, NetEnt, Relax Gaming, Pragmatic Play, and BGaming. This collaboration ensures a high-quality gaming experience with reliable mechanics, engaging graphics, and fair outcomes. The platform is well-organized, allowing players to filter games by provider or search directly for their favorite titles.
+![A view of the Chanced Casino homepage showcasing featured slot games and promotions.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__chanced-social-casino-homepage.png)
 
-![The Chanced Casino homepage showcasing featured slot games and promotions.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__chanced-social-casino-homepage.png)
+The slot selection is particularly robust, covering a vast spectrum of styles. Players can find high-volatility titles from Hacksaw Gaming like *Le Bandit* and *Huff House Bonanza*, known for their engaging bonus features and significant win potential. Classic fan-favorites from NetEnt, such as the iconic *Starburst*, are also available, offering a more traditional and balanced slot experience. Pragmatic Play contributes its popular titles, which are a staple at many top social and real-money casinos. The lobby is well-organized, allowing players to filter games by provider, which simplifies navigation.
 
-The slot selection is the main attraction, featuring popular games such as Hacksaw Gaming's *Le Bandit* and NetEnt's iconic *Starburst*. The library includes a wide range of themes, volatility levels, and bonus features to suit all player preferences. Beyond slots, Chanced offers a solid collection of table games, including multiple variants of Blackjack, Roulette, and Baccarat. Specialty games like Keno, Crash, and a variety of scratch cards add further depth to the catalog.
+![The slot games lobby at Chanced, with filters for providers like Hacksaw Gaming and NetEnt.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__slot-games-lobby-with-provider.png)
 
-![The slot game lobby on Chanced, with options to filter by game provider.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__slot-games-lobby-with-provider.png)
+Beyond slots, Chanced offers a solid selection of table games and specialty titles. Players can enjoy digital versions of Blackjack, Roulette, and Baccarat. The library also includes Video Poker, Keno, Scratch Cards, and popular "crash" style games. This variety ensures that players who prefer strategy-based games or instant-win formats have plenty of options to explore.
 
-A significant highlight is the live dealer section, which is powered by Iconic21. This provides an immersive experience with real-time streaming of classic casino games. Players can enjoy Live Blackjack, Live Roulette, Live Baccarat, and unique game show-style offerings like Sic Bo, Dragon Tiger, and Crash Live. The presence of a dedicated live casino with over 20 tables distinguishes Chanced from many of its sweepstakes competitors, offering a level of interaction and authenticity typically found in real-money online casinos. Loading times are fast across both desktop and mobile browsers, ensuring smooth gameplay without frustrating delays.
+![The live dealer lobby at Chanced, featuring tables for Blackjack, Roulette, and Baccarat.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__chanced-live-dealer-casino-lob.png)
 
-![The live dealer casino lobby at Chanced, featuring blackjack and roulette tables.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__chanced-live-dealer-casino-lob.png)
+A significant highlight is the live dealer section, which is powered by Iconic21. This is a notable feature for a sweepstakes casino, as many competitors lack a live casino offering. Players can engage with real dealers in real-time across more than 20 tables, including Live Blackjack, Live Roulette, Baccarat, Sic Bo, and Dragon Tiger. The live stream quality is high, and the interface is user-friendly, successfully replicating the immersive atmosphere of a physical casino.
 
-### Deposits and Withdrawals
+![The account creation pop-up modal at Chanced Casino.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-games__chanced-create-account-modal-w.png)
 
-As a sweepstakes casino, Chanced does not process "deposits" in the traditional sense. Instead, players purchase packages of Gold Coins, which often come with free Sweeps Coins as a bonus. The platform provides a modern and flexible cashier that supports both traditional payment methods and cryptocurrencies for these purchases.
+## Deposits and Withdrawals
 
-![The purchase modal at Chanced, showing a welcome bonus bundle offer.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__purchases-and-redemptions__buy-bundle-modal-with-welcome-.png)
+Chanced Casino provides a straightforward and modern banking system for purchasing Gold Coin packages and redeeming Sweeps Coins for cash prizes. The platform supports a mix of traditional payment methods and cryptocurrencies for purchases, though prize redemptions are limited to bank transfers.
 
-#### Deposit Methods
+![The purchase screen showing a welcome bonus bundle for new players.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__purchases-and-redemptions__buy-bundle-modal-with-welcome-.png)
 
-Players can purchase Gold Coin packages using a variety of convenient methods. Traditional options include Visa, Mastercard, Discover, and American Express. For those who prefer digital assets, Chanced accepts Bitcoin, Ethereum, and Litecoin. This crypto-friendly approach is a major advantage, offering faster and more private transactions for purchasing coin bundles. The minimum purchase amount is set at a very accessible $5. The inclusion of major cryptocurrencies makes it a viable option for players browsing our lists of **[Bitcoin Casinos](/bitcoin-casinos/)** and **[Ethereum Casinos](/ethereum-casinos/)**.
+### Deposit Methods
 
-![The order summary screen at Chanced Casino during a coin bundle purchase.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__purchases-and-redemptions__order-summary-checkout-screen.png)
+Players can purchase Gold Coin packages using a variety of methods. Traditional options include major credit and debit cards such as Visa, Mastercard, Discover, and American Express. The minimum purchase amount is set at a very accessible $5.
 
-#### Withdrawal Speed
+For players who prefer digital assets, Chanced accepts several major cryptocurrencies, including Bitcoin (BTC), Ethereum (ETH), and Litecoin (LTC). This makes it a convenient option for crypto holders looking to participate in a sweepstakes casino. While you can buy GC packages with crypto, it is important to remember that you cannot redeem prizes directly back to a crypto wallet. This is a key distinction from real-money **[Bitcoin Casinos](/bitcoin-casinos/)** where crypto is used for both deposits and withdrawals.
 
-Redemptions at Chanced are processed for Sweeps Coins, with each SC holding a value of $1 USD. The platform offers two primary methods for redeeming cash prizes: standard ACH bank transfer and Instant Bank Transfer. Standard ACH transfers typically take between 1 to 5 business days to complete. The Instant Bank Transfer option is a standout feature, allowing players to receive their funds within minutes once the redemption is approved. This makes Chanced one of the faster-paying social casinos available.
+![The final checkout screen summarizing a Gold Coin package purchase.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__purchases-and-redemptions__order-summary-checkout-screen.png)
 
-However, players must be aware of the mandatory Know Your Customer (KYC) verification process required before the first redemption can be processed. This involves submitting identity documents like a passport or driver's license and a proof of address. This initial verification can add 24-48 hours to the total processing time for a first-time redemption. Furthermore, Chanced may require a selfie re-verification for each subsequent withdrawal, adding a recurring step that can slow down the process. For players who prioritize speed above all else, exploring platforms on our **[Fast Withdrawal Crypto Casinos](/fast-withdrawal-crypto-casinos/)** list might be a better fit.
+### Withdrawal Speed
 
-#### Fees
+Chanced excels in its redemption processing speeds, offering two primary methods for cashing out Sweeps Coins. The "Instant Bank Transfer" option is the fastest, typically delivering funds to a player's bank account within minutes of approval. This is a major advantage over many competitors, where withdrawals can take several days. The standard ACH bank transfer is also available, with processing times ranging from 1 to 5 business days.
 
-Chanced Casino does not charge any fees for processing redemptions. This is a positive policy that ensures players receive the full value of their redeemed Sweeps Coins. Players should remain aware that their own financial institutions or banks might impose fees on incoming transactions, so it is always wise to check with the respective payment provider. The absence of platform-side fees enhances the transparency and value proposition of the redemption process.
+However, all players must complete a mandatory Know Your Customer (KYC) verification process before their first redemption request can be processed. This involves submitting identity documents like a passport or driver's license and a proof of address. This initial verification can add 24 to 48 hours to the total wait time for the first withdrawal. A significant downside is that Chanced may require a selfie re-verification for each subsequent withdrawal, adding a layer of friction to the process. For players who value privacy and speed, the mandatory KYC and potential re-verifications are a notable drawback. Those seeking anonymity might prefer to explore our list of **[No Kyc Crypto Casinos](/no-kyc-crypto-casinos/)**.
 
-### Bonuses and Promotions
+### Fees
 
-Chanced Casino offers a robust promotional schedule designed to reward both new and existing players. The bonus structure is centered around providing free Gold Coins and Sweeps Coins through various activities, ensuring players always have a way to engage with the platform.
+Chanced Casino does not charge any fees for purchasing Gold Coin packages or for redeeming Sweeps Coins. Players should be aware that their own bank or payment provider might impose transaction fees, so it is always wise to check with them. The redemption rate is fixed at 1 SC equals $1 USD.
 
-![The promotions page at Chanced showcasing various tournaments and bonus offers.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-bonuses-for-existing-play__promotions-page-with-tournamen.png)
+A significant point of criticism is the high minimum redemption threshold. Players must accumulate at least 100 SC before they can request a cash prize redemption, which equates to a minimum of $100. This is considerably higher than the industry average and may be a barrier for casual players or those with smaller balances.
 
-#### Welcome Bonus
+## Bonuses and Promotions
 
-New players who register at Chanced are immediately rewarded with a generous no-deposit welcome bonus. Upon successful sign-up, you receive 30,000 Gold Coins, 2 Sweeps Coins, and 20 Free Spins. This allows you to start playing games and accumulating SC without making any initial purchase. The Sweeps Coins obtained through this offer are subject to a 3x playthrough requirement before they can be redeemed.
+Chanced Casino offers a generous and multi-faceted promotional structure designed to attract new players and retain existing ones. The system is built around providing free Gold Coins and Sweeps Coins through various activities, ensuring players always have a way to engage with the platform.
 
-For players who choose to make a purchase, Chanced offers a "Mega Boost" first-purchase bonus. This promotion can provide up to 2,100,000 Gold Coins and 210 bonus Sweeps Coins, depending on the size of the purchase package selected. Using a promo code like `SBRBONUS` can unlock these enhanced offers. The minimum purchase to qualify for a bonus is just $5. Sweeps Coins acquired through a purchase typically have a more favorable 1x playthrough requirement.
+### Welcome Bonus
 
-#### Ongoing Promotions
+New players at Chanced are greeted with a substantial no-deposit welcome bonus upon successful registration. The package includes 30,000 Gold Coins, 2 Sweeps Coins, and 20 Free Spins. This allows newcomers to explore the full range of games in both fun-play and promotional sweepstakes mode immediately, without any financial commitment. Using a promo code like SBRBONUS is recommended during sign-up to ensure the offer is claimed.
 
-The value at Chanced extends well beyond the initial welcome offer. The casino maintains an active promotional calendar to keep its community engaged. Players can benefit from a daily login bonus that awards free coins just for signing into their account each day. Additionally, hourly and weekly bonus drops provide frequent opportunities to top up your balance.
+For players who decide to make a purchase, Chanced offers a "Mega Boost" on the first Gold Coin package. This one-time deal can provide up to 2,100,000 GC and 210 SC, offering significant value. The playthrough requirement for Sweeps Coins is reasonable; SC obtained through regular gameplay has a 1x wagering requirement, while SC received from promotional offers or bonuses carries a 3x playthrough. This 3x requirement on bonus SC is slightly steep but still manageable compared to some competitors.
 
-The casino leverages its social media channels, particularly Instagram, to release weekly bonus drop codes for VIP members at the Copper tier and above. Other regular promotions include weekly raffles, a referral program that rewards you for bringing friends to the platform, and daily challenges that offer prizes for completing specific in-game tasks. These consistent promotions ensure that both free-play and redemption-focused players have ample opportunities to earn more coins.
+### Ongoing Promotions
 
-### VIP and Loyalty Program
+The promotional activity at Chanced extends far beyond the initial welcome offer. The casino provides numerous opportunities for players to collect additional free coins on a consistent basis. This creates a dynamic environment where active participation is regularly rewarded.
 
-Chanced Casino has implemented a comprehensive 16-level VIP program that automatically rewards players for their activity. The program is designed to provide accumulating value as you play, with benefits that scale significantly at higher tiers. All players are enrolled upon registration, starting at the Copper level and progressing through tiers like Bronze, Silver, Gold, Platinum, and the exclusive Goat and MVP levels.
+![The promotions page at Chanced showcasing tournaments and bonus drop events.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-casino-bonuses-for-existing-play__promotions-page-with-tournamen.png)
 
-![A modal showing the daily bonus streak reward for loyal players at Chanced.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-vip-and-loyalty-rewards__daily-bonus-streak-modal-showi.png)
+Key ongoing promotions include:
+*   **Daily Login Bonus:** Players receive a set amount of GC and SC simply for logging in each day.
+*   **Hourly Bonus Drops:** Small bonuses are frequently dropped into player accounts throughout the day.
+*   **Weekly Bonus Drops:** Larger bonus drops are available for VIP members at the Copper tier and above, often announced via Instagram.
+*   **Weekly Raffles:** Players can participate in raffles for a chance to win significant SC prizes.
+*   **Social Media Giveaways:** Chanced is active on social media platforms, running contests and giveaways for its followers.
+*   **Referral Bonus:** Players can earn bonuses by inviting friends to join the platform.
+*   **Daily Challenges:** Completing specific game-related tasks can unlock extra rewards.
 
-Progression through the VIP tiers is based on play volume. The core benefit of the program is passive rakeback, which accumulates on every spin or hand played and can be claimed at any time. As you climb the VIP ladder, the percentage of rakeback increases. Higher tiers also unlock additional perks, such as bespoke promotions tailored to your play style, level-up bonuses upon reaching a new tier, and monthly bonus drops.
+This steady stream of promotions ensures that players can sustain their gameplay over long periods without necessarily needing to make frequent purchases.
 
-![A promotional page for a sweepstakes event at Chanced Casino.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-vip-and-loyalty-rewards__meet-matt-cruise-sweepstakes-p.png)
+## VIP and Loyalty Program
 
-At the highest levels of the program, such as Platinum and above, players gain access to a dedicated VIP host. This personal account manager provides a concierge-level service, handling queries, offering exclusive bonuses, and ensuring a premium experience. The automatic enrollment and passive accumulation of rakeback make the Chanced VIP program accessible and rewarding for players at all levels of engagement.
+Chanced Casino has implemented a comprehensive 16-level VIP program that automatically rewards players based on their activity. Every player is enrolled upon registration, starting at the base tier and progressing by playing games with either Gold Coins or Sweeps Coins. The program is designed to deliver tangible, long-term value, particularly through its passive rakeback system.
 
-### Licensing and Security
+![A promotional modal for a daily bonus streak, a common loyalty reward.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-vip-and-loyalty-rewards__daily-bonus-streak-modal-showi.png)
 
-Chanced Casino operates legally in the United States under federal sweepstakes law. This model allows it to offer casino-style games for entertainment and cash prize redemptions without requiring a traditional online gambling license from a state regulatory body. The parent company, Gold Coin Group LLC, is a registered entity in Wyoming, providing a clear and transparent corporate structure. This legal framework is distinct from that of casinos licensed by authorities like the Malta Gaming Authority (MGA) or the UK Gambling Commission (UKGC), which involve more stringent regulatory oversight and formal player dispute resolution channels.
+The tiers are structured as follows: Copper, Bronze, Silver, Gold, Platinum (I-VI), Goat (I-V), and the top-level MVP. As players move up, the benefits become increasingly valuable. The core benefit available at all levels is rakeback, where a small percentage of every bet is returned to the player's balance. This accumulates passively in the background and can be claimed at any time.
 
-Security is a clear priority for the platform. Chanced employs SSL encryption technology to protect all data transmitted between players and its servers, safeguarding personal and financial information. The casino also enforces a strict KYC policy, which is mandatory for all players before they can redeem any cash prizes. This verification process helps prevent fraud and ensures compliance with legal requirements. While this KYC requirement is a strong security measure, players looking for anonymity may prefer platforms found on our **[No Kyc Crypto Casinos](/no-kyc-crypto-casinos/)** list. The casino also explicitly prohibits the use of VPNs to access the site from restricted regions.
+Higher tiers unlock additional perks. These include level-up bonuses awarded each time a new tier is reached, monthly bonuses tailored to a player's activity level, and bespoke promotions. Once players reach the upper echelons of the program, such as the Platinum and Goat tiers, they gain access to a dedicated VIP host who can provide personalized support and exclusive offers. This level of service is typically reserved for high-value players and adds a premium feel to the experience.
 
-### Responsible Gambling
+![An example of a special sweepstakes promotion available to Chanced players.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__chanced-vip-and-loyalty-rewards__meet-matt-cruise-sweepstakes-p.png)
 
-Chanced Casino demonstrates a commitment to player safety by providing a suite of responsible gambling tools. These features empower players to manage their play habits and maintain control over their activity on the platform. The availability of these tools is a positive indicator of the operator's dedication to creating a safe entertainment environment.
+## Licensing and Security
 
-Players can set limits on their purchases to manage their spending effectively. Session limits are also available, allowing users to control the amount of time they spend on the site in a single session. For those who need to take a break, a self-exclusion option allows players to temporarily or permanently block access to their account. A reality check feature provides periodic reminders of the time spent playing. This is a solid set of tools, and we recommend all players familiarize themselves with their location on the casino's website.
+Chanced Casino operates as a legal sweepstakes platform in the United States, adhering to federal and state laws governing such promotions. It is owned and operated by Gold Coin Group LLC, a company registered in Wyoming and headquartered in Abilene, Texas. Instead of holding a traditional gambling license from an authority like the Malta Gaming Authority (MGA) or the UK Gambling Commission (UKGC), its legality is based on the "no purchase necessary" principle of sweepstakes.
 
-For anyone seeking help with problem gambling, several professional organizations offer free and confidential support:
-- [GambleAware](https://www.gambleaware.org/) — UK-based gambling harm prevention
-- [GamCare](https://www.gamcare.org.uk/) — Free counselling and support
-- [Gambling Therapy](https://www.gamblingtherapy.org/) — Global online support service
-- [National Council on Problem Gambling](https://www.ncpgambling.org/help-treatment/) — US resources and helpline (1-800-522-4700)
+This legal framework means that player protections and dispute resolution mechanisms differ from those at MGA or UKGC-licensed casinos. Sweepstakes law focuses on the fairness of the promotional giveaway rather than comprehensive player fund protection or responsible gambling oversight in the same way a traditional license does. While Chanced operates legitimately within its legal model, players accustomed to the stringent regulatory environment of top-tier jurisdictions should be aware of this distinction.
 
-### Customer Support
+In terms of technical security, Chanced employs standard industry measures to protect user data. All data transmitted between the player and the casino's servers is secured with SSL encryption. The platform also has a strict policy against the use of VPNs to circumvent regional restrictions. To maintain security and comply with legal requirements, Chanced enforces a mandatory KYC verification process for all players before they can redeem any cash prizes.
 
-Chanced Casino offers reliable and accessible customer support through multiple channels. The primary method for immediate assistance is the 24/7 live chat feature. Support agents are generally responsive and helpful, providing quick solutions to common queries regarding account verification, purchases, or game rules. This round-the-clock availability is a significant advantage, ensuring players can get help whenever they need it.
+## Responsible Gambling
 
-![The account creation modal for Chanced Casino.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__ux-and-support__chanced-create-account-modal-w.png)
+Chanced Casino demonstrates a commitment to responsible play by providing its users with a suite of practical tools to manage their activity. This is a positive sign, as it shows the operator acknowledges the importance of player well-being even within a social casino model.
 
-For less urgent or more detailed inquiries, players can contact the support team via email. Responses to emails are typically sent within a few hours, which is an efficient turnaround time. The casino also maintains a helpful FAQ section that covers a wide range of topics, including the sweepstakes model, coin purchases, prize redemptions, and bonus terms. This self-help resource is a useful first stop for players looking for answers to general questions.
+The platform offers the following responsible gambling controls:
+*   **Deposit Limit:** Players can set limits on the amount of money they can spend on Gold Coin purchases over a specific period.
+*   **Session Limit:** Users can control the amount of time they spend playing on the site in a single session.
+*   **Self-Exclusion:** A crucial tool that allows players to temporarily or permanently block themselves from accessing their account if they feel their play is becoming problematic.
+*   **Reality Check:** Pop-up reminders that help players keep track of how long they have been playing.
 
-### Pros & Cons
+This set of tools is commendable and aligns with the best practices seen at many real-money online casinos. Players can access these controls through their account settings. If you or someone you know needs support, we strongly recommend contacting a professional organization.
 
-**Pros:**
-*   No purchase required to claim the welcome bonus of GC, SC, and Free Spins.
-*   Instant bank transfer redemptions allow for prize collection within minutes.
-*   Massive game library with over 1,600 slots and more than 20 live dealer tables.
-*   A 16-level VIP program that offers valuable passive rakeback to all players.
-*   24/7 live chat support ensures assistance is always available.
-*   Extensive daily, weekly, and monthly promotions provide continuous value.
+*   [GambleAware](https://www.gambleaware.org/) — UK-based gambling harm prevention
+*   [GamCare](https://www.gamcare.org.uk/) — Free counselling and support
+*   [Gambling Therapy](https://www.gamblingtherapy.org/) — Global online support service
+*   [National Council on Problem Gambling](https://www.ncpgambling.org/help-treatment/) — US resources and helpline (1-800-522-4700)
 
-**Cons:**
-*   The minimum redemption amount of 100 SC ($100) is high compared to some competitors.
-*   Cryptocurrency is accepted for purchases but cannot be used for redemptions.
-*   The requirement for a selfie re-verification on every withdrawal can be inconvenient.
-*   Promotional Sweeps Coins come with a 3x playthrough requirement, which is higher than the 1x for purchased SC.
-*   The platform lacks dedicated mobile apps for iOS and Android devices.
+## Customer Support
 
-### Final Verdict
+Chanced Casino provides reliable and accessible customer support through multiple channels, ensuring players can get assistance whenever needed. The primary method of contact is the 24/7 live chat service, which is highly responsive. Support agents are generally knowledgeable and helpful, capable of resolving most common queries regarding account verification, promotions, and technical issues in real-time.
 
-Chanced is a top-tier sweepstakes casino that is best suited for US-based players who value a large game selection, fast prize redemptions, and a rewarding loyalty program. Its operation under US sweepstakes law by Gold Coin Group LLC provides a legitimate and transparent framework. The combination of 1,600+ games from leading providers, a high-quality live dealer casino, and instant redemption options makes it a powerful contender in the social casino space.
+![The sign-up form modal, which is a common point of interaction with the site's UX.](https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/logos/657f6bdb-9fd8-4b6c-b7b6-e7ccb4f4c26b/chanced-casino__ux-and-support__chanced-create-account-modal-w.png)
 
-While the high redemption minimum and cumbersome selfie verification process are notable drawbacks, the overall package is compelling. The generous no-deposit bonus and frequent promotions provide ample opportunities for free play, while the VIP program delivers consistent long-term value. Chanced earns its high rating by successfully blending the entertainment of a social casino with the efficiency and features of a modern gaming platform.
+In addition to live chat, players can reach out via email. Responses to email inquiries are typically sent within a few hours, making it a viable option for less urgent or more detailed questions. The platform also includes a helpful FAQ section that covers the basics of the sweepstakes model, account management, and the redemption process. The overall quality of support is strong, which contributes to the casino's positive player reputation, reflected in its 4.1/5 rating on Trustpilot from over 1,300 reviews.
 
-### Frequently Asked Questions
+## Pros & Cons
+
+### Pros
+*   **Generous No-Deposit Bonus:** New players receive 30,000 GC, 2 SC, and 20 free spins without making a purchase.
+*   **Instant Redemption Option:** The instant bank transfer method allows players to receive cash prizes within minutes.
+*   **Massive Game Library:** Over 1,600 slots and more than 20 live dealer tables from top providers.
+*   **Excellent VIP Program:** A 16-tier system with automatic advancement and passive rakeback for all players.
+*   **24/7 Live Chat Support:** Responsive and helpful customer service is available around the clock.
+
+### Cons
+*   **High Redemption Minimum:** Players must have at least 100 SC ($100) to request a prize redemption.
+*   **Crypto for Purchases Only:** Cryptocurrency can be used to buy Gold Coins but not for redeeming prizes.
+*   **Repetitive Verification:** A selfie may be required for every withdrawal, creating friction for regular players.
+*   **No Mobile App:** Chanced does not offer a dedicated iOS or Android application.
+*   **Steep Promo Wagering:** The 3x playthrough on promotional Sweeps Coins is higher than the standard 1x.
+
+## Final Verdict
+
+Chanced is a top-tier sweepstakes casino that successfully combines a massive game selection with player-friendly features like instant redemptions and a rewarding VIP program. It is best suited for US players seeking a legal and entertaining casino-style experience with the potential for real cash prizes. The platform's legitimacy under US sweepstakes law, combined with its strong operational execution, justifies its high rating.
+
+While the high $100 redemption minimum and the lack of crypto withdrawals are notable drawbacks, the overall package is compelling. The combination of a no-deposit bonus, daily promotions, and a robust live dealer section makes Chanced a standout choice in the crowded social casino market.
 
 ### Is Chanced Casino legit?
-Yes, Chanced Casino is a legitimate sweepstakes casino. It is owned and operated by Gold Coin Group LLC, a company registered in Wyoming, and functions legally under United States federal sweepstakes law. It is available to players in 38 US states.
+Yes, Chanced Casino is a legitimate sweepstakes platform owned by Gold Coin Group LLC. It operates legally in the United States under federal sweepstakes laws, which allow it to offer casino-style games for entertainment with the chance to redeem Sweeps Coins for cash prizes.
 
-### How fast are Chanced redemptions?
-Redemption speed at Chanced depends on the method chosen. The Instant Bank Transfer option can deliver funds to your account within minutes of approval. The standard ACH bank transfer option takes 1-5 business days. First-time redemptions require KYC verification, which can add an extra 24-48 hours to the process.
+### How fast are withdrawals at Chanced?
+Chanced offers two redemption speeds. The instant bank transfer option typically processes within minutes. The standard ACH bank transfer takes 1-5 business days. Note that your first redemption will be delayed by an additional 24-48 hours for the mandatory KYC identity verification.
 
-### Does Chanced Casino accept cryptocurrency?
-Chanced Casino accepts cryptocurrencies, including Bitcoin, Ethereum, and Litecoin, for the purchase of Gold Coin packages. However, it does not support cryptocurrency for prize redemptions. All redemptions are processed in USD to a bank account.
-
-### What are the Chanced bonus playthrough requirements?
-The playthrough requirements vary. Sweeps Coins obtained as a bonus with a Gold Coin purchase typically have a 1x playthrough requirement. Sweeps Coins received for free through no-deposit bonuses, daily logins, or other promotions are subject to a 3x playthrough requirement before they can be redeemed.
+### Can I use cryptocurrency at Chanced?
+You can use Bitcoin, Ethereum, and Litecoin to purchase Gold Coin packages. However, you cannot redeem your Sweeps Coins prizes back to a cryptocurrency wallet. Redemptions are only available via instant bank transfer or standard ACH to a USD bank account.
 
 ### Does Chanced Casino require KYC verification?
-Yes, Chanced Casino requires mandatory KYC (Know Your Customer) verification before you can process your first prize redemption. This involves submitting a valid photo ID and proof of address. The casino may also require a selfie re-verification for each subsequent withdrawal request to ensure account security.
+Yes, Chanced requires all players to complete a mandatory Know Your Customer (KYC) verification before their first prize redemption can be processed. This involves submitting a government-issued ID and proof of address. The casino may also require a new selfie verification for each subsequent withdrawal request.
+
+### What are the bonus terms for the welcome offer?
+The no-deposit welcome bonus provides 30,000 Gold Coins, 2 Sweeps Coins, and 20 Free Spins. Sweeps Coins obtained from bonuses have a 3x playthrough requirement before they can be redeemed. Sweeps Coins won through gameplay have a 1x playthrough requirement. The minimum redemption amount is 100 SC.
 
 Remember to gamble responsibly. Casino terms and conditions apply. Minimum age 18+/21+. Visit [GambleAware](https://www.gambleaware.org/) for more information.
