@@ -4,9 +4,9 @@ slug: "dexsport"
 description: "Dexsport review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "Dexsport Review 2026 – Legit or Not? Our Honest Verdict"
 excerpt: "Dexsport is a feature-rich Web3-native betting platform delivering anonymous, multi-chain crypto gambling with a large game library and competitive bonuses, but its value is diminished by a weak licen"
-publishedAt: 2026-03-12T18:38:26.460Z
+publishedAt: 2026-03-12T21:33:45.082Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T18:38:26.460Z
+updatedAt: 2026-03-12T21:33:45.082Z
 tags:
   - "Dexsport"
   - "casino review"
