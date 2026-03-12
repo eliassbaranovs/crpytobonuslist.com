@@ -30,14 +30,53 @@ const newsToShow = 4;
 const hasMoreBonuses = totalBonuses > bonusesToShow;
 const hasMoreNews = totalNews > newsToShow;
 
-const schemaJsonLd = JSON.stringify({
+// Resolve author image (image field takes precedence over avatar)
+const authorImage = author.data.image || author.data.avatar;
+const authorImageUrl = authorImage
+  ? (authorImage.startsWith("http") ? authorImage : `https://cryptobonuslist.com${authorImage.startsWith("/") ? "" : "/"}${authorImage}`)
+  : undefined;
+
+// Build enriched Person schema
+const personSchema: Record<string, any> = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: author.data.name,
   jobTitle: author.data.role,
   description: author.data.bio,
+  url: `https://cryptobonuslist.com/team/${author.data.slug}`,
   worksFor: { "@type": "Organization", name: "CryptoBonusList", url: "https://cryptobonuslist.com" },
-});
+};
+
+if (authorImageUrl) {
+  personSchema.image = authorImageUrl;
+}
+
+if (author.data.expertise && author.data.expertise.length > 0) {
+  personSchema.knowsAbout = author.data.expertise;
+}
+
+if (author.data.credentials && author.data.credentials.length > 0) {
+  personSchema.hasCredential = author.data.credentials.map((c: string) => ({
+    "@type": "EducationalOccupationalCredential",
+    credentialCategory: c,
+  }));
+}
+
+if (author.data.yearsExperience) {
+  personSchema.hasOccupationalExperience = {
+    "@type": "OccupationalExperienceRequirements",
+    monthsOfExperience: author.data.yearsExperience * 12,
+  };
+}
+
+if (author.data.socialLinks) {
+  const sameAs = Object.values(author.data.socialLinks).filter(Boolean);
+  if (sameAs.length > 0) {
+    personSchema.sameAs = sameAs;
+  }
+}
+
+const schemaJsonLd = JSON.stringify(personSchema);
 ---
 
 <Layout title={`${author.data.name} | CryptoBonusList Team`} description={author.data.bio} jsonld={schemaJsonLd}>
@@ -45,9 +84,9 @@ const schemaJsonLd = JSON.stringify({
     <div class="max-w-4xl mx-auto">
       <header class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-10">
         <div class="flex gap-6 items-start mb-6">
-          {author.data.avatar && (
+          {(author.data.image || author.data.avatar) && (
             <img
-              src={author.data.avatar}
+              src={author.data.image || author.data.avatar}
               alt={author.data.name}
               class="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-[#39FF14] object-cover flex-shrink-0"
               loading="eager"
@@ -66,8 +105,23 @@ const schemaJsonLd = JSON.stringify({
             ))}
           </div>
         )}
+        {author.data.credentials && author.data.credentials.length > 0 && (
+          <div class="mt-4 space-y-1">
+            {author.data.credentials.map((cred: string) => (
+              <div class="flex items-center gap-2 text-[#D4D4D4] font-[Public_Sans] text-sm">
+                <span class="text-[#FAFF00] shrink-0">&#9670;</span>
+                <span>{cred}</span>
+              </div>
+            ))}
+          </div>
+        )}
         <div class="mt-6 flex flex-wrap gap-4 text-[#D4D4D4] font-[JetBrains_Mono] text-xs">
-          <p>Team member since {new Date(author.data.joinedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+          {author.data.joinedAt && (
+            <p>Team member since {new Date(author.data.joinedAt).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
+          )}
+          {author.data.yearsExperience && (
+            <p>{author.data.yearsExperience}+ years in iGaming</p>
+          )}
           {totalContributions > 0 && (
             <p class="text-[#39FF14]">
               {totalContributions} {totalContributions === 1 ? 'contribution' : 'contributions'}

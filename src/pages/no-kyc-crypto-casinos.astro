@@ -7,12 +7,11 @@ import {
   getReviewUrl,
   getClaimUrl,
   getWithdrawalSpeedLabel,
+  isNoKyc,
 } from "../lib/casino-filters";
 
 const allPosts = await getCollection("posts");
-const reviews = getReviews(allPosts);
-// Show all reviews since we don't have a KYC filter field yet
-// When automation adds kycRequired field, we can filter: .filter(r => !(r.data as any).kycRequired)
+const reviews = getReviews(allPosts).filter((r) => isNoKyc(r));
 
 const faqItems = [
   {

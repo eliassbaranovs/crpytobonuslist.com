@@ -25,7 +25,12 @@ export function acceptsCrypto(review: Post, coin: string): boolean {
 
 /** Check if casino has fast crypto withdrawals (under 6 hours) */
 export function hasFastWithdrawal(review: Post): boolean {
-  // Parse withdrawalTimes text (normalized in config.ts transform)
+  // Use structured field when available
+  const minutes = (review.data as any).cryptoWithdrawalSpeedMinutes;
+  if (typeof minutes === "number") {
+    return minutes <= 360;
+  }
+  // Fall back to parsing withdrawalTimes text
   const times = review.data.withdrawalTimes || "";
   const cryptoMatch = times.match(/crypto:\s*(?:(\d+)\s*-\s*)?(\d+)\s*hour/i);
   if (cryptoMatch) {
@@ -37,6 +42,15 @@ export function hasFastWithdrawal(review: Post): boolean {
 
 /** Get withdrawal speed label from data */
 export function getWithdrawalSpeedLabel(review: Post): string {
+  // Use structured field when available
+  const minutes = (review.data as any).cryptoWithdrawalSpeedMinutes;
+  if (typeof minutes === "number") {
+    if (minutes < 60) return `${minutes} minutes`;
+    if (minutes === 60) return "1 hour";
+    if (minutes < 1440) return `${Math.round(minutes / 60)} hours`;
+    return `${Math.round(minutes / 1440)} days`;
+  }
+  // Fall back to parsing withdrawalTimes text
   const times = review.data.withdrawalTimes || "";
   const cryptoMatch = times.match(/crypto:\s*[^|]*/i);
   return cryptoMatch ? cryptoMatch[0].replace(/crypto:\s*/i, "").trim() : "N/A";
@@ -44,7 +58,12 @@ export function getWithdrawalSpeedLabel(review: Post): string {
 
 /** Check if casino has low or no wagering requirements */
 export function hasLowWagering(review: Post): boolean {
-  // Parse wagering text (normalized in config.ts transform)
+  // Use structured field when available
+  const multiplier = (review.data as any).wageringMultiplier;
+  if (typeof multiplier === "number") {
+    return multiplier <= 10;
+  }
+  // Fall back to parsing wagering text
   const wr = review.data.wagering || "";
   const match = wr.match(/(\d+)x/i);
   if (match) {
@@ -55,9 +74,22 @@ export function hasLowWagering(review: Post): boolean {
 
 /** Get wagering multiplier as number */
 export function getWageringNumber(review: Post): number | null {
+  // Use structured field when available
+  const multiplier = (review.data as any).wageringMultiplier;
+  if (typeof multiplier === "number") {
+    return multiplier;
+  }
+  // Fall back to parsing wagering text
   const wr = review.data.wagering || "";
   const match = wr.match(/(\d+)x/i);
   return match ? parseInt(match[1]) : null;
+}
+
+/** Check if casino does not require KYC */
+export function isNoKyc(review: Post): boolean {
+  const kyc = (review.data as any).kycRequired;
+  if (kyc === false) return true;
+  return false;
 }
 
 /** Check if casino was established recently (within 2 years) */

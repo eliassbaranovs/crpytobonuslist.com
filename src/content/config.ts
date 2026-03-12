@@ -23,6 +23,15 @@ const toNum = (v: unknown): number | undefined => {
   return isNaN(n) ? undefined : n;
 };
 
+// Pipeline-safe optional string: accepts string, number, or boolean from YAML
+const pStr = () => z.preprocess((v) => toStr(v), z.string().optional());
+
+// Pipeline-safe optional string that coerces bool to Yes/No
+const pStrBool = () => z.preprocess(
+  (v) => typeof v === "string" ? v : v === true ? "Yes" : v === false ? "No" : toStr(v),
+  z.string().optional(),
+);
+
 // Shared schema for all content types (posts + news)
 const contentSchema = z
     .object({
@@ -64,81 +73,104 @@ const contentSchema = z
       relatedPosts: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
       featured: z.preprocess((v) => toBool(v), z.boolean().optional()),
       category: z.string().optional(),
+      // Bonus fields
       bonus: z.string().optional(),
       bonusType: z.string().optional(),
-      bonusPercentage: z.string().optional(),
+      bonusPercentage: pStr(),
+      bonus_percentage: pStr(),
       bonusDuration: z.string().optional(),
-      code: z.preprocess((v) => toStr(v), z.string().optional()),
-      maxBonus: z.string().optional(),
-      maximumBonusAmount: z.string().optional(),
-      freeSpins: z.preprocess((v) => toStr(v), z.string().optional()),
+      bonus_title: z.string().optional(),
+      code: pStr(),
+      bonus_code: pStr(),
+      maxBonus: pStr(),
+      max_bonus: pStr(),
+      maximumBonusAmount: pStr(),
+      freeSpins: pStr(),
+      free_spins: pStr(),
       freeSpinsCount: z.preprocess((v) => toNum(v), z.number().optional()),
-      freeSpinsWr: z.string().optional(),
-      wagering: z.string().optional(),
-      wageringRequirements: z.string().optional(),
+      freeSpinsWr: pStr(),
+      wagering: pStr(),
+      wageringRequirements: pStr(),
       exclusive: z.preprocess((v) => toBool(v), z.boolean().optional()),
       verified: z.preprocess((v) => toBool(v), z.boolean().optional()),
       expires_at: z.coerce.date().optional(),
       claim_url: z.string().optional(),
+      // Ratings
       rating: z.preprocess((v) => toNum(v), z.number().min(0).max(10).optional()),
       ourRating: z.preprocess((v) => toNum(v), z.number().min(0).max(10).optional()),
       playerRating: z.preprocess((v) => toNum(v), z.number().min(0).max(10).optional()),
-      playerRatingCount: z.preprocess((v) => toStr(v), z.string().optional()),
+      player_rating: pStr(),
+      playerRatingCount: pStr(),
+      // Pros and Cons
       pros: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
       cons: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
+      // Casino identity
       casino: z.string().optional(),
       casino_name: z.string().optional(),
       casinoName: z.string().optional(),
       casinoReviewUrl: z.string().optional(),
       casinoType: z.string().optional(),
+      casino_type: z.string().optional(),
       website: z.string().optional(),
       company: z.string().optional(),
-      established: z.preprocess((v) => toStr(v), z.string().optional()),
+      established: pStr(),
+      best_for: z.string().optional(),
+      // General info
       languages: z.string().optional(),
       mobileApps: z.string().optional(),
       readReview: z.string().optional(),
       licences: z.string().optional(),
-      rtp: z.string().optional(),
-      rngTested: z.string().optional(),
+      rtp: pStr(),
+      rngTested: pStr(),
       currencies: z.string().optional(),
+      // Payment fields (snake_case + camelCase)
       deposit_methods: z.string().optional(),
       depositMethods: z.string().optional(),
       withdrawal_methods: z.string().optional(),
       withdrawalMethods: z.string().optional(),
-      minimum_deposit: z.string().optional(),
-      minimumDeposit: z.string().optional(),
-      minimumWithdrawalAmount: z.preprocess((v) => toStr(v), z.string().optional()),
+      minimum_deposit: pStr(),
+      minimumDeposit: pStr(),
+      min_deposit: pStr(),
+      minimumWithdrawalAmount: pStr(),
       withdrawal_time: z.string().optional(),
       withdrawalTimes: z.string().optional(),
-      withdrawalFees: z.preprocess((v) => toStr(v), z.string().optional()),
-      withdrawalLimit: z.string().optional(),
+      withdrawalFees: pStr(),
+      withdrawalLimit: pStr(),
       pendingTime: z.string().optional(),
+      // Game providers (snake_case + camelCase)
       game_providers: z.string().optional(),
       gameProviders: z.string().optional(),
-      live_chat: z.preprocess(
-        (v) => typeof v === "string" ? v : v === true ? "Yes" : v === false ? "No" : undefined,
-        z.string().optional(),
-      ),
-      liveChat: z.preprocess(
-        (v) => typeof v === "string" ? v : v === true ? "Yes" : v === false ? "No" : undefined,
-        z.string().optional(),
-      ),
-      email_support: z.string().optional(),
-      emailSupport: z.string().optional(),
+      // Support fields
+      live_chat: pStrBool(),
+      liveChat: pStrBool(),
+      email_support: pStr(),
+      emailSupport: pStr(),
       complaintResponse: z.string().optional(),
-      vipLoyaltyProgram: z.string().optional(),
+      // VIP / affiliate
+      vipLoyaltyProgram: pStrBool(),
+      vip_program: pStrBool(),
       affiliate_program: z.string().optional(),
       affiliateProgram: z.string().optional(),
-      depositLimitTool: z.string().optional(),
-      lossLimitTool: z.string().optional(),
-      wagerLimitTool: z.string().optional(),
-      selfExclusionTool: z.string().optional(),
-      coolOffTimeOutTool: z.string().optional(),
-      realityCheckTool: z.string().optional(),
-      timeSessionLimitTool: z.string().optional(),
-      selfAssessmentTest: z.string().optional(),
-      gameHistoryFeature: z.string().optional(),
-      selfExclusionRegisterParticipation: z.string().optional(),
+      // Casino review: accepted coins (can be array or pipe-delimited string)
+      accepted_coins: z.preprocess(
+        (v) => {
+          if (Array.isArray(v)) return v.map(String).join(" | ");
+          return toStr(v);
+        },
+        z.string().optional(),
+      ),
+      // Responsible gambling tools
+      depositLimitTool: pStrBool(),
+      lossLimitTool: pStrBool(),
+      wagerLimitTool: pStrBool(),
+      selfExclusionTool: pStrBool(),
+      coolOffTimeOutTool: pStrBool(),
+      realityCheckTool: pStrBool(),
+      timeSessionLimitTool: pStrBool(),
+      selfAssessmentTest: pStrBool(),
+      gameHistoryFeature: pStrBool(),
+      selfExclusionRegisterParticipation: pStrBool(),
+      // Misc
       difficulty: z.string().optional(),
       showToc: z.preprocess((v) => toBool(v), z.boolean().optional()),
       faqs: z.preprocess(
@@ -159,6 +191,24 @@ const contentSchema = z
         (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
         z.string().optional(),
       ),
+      lastVerified: z.preprocess(
+        (v) => (v instanceof Date ? v.toISOString().split("T")[0] : toStr(v)),
+        z.string().optional(),
+      ),
+      // Casino review: section images from scraper
+      sectionImages: z.preprocess(
+        (v) => (Array.isArray(v) ? v : undefined),
+        z.array(z.object({ section: z.string(), path: z.string() })).optional(),
+      ),
+      // Trust scoring (entity mode reviews)
+      trustScore: pStr(),
+      trustBadge: z.string().optional(),
+      // Derived fields (injected at publish)
+      acceptedCryptos: z.preprocess((v) => toStrArray(v), z.array(z.string()).optional()),
+      cryptoWithdrawalSpeedMinutes: z.preprocess((v) => toNum(v), z.number().optional()),
+      wageringMultiplier: z.preprocess((v) => toNum(v), z.number().optional()),
+      isNewCasino: z.preprocess((v) => toBool(v), z.boolean().optional()),
+      kycRequired: z.preprocess((v) => toBool(v), z.boolean().optional()),
     })
     .transform((data) => ({
       ...data,
@@ -173,12 +223,18 @@ const contentSchema = z
       withdrawalMethods: data.withdrawalMethods || data.withdrawal_methods || "",
       gameProviders: data.gameProviders || data.game_providers || "",
       casinoName: data.casinoName || data.casino_name || data.casino || "",
+      casinoType: data.casinoType || data.casino_type || "",
       liveChat: data.liveChat || data.live_chat || "",
       emailSupport: data.emailSupport || data.email_support || "",
-      minimumDeposit: data.minimumDeposit || data.minimum_deposit || "",
+      minimumDeposit: data.minimumDeposit || data.minimum_deposit || data.min_deposit || "",
       withdrawalTimes: data.withdrawalTimes || data.withdrawal_time || "",
       affiliateProgram: data.affiliateProgram || data.affiliate_program || "",
       wagering: data.wageringRequirements || data.wagering || "",
+      bonusPercentage: data.bonusPercentage || data.bonus_percentage || "",
+      maxBonus: data.maxBonus || data.max_bonus || "",
+      code: data.code || data.bonus_code || "",
+      freeSpins: data.freeSpins || data.free_spins || "",
+      vipLoyaltyProgram: data.vipLoyaltyProgram || data.vip_program || "",
     }));
 
 // Unified posts collection - pipeline publishes to src/content/posts/{slug}.md
@@ -205,16 +261,33 @@ const authors = defineCollection({
     slug: z.string(),
     role: z.string().optional(),
     bio: z.string().optional(),
+    layout: z.string().optional(),
+    image: z.string().optional(),
+    avatar: z.string().optional(),
     expertise: z.preprocess(
       (v) => (Array.isArray(v) ? v : undefined),
       z.array(z.string()).optional(),
     ),
-    avatar: z.string().optional(),
+    credentials: z.preprocess(
+      (v) => (Array.isArray(v) ? v : undefined),
+      z.array(z.string()).optional(),
+    ),
+    yearsExperience: z.preprocess(
+      (v) => toNum(v),
+      z.number().optional(),
+    ),
     socialLinks: z.preprocess(
       (v) => typeof v === "object" && v !== null && !Array.isArray(v) ? v : undefined,
       z.record(z.string()).optional(),
     ),
-    joinedAt: z.string(),
+    joinedAt: z.string().optional(),
+    schemaJsonLd: z.preprocess(
+      (v) =>
+        typeof v === "object" && v !== null
+          ? JSON.stringify(v)
+          : v === "[object Object]" ? "" : v,
+      z.string().optional(),
+    ),
   }),
 });
 
