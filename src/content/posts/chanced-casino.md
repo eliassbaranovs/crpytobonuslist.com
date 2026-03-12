@@ -4,9 +4,9 @@ slug: "chanced-casino"
 description: "Chanced Casino review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "Chanced Casino Review 2026 – Legit or Not? Our Honest Verdic"
 excerpt: "Chanced Casino is a legitimate and feature-rich sweepstakes platform that stands out for its instant cash redemptions, massive game library, and a valuable VIP rakeback program."
-publishedAt: 2026-03-12T18:31:45.054Z
+publishedAt: 2026-03-12T18:36:04.399Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T18:31:45.054Z
+updatedAt: 2026-03-12T18:36:04.399Z
 tags:
   - "Chanced Casino"
   - "casino review"
@@ -49,8 +49,7 @@ kycRequired: true
 casino_name: "Chanced Casino"
 established: "2023"
 company: "Gold Coin Group LLC"
-licences:
-  - "Operates under US sweepstakes law — no traditional gambling license required"
+licences: "Operates under US sweepstakes law — no traditional gambling license required"
 casino_type: "Sweepstakes Social Casino"
 rating: 8.5
 player_rating: 4.1
@@ -66,27 +65,10 @@ accepted_coins:
   - "Bitcoin"
   - "Ethereum"
   - "Litecoin"
-deposit_methods:
-  - "Visa"
-  - "Mastercard"
-  - "Discover"
-  - "American Express"
-  - "Bitcoin"
-  - "Ethereum"
-  - "Litecoin"
-withdrawal_methods:
-  - "ACH bank transfer"
-  - "Instant bank transfer"
-currencies:
-  - "USD"
-game_providers:
-  - "Hacksaw Gaming"
-  - "NetEnt"
-  - "Relax Gaming"
-  - "3 Oaks Gaming"
-  - "Pragmatic Play"
-  - "BGaming"
-  - "Iconic21 (live dealer)"
+depositMethods: "Visa | Mastercard | Discover | American Express | Bitcoin | Ethereum | Litecoin"
+withdrawalMethods: "ACH bank transfer | Instant bank transfer"
+currencies: "USD"
+gameProviders: "Hacksaw Gaming | NetEnt | Relax Gaming | 3 Oaks Gaming | Pragmatic Play | BGaming | Iconic21 (live dealer)"
 canonical: "https://cryptobonuslist.com/posts/chanced-casino"
 logo: "/images/logos/chanced-casino.png"
 schemaJsonLd: |
