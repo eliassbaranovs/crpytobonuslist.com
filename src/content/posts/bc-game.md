@@ -4,9 +4,9 @@ slug: "bc-game"
 description: "BC.GAME review covering games, bonuses, crypto payments, withdrawal speeds, and licensing."
 seoTitle: "BC.GAME Review 2026 – Legit or Not? Our Honest Verdict"
 excerpt: "BC.GAME is a feature-rich crypto casino and sportsbook best suited for high-volume slot players who prioritize game variety and extensive cryptocurrency support over regulatory strength and player-fri"
-publishedAt: 2026-03-12T17:34:55.952Z
+publishedAt: 2026-03-12T21:34:31.169Z
 publishDate: "2026-03-12"
-updatedAt: 2026-03-12T17:34:55.952Z
+updatedAt: 2026-03-12T21:34:31.169Z
 tags:
   - "BC.GAME"
   - "casino review"
