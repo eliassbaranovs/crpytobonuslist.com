@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Solana"));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "How fast are Solana casino deposits?",
@@ -52,6 +57,7 @@ const jsonld = JSON.stringify({
       name: "Best Solana Casinos 2026",
       description: "Solana casinos with near-instant deposits and sub-cent fees.",
       url: `${siteUrl}/solana-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",

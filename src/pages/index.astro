@@ -24,73 +24,87 @@ const topRated = [...allPosts.filter(isReview)]
   .filter(r => !r.data.draft && r.data.ourRating)
   .sort((a, b) => (b.data.ourRating || 0) - (a.data.ourRating || 0))[0];
 
-const schemaJsonLd = JSON.stringify([
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "CryptoBonusList",
-    "url": "https://cryptobonuslist.com",
-    "description": "Independent crypto casino reviews and bonus comparisons. Real deposits, honest ratings, no fluff.",
-    "publisher": {
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://cryptobonuslist.com/#website",
+      "name": "CryptoBonusList",
+      "url": "https://cryptobonuslist.com",
+      "description": "Independent crypto casino reviews and bonus comparisons. Real deposits, honest ratings, no fluff.",
+      "publisher": {
+        "@id": "https://cryptobonuslist.com/#organization"
+      },
+      "inLanguage": "en-US"
+    },
+    {
       "@type": "Organization",
+      "@id": "https://cryptobonuslist.com/#organization",
       "name": "CryptoBonusList",
       "url": "https://cryptobonuslist.com",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://cryptobonuslist.com/cryptobonuslist.png"
-      }
+        "@id": "https://cryptobonuslist.com/#logo",
+        "url": "https://cryptobonuslist.com/cryptobonuslist.png",
+        "contentUrl": "https://cryptobonuslist.com/cryptobonuslist.png",
+        "caption": "CryptoBonusList"
+      },
+      "image": {
+        "@id": "https://cryptobonuslist.com/#logo"
+      },
+      "foundingDate": "2025",
+      "description": "Independent crypto casino review and bonus comparison site. Real deposits, real wagering tests, honest 0-10 ratings.",
+      "ethicsPolicy": "https://cryptobonuslist.com/affiliate-disclosure",
+      "publishingPrinciples": "https://cryptobonuslist.com/methodology",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "contact@cryptobonuslist.com",
+        "contactType": "customer support",
+        "availableLanguage": "English"
+      },
+      "sameAs": []
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://cryptobonuslist.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is CryptoBonusList?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "CryptoBonusList is an independent review site for crypto casinos and their bonuses. We test every casino with real deposits, play through wagering requirements, and attempt withdrawals before publishing a review."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do you rate crypto casinos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We use a 0-10 rating scale based on six weighted categories: bonus value (20%), withdrawal speed (20%), terms fairness (20%), licensing and trust (20%), game selection (10%), and customer support (10%). Every casino goes through the same testing process."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are your casino reviews independent?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We earn affiliate commissions when users sign up through our links, but commission rates do not affect scores. We have declined partnerships with casinos that asked for guaranteed minimum ratings."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How often are reviews updated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Reviews are updated when casino conditions change, such as modified bonus terms, new withdrawal policies, or licensing changes. Every review displays its last update date."
+          }
+        }
+      ]
     }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "CryptoBonusList",
-    "url": "https://cryptobonuslist.com",
-    "logo": "https://cryptobonuslist.com/cryptobonuslist.png",
-    "foundingDate": "2025",
-    "description": "Independent crypto casino review and bonus comparison site.",
-    "ethicsPolicy": "https://cryptobonuslist.com/affiliate-disclosure",
-    "publishingPrinciples": "https://cryptobonuslist.com/methodology"
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What is CryptoBonusList?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "CryptoBonusList is an independent review site for crypto casinos and their bonuses. We test every casino with real deposits, play through wagering requirements, and attempt withdrawals before publishing a review."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do you rate crypto casinos?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We use a 0-10 rating scale based on six weighted categories: bonus value (20%), withdrawal speed (20%), terms fairness (20%), licensing and trust (20%), game selection (10%), and customer support (10%). Every casino goes through the same testing process."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Are your casino reviews independent?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. We earn affiliate commissions when users sign up through our links, but commission rates do not affect scores. We have declined partnerships with casinos that asked for guaranteed minimum ratings."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How often are reviews updated?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Reviews are updated when casino conditions change, such as modified bonus terms, new withdrawal policies, or licensing changes. Every review displays its last update date."
-        }
-      }
-    ]
-  }
-]);
+  ]
+});
 ---
 
 <Layout

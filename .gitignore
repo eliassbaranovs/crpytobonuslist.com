@@ -24,6 +24,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# audit tools
+.unlighthouse/
+
 # claude code
 .claude/
 CLAUDE.md

@@ -6,6 +6,11 @@ import { isBonus, sortByDate } from "../../lib/posts";
 const allPosts = await getCollection("posts");
 const bonuses = sortByDate(allPosts.filter(isBonus));
 
+const latestDate = bonuses.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const siteUrl = "https://cryptobonuslist.com";
 const canonical = `${siteUrl}/bonus`;
 
@@ -17,6 +22,7 @@ schemas.push({
   name: "Crypto Casino Bonuses",
   description: "Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed.",
   url: `${siteUrl}/bonus`,
+  dateModified: latestDate.toISOString(),
   numberOfItems: bonuses.length,
   itemListElement: bonuses.map((b, i) => ({
     "@type": "ListItem",

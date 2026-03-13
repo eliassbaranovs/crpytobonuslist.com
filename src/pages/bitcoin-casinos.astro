@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Bitcoin"));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "Are Bitcoin casinos legal?",
@@ -56,6 +61,7 @@ const jsonld = JSON.stringify({
       name: "Best Bitcoin Casinos 2026",
       description: "Top Bitcoin casinos ranked by real testing.",
       url: `${siteUrl}/bitcoin-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",

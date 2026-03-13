@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => isNewCasino(r));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "Are new crypto casinos safe?",
@@ -56,6 +61,7 @@ const jsonld = JSON.stringify({
       name: "New Crypto Casinos 2026",
       description: "New crypto casinos launched in 2025 and 2026.",
       url: `${siteUrl}/new-crypto-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",

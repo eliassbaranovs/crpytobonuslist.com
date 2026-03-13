@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => isNoKyc(r));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "Do all crypto casinos require KYC?",
@@ -56,6 +61,7 @@ const jsonld = JSON.stringify({
       name: "No KYC Crypto Casinos 2026",
       description: "Crypto casinos that do not require identity verification.",
       url: `${siteUrl}/no-kyc-crypto-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",

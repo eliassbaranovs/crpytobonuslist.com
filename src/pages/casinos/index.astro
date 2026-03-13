@@ -6,6 +6,11 @@ import { getReviews, getRatingBg, getReviewUrl, getClaimUrl } from "../../lib/ca
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts);
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const siteUrl = "https://cryptobonuslist.com";
 const canonical = `${siteUrl}/casinos`;
 
@@ -17,6 +22,7 @@ schemas.push({
   name: "Crypto Casino Reviews",
   description: "Honest, deposit-tested crypto casino reviews. Ratings, withdrawal speeds, bonus breakdowns, and everything you need before you play.",
   url: `${siteUrl}/casinos`,
+  dateModified: latestDate.toISOString(),
   numberOfItems: reviews.length,
   itemListElement: reviews.map((r, i) => ({
     "@type": "ListItem",

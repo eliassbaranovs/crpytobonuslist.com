@@ -8,6 +8,17 @@ const allPosts = await getCollection("posts");
 const bonuses = sortByDate(allPosts.filter(isBonus));
 const reviews = getReviews(allPosts);
 
+const latestDate = [...bonuses, ...reviews].reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
+const latestUpdate = [...bonuses, ...reviews].reduce((latest, r) => {
+  const d = new Date(r.data.updatedAt || r.data.publishDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+const updateMonth = latestUpdate.toLocaleString('en-US', { month: 'long', year: 'numeric' }).toUpperCase();
+
 const siteUrl = "https://cryptobonuslist.com";
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -70,6 +81,7 @@ const schemaJsonLd = JSON.stringify({
       name: "Crypto Casino Bonuses 2026",
       description: "Best crypto casino welcome offers and bonus deals.",
       url: `${siteUrl}/crypto-casino-bonuses`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",
@@ -101,7 +113,7 @@ const schemaJsonLd = JSON.stringify({
   {/* Hero */}
   <section class="px-6 py-16 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
-      <p class="font-[JetBrains_Mono] text-[#39FF14] text-sm mb-4 tracking-wider">&gt; UPDATED MARCH 2026</p>
+      <p class="font-[JetBrains_Mono] text-[#39FF14] text-sm mb-4 tracking-wider">&gt; UPDATED {updateMonth}</p>
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
         CRYPTO CASINO <span class="text-[#8A2BE2]">BONUSES</span> 2026
       </h1>

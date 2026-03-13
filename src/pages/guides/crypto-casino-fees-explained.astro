@@ -1,7 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 
-const title = "Crypto Casino Fees Explained: What Does It Cost? | CryptoBonusList";
+const title = "Crypto Casino Fees Explained | CryptoBonusList";
 const description = "Full breakdown of crypto casino fees. Network gas fees by coin, deposit and withdrawal costs, hidden charges, and tips to keep your fees as low as possible.";
 
 const jsonld = JSON.stringify({
@@ -45,6 +45,14 @@ const jsonld = JSON.stringify({
           "name": "How do crypto casino fees compare to regular casino fees?",
           "acceptedAnswer": { "@type": "Answer", "text": "Regular casinos rarely charge visible fees, but banks and payment processors often add charges for gambling transactions. Crypto casino fees are more transparent. You see the network fee upfront. Overall costs are similar for large transactions but crypto is cheaper for frequent smaller transfers when using low-fee coins." }
         }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com" },
+        { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://cryptobonuslist.com/guides" },
+        { "@type": "ListItem", "position": 3, "name": "Crypto Casino Fees Explained" }
       ]
     }
   ]
@@ -353,6 +361,22 @@ const jsonld = JSON.stringify({
                 Regular casinos rarely charge visible fees, but banks and payment processors often add charges for gambling transactions. Crypto casino fees are more transparent. You see the network fee upfront. Overall costs are similar for large transactions but crypto is cheaper for frequent smaller transfers when using low-fee coins.
               </div>
             </details>
+          </div>
+        </section>
+
+
+        <!-- Related Guides -->
+        <section class="mt-16 border-t-[3px] border-white pt-8">
+          <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 uppercase">RELATED GUIDES</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a href="/guides/how-crypto-casino-withdrawals-work" class="block border-[3px] border-white p-4 hover:bg-white/5 transition-colors">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">How Crypto Casino Withdrawals Work</span>
+            <p class="text-sm text-[#D4D4D4] font-[Public_Sans] mt-1">Step-by-step guide from withdrawal request to crypto in your wallet.</p>
+          </a>
+          <a href="/guides/crypto-casino-vs-regular-casino" class="block border-[3px] border-white p-4 hover:bg-white/5 transition-colors">
+            <span class="font-[Space_Grotesk] font-bold text-[#39FF14]">Crypto Casino vs Regular Casino</span>
+            <p class="text-sm text-[#D4D4D4] font-[Public_Sans] mt-1">Speed, fees, privacy, and regulation compared side by side.</p>
+          </a>
           </div>
         </section>
 

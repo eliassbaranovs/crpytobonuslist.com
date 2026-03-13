@@ -82,7 +82,7 @@ const reviewSchema: Record<string, any> = {
     ...(d.website ? { url: d.website } : {}),
     ...(d.image ? { image: d.image.startsWith("http") ? d.image : `${siteUrl}${d.image}` } : {}),
   },
-  publisher: { "@type": "Organization", name: "cryptobonuslist.com", url: siteUrl },
+  publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
 };
 
 if (d.author) {
@@ -125,14 +125,6 @@ if (d.playerRating && d.playerRatingCount) {
     bestRating: "10",
     worstRating: "0",
     ratingCount: String(d.playerRatingCount),
-  };
-} else if (d.ourRating) {
-  (reviewSchema.itemReviewed as Record<string, any>).aggregateRating = {
-    "@type": "AggregateRating",
-    ratingValue: String(d.ourRating),
-    bestRating: "10",
-    worstRating: "0",
-    ratingCount: "1",
   };
 }
 
@@ -476,6 +468,28 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             )}
           </div>
         </aside>
+      )}
+
+      {/* Visible FAQ section */}
+      {d.faqs && d.faqs.length > 0 && (
+        <section class="mt-10 mb-4">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-4 border-b-[3px] border-[#A855F7] pb-2">
+            FREQUENTLY ASKED QUESTIONS
+          </h2>
+          <div class="space-y-4">
+            {d.faqs.map((faq: { question: string; answer: string }) => (
+              <details class="group border-[3px] border-white bg-black">
+                <summary class="cursor-pointer px-6 py-4 font-[Space_Grotesk] font-bold text-white flex items-center justify-between hover:bg-[#111111] transition-colors">
+                  <span class="pr-4">{faq.question}</span>
+                  <span class="text-[#A855F7] font-[JetBrains_Mono] group-open:rotate-45 transition-transform text-xl shrink-0">+</span>
+                </summary>
+                <div class="px-6 py-4 border-t-[2px] border-white/20 font-[Public_Sans] text-[#D4D4D4] text-sm leading-relaxed">
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Related Reviews */}

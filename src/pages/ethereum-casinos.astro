@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Ethereum"));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "How fast are Ethereum casino deposits?",
@@ -56,6 +61,7 @@ const jsonld = JSON.stringify({
       name: "Best Ethereum Casinos 2026",
       description: "Top Ethereum casinos ranked by real testing.",
       url: `${siteUrl}/ethereum-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",

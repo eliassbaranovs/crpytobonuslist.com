@@ -13,6 +13,11 @@ import {
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => hasFastWithdrawal(r));
 
+const latestDate = reviews.reduce((latest, item) => {
+  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  return d > latest ? d : latest;
+}, new Date(0));
+
 const faqItems = [
   {
     question: "How fast should a crypto casino withdrawal be?",
@@ -56,6 +61,7 @@ const jsonld = JSON.stringify({
       name: "Fast Withdrawal Crypto Casinos 2026",
       description: "Crypto casinos with withdrawals under 6 hours.",
       url: `${siteUrl}/fast-withdrawal-crypto-casinos`,
+    dateModified: latestDate.toISOString(),
     },
     {
       "@type": "ItemList",
@@ -80,7 +86,7 @@ const jsonld = JSON.stringify({
 ---
 
 <Layout
-  title="Fast Withdrawal Crypto Casinos 2026 | Get Paid in Hours, Not Days"
+  title="Fast Withdrawal Crypto Casinos 2026 | CryptoBonusList"
   description="Crypto casinos with withdrawals under 6 hours. Tested payout speeds with real money. Stop waiting days for your winnings."
   jsonld={jsonld}
 >
