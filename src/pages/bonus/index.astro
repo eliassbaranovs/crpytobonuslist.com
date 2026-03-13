@@ -61,13 +61,13 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         <div>
           <label class="block text-[#D4D4D4] text-xs uppercase font-[JetBrains_Mono] mb-2">Bonus Type</label>
           <div class="flex flex-wrap gap-2" id="type-filters" role="group" aria-label="Filter by bonus type">
-            <button data-filter="all" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-[#39FF14] text-black border-[#39FF14] font-bold" aria-pressed="true">All</button>
-            <button data-filter="Welcome Bonus" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Welcome</button>
-            <button data-filter="No Deposit" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">No Deposit</button>
-            <button data-filter="Free Spins" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Free Spins</button>
-            <button data-filter="Reload" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Reload</button>
-            <button data-filter="Cashback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Cashback</button>
-            <button data-filter="Rakeback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14]" aria-pressed="false">Rakeback</button>
+            <button data-filter="all" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-[#39FF14] text-black border-[#39FF14] font-bold focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="true">All</button>
+            <button data-filter="Welcome Bonus" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">Welcome</button>
+            <button data-filter="No Deposit" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">No Deposit</button>
+            <button data-filter="Free Spins" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">Free Spins</button>
+            <button data-filter="Reload" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">Reload</button>
+            <button data-filter="Cashback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">Cashback</button>
+            <button data-filter="Rakeback" class="border-[2px] px-4 py-2 font-[JetBrains_Mono] text-sm uppercase cursor-pointer transition-colors bg-transparent text-[#D4D4D4] border-white hover:border-[#39FF14] hover:text-[#39FF14] focus:outline-2 focus:outline-[#39FF14] focus:outline-offset-2" aria-pressed="false">Rakeback</button>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
               {/* Top row: badges */}
               <div class="flex items-center gap-2 px-5 pt-5 pb-0 flex-wrap">
                 {d.bonusType && (
-                  <span class="bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
+                  <span class="bg-[#A855F7] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">
                     {d.bonusType}
                   </span>
                 )}
@@ -193,6 +193,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
                   {claimUrl && (
                     <a
                       href={claimUrl}
+                      rel="nofollow sponsored"
                       class="block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-3 text-center border-[3px] border-black shadow-[4px_4px_0px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[2px_2px_0px_0px_#000] transition-all uppercase tracking-wide"
                     >
                       CLAIM BONUS
@@ -221,6 +222,30 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             </div>
           );
         })}
+      </div>
+
+      <div class="mt-12 pt-8 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-4 text-[#FAFF00]">ABOUT CRYPTO BONUSES</h2>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Crypto casino bonuses come in many forms. Welcome bonuses match your first deposit, sometimes up to 200% or more. Free spins give you risk-free rounds on slot games. Rakeback returns a percentage of your wagering losses. Reload bonuses reward repeat deposits with smaller percentage matches.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-6">
+          Always check the wagering requirements before claiming. A 100% match bonus with 60x wagering is worse than a 50% match with 20x wagering. We list the wagering multiplier for every bonus so you can compare the actual value, not just the headline number.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <a href="/casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#39FF14] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">Casino Reviews</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Full reviews of every casino behind these bonuses.</p>
+          </a>
+          <a href="/best-crypto-casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#FAFF00] hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">Best Crypto Casinos</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Our top-rated picks ranked by overall score.</p>
+          </a>
+          <a href="/no-wagering-crypto-casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#A855F7] hover:shadow-[6px_6px_0px_0px_#A855F7] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">No Wagering Casinos</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Bonuses you can actually withdraw without jumping through hoops.</p>
+          </a>
+        </div>
       </div>
     </div>
   </section>

@@ -56,23 +56,35 @@ const canonicalUrl = page.currentPage > 1
 const prevUrl = page.url.prev ? `${siteUrl}${page.url.prev}` : null;
 const nextUrl = page.url.next ? `${siteUrl}${page.url.next}` : null;
 
-// BreadcrumbList JSON-LD
+let headExtra = "";
+if (prevUrl) headExtra += `<link rel="prev" href="${prevUrl}" />`;
+if (nextUrl) headExtra += `<link rel="next" href="${nextUrl}" />`;
+
+// JSON-LD: CollectionPage + BreadcrumbList
 const breadcrumbName = page.currentPage > 1 ? `News - Page ${page.currentPage}` : "News";
-const breadcrumbLd = {
-  "@context": "https://schema.org",
+
+const schemas: Record<string, any>[] = [];
+
+schemas.push({
+  "@type": "CollectionPage",
+  name: breadcrumbName,
+  description: "Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.",
+  url: canonicalUrl,
+  numberOfItems: page.data.length,
+});
+
+schemas.push({
   "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${siteUrl}/` },
-    { "@type": "ListItem", "position": 2, "name": breadcrumbName, "item": canonicalUrl }
-  ]
-};
-const schemaJsonLd = JSON.stringify(breadcrumbLd);
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 2, name: breadcrumbName, item: canonicalUrl },
+  ],
+});
+
+const schemaJsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 ---
 
-<Layout title={pageTitle} description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals." canonical={canonicalUrl} jsonld={schemaJsonLd}>
-  {/* rel prev/next for pagination SEO */}
-  {prevUrl && <link rel="prev" href={prevUrl} />}
-  {nextUrl && <link rel="next" href={nextUrl} />}
+<Layout title={pageTitle} description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals." canonical={canonicalUrl} jsonld={schemaJsonLd} headExtra={headExtra}>
   <section class="px-6 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
@@ -120,7 +132,7 @@ const schemaJsonLd = JSON.stringify(breadcrumbLd);
             <h2 class="font-[Space_Grotesk] text-2xl md:text-4xl font-bold text-white mb-3 leading-tight group-hover:text-[#FAFF00] transition-colors">{featuredArticle.data.title}</h2>
             <p class="text-[#D4D4D4] text-base font-[Public_Sans] mb-4 line-clamp-3">{featuredArticle.data.description}</p>
             <div class="flex flex-wrap gap-2">
-              {featuredArticle.data.tags.map((tag: string) => (
+              {(featuredArticle.data.tags || []).map((tag: string) => (
                 <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">{tag}</span>
               ))}
             </div>
@@ -164,11 +176,11 @@ const schemaJsonLd = JSON.stringify(breadcrumbLd);
               <p class="text-[#D4D4D4] text-sm font-[Public_Sans] line-clamp-2 mb-3">{article.data.description}</p>
               <div class="flex items-center justify-between gap-4">
                 <div class="flex flex-wrap gap-2">
-                  {article.data.tags.slice(0, 3).map((tag: string) => (
+                  {(article.data.tags || []).slice(0, 3).map((tag: string) => (
                     <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00]/40 px-2 py-0.5">{tag}</span>
                   ))}
-                  {article.data.tags.length > 3 && (
-                    <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">+{article.data.tags.length - 3}</span>
+                  {(article.data.tags || []).length > 3 && (
+                    <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">+{(article.data.tags || []).length - 3}</span>
                   )}
                 </div>
                 <span class="text-[#D4D4D4] text-xs font-[Public_Sans] shrink-0">{article.data.author}</span>
@@ -180,12 +192,12 @@ const schemaJsonLd = JSON.stringify(breadcrumbLd);
 
       {/* Pagination Navigation */}
       {(page.url.prev || page.url.next) && (
-        <nav class="flex justify-between items-center mt-12 pt-8 border-t-[3px] border-white">
+        <nav class="flex justify-between items-center mt-12 pt-8 border-t-[3px] border-white" aria-label="Pagination">
           <div>
             {page.url.prev ? (
               <a
                 href={page.url.prev}
-                class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
+                class="inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
               >
                 &larr; Previous
               </a>
@@ -204,7 +216,7 @@ const schemaJsonLd = JSON.stringify(breadcrumbLd);
             {page.url.next ? (
               <a
                 href={page.url.next}
-                class="card-brutal inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
+                class="inline-block bg-black border-[3px] border-white px-6 py-3 font-[Space_Grotesk] font-bold text-white hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-all"
               >
                 Next &rarr;
               </a>

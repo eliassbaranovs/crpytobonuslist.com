@@ -17,31 +17,55 @@ const { Content } = await render(post);
 const slug = post.data.slug;
 const computedCanonical = `https://cryptobonuslist.com/news/${slug}`;
 
-// Build JSON-LD: merge existing schema with BreadcrumbList in @graph
-const existingSchema = post.data.schema_jsonld ? JSON.parse(post.data.schema_jsonld) : null;
-const breadcrumbLd = {
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com/" },
-    { "@type": "ListItem", "position": 2, "name": "News", "item": "https://cryptobonuslist.com/news" },
-    { "@type": "ListItem", "position": 3, "name": post.data.title, "item": computedCanonical }
-  ]
-};
-
-let graphItems: any[] = [breadcrumbLd];
-if (existingSchema) {
-  if (existingSchema["@graph"]) {
-    graphItems = [...existingSchema["@graph"], breadcrumbLd];
-  } else {
-    // Existing is a single schema object - strip @context and add to graph
-    const { "@context": _ctx, ...rest } = existingSchema;
-    graphItems = [rest, breadcrumbLd];
-  }
-}
-
-const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": graphItems });
 const lastUpdated = post.data.updatedAt || post.data.publishedAt;
 const publishedDate = new Date(post.data.publishDate || post.data.publishedAt);
+
+// Build JSON-LD programmatically
+const siteUrl = "https://cryptobonuslist.com";
+
+const articleSchema: Record<string, any> = {
+  "@type": "NewsArticle",
+  headline: post.data.title,
+  description: post.data.description,
+  url: computedCanonical,
+  datePublished: publishedDate.toISOString(),
+  dateModified: lastUpdated ? lastUpdated.toISOString() : publishedDate.toISOString(),
+  mainEntityOfPage: { "@type": "WebPage", "@id": computedCanonical },
+  publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
+};
+
+if (post.data.author) {
+  articleSchema.author = {
+    "@type": "Person",
+    name: post.data.author,
+    ...(post.data.authorSlug ? { url: `${siteUrl}/team/${post.data.authorSlug}` } : {}),
+  };
+}
+
+if (post.data.image) {
+  articleSchema.image = {
+    "@type": "ImageObject",
+    url: post.data.image.startsWith("http") ? post.data.image : `${siteUrl}${post.data.image}`,
+    width: post.data.imageWidth || 1792,
+    height: post.data.imageHeight || 1024,
+    ...(post.data.imageAlt ? { caption: post.data.imageAlt } : {}),
+  };
+}
+
+if (post.data.tags?.length) {
+  articleSchema.keywords = post.data.tags.join(", ");
+}
+
+const breadcrumbLd = {
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "News", item: `${siteUrl}/news` },
+    { "@type": "ListItem", position: 3, name: post.data.title },
+  ],
+};
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": [articleSchema, breadcrumbLd] });
 const now = new Date();
 const diffMs = now.getTime() - publishedDate.getTime();
 const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
@@ -94,9 +118,9 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
   robots={robots}
 >
   {/* Reading progress bar */}
-  <div id="progress-bar" class="fixed top-0 left-0 h-[3px] bg-[#39FF14] z-[100] transition-all duration-100" style="width: 0%"></div>
+  <div id="progress-bar" class="fixed top-0 left-0 h-[3px] bg-[#39FF14] z-[100] transition-all duration-100" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Reading progress"></div>
 
-  <article class="px-6 py-10">
+  <article class="px-6 py-10" aria-labelledby="article-title">
     <div class="max-w-4xl mx-auto">
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" class="mb-6 text-sm font-[JetBrains_Mono]">
@@ -119,6 +143,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
             height={post.data.imageHeight}
             loading="eager"
             fetchpriority="high"
+            decoding="async"
             class="w-full h-auto border-[3px] border-white"
           />
           {/* Badges overlay */}
@@ -141,9 +166,9 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
             {relativeTime}
           </time>
           {wasUpdated && (
-            <span class="text-[#FAFF00] font-[JetBrains_Mono] font-bold border border-[#FAFF00] px-2 py-0.5 text-xs">
+            <time datetime={lastUpdated.toISOString()} class="text-[#FAFF00] font-[JetBrains_Mono] font-bold border border-[#FAFF00] px-2 py-0.5 text-xs">
               Updated {lastUpdated.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-            </span>
+            </time>
           )}
           <span class="text-[#D4D4D4]">&bull;</span>
           <span class="text-[#D4D4D4] font-[JetBrains_Mono]">{readingTime}</span>
@@ -151,13 +176,13 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
           <span class="text-[#D4D4D4] font-[JetBrains_Mono]">{wordCount.toLocaleString()} words</span>
         </div>
 
-        <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
+        <h1 id="article-title" class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
 
         <p class="text-[#D4D4D4] text-lg font-[Public_Sans] leading-relaxed mb-5">{post.data.description}</p>
 
         {/* Tags */}
         <div class="flex flex-wrap gap-2 mb-5">
-          {post.data.tags.map((tag: string) => (
+          {(post.data.tags || []).map((tag: string) => (
             <span class="text-[#FAFF00] text-sm font-[JetBrains_Mono] border border-[#FAFF00] px-3 py-1">{tag}</span>
           ))}
         </div>
@@ -168,7 +193,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
             <img src={authorData.data.avatar} alt={post.data.author} class="w-12 h-12 border-2 border-[#39FF14] object-cover" />
           ) : (
             <div class="w-12 h-12 border-2 border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center">
-              <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-lg">{post.data.author.charAt(0)}</span>
+              <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-lg">{(post.data.author || "?").charAt(0)}</span>
             </div>
           )}
           <div>
@@ -247,7 +272,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
 
       {/* Related news */}
       {displayRelated.length > 0 && (
-        <aside class="mt-12 pt-8 border-t-[3px] border-white">
+        <aside class="mt-12 pt-8 border-t-[3px] border-white" aria-label="Related news articles">
           <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">RELATED NEWS</h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             {displayRelated.map((related) => (
@@ -301,6 +326,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
         const docH = document.documentElement.scrollHeight - window.innerHeight;
         const pct = docH > 0 ? Math.min((window.scrollY / docH) * 100, 100) : 0;
         bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(Math.round(pct)));
       }, { passive: true });
     }
   </script>

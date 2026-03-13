@@ -111,7 +111,7 @@ export function isNewCasino(review: Post): boolean {
 export function getRatingColor(rating: number): string {
   if (rating >= 8) return "text-[#39FF14]";
   if (rating >= 6) return "text-[#FAFF00]";
-  if (rating >= 4) return "text-[#8A2BE2]";
+  if (rating >= 4) return "text-[#A855F7]";
   return "text-white";
 }
 
@@ -119,7 +119,7 @@ export function getRatingColor(rating: number): string {
 export function getRatingBg(rating: number): string {
   if (rating >= 8) return "bg-[#39FF14] text-black";
   if (rating >= 6) return "bg-[#FAFF00] text-black";
-  if (rating >= 4) return "bg-[#8A2BE2] text-white";
+  if (rating >= 4) return "bg-[#A855F7] text-white";
   return "bg-white text-black";
 }
 
