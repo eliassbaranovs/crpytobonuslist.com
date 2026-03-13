@@ -1,0 +1,98 @@
+---
+title: "US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw"
+slug: "us-prosecutors-tornado-cash-retrial-crypto-privacy"
+description: "Industry analysis of the SDNY's push to retry Tornado Cash co-founder Roman Storm in October 2026, contrasting with the US Treasury's recent acknowledgment of lawful uses for crypto mixers."
+seoTitle: "Tornado Cash Retrial: SDNY Move Clashes with Treasury on Crypto Privacy"
+excerpt: "The timing of the SDNY's filing is critical. It arrived just days after the U.S. Treasury submitted a report to Congress in March 2026 that, for the first time, officially recognized legitimate reason"
+publishedAt: 2026-03-13T09:48:34.660Z
+publishDate: "2026-03-13"
+updatedAt: 2026-03-13T09:48:34.660Z
+tags: ["Tornado Cash", "Roman Storm", "Crypto Regulation", "Privacy Coins", "DOJ"]
+image: "/images/us-prosecutors-tornado-cash-retrial-crypto-privacy.webp"
+imageAlt: "Cover image for US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw"
+imageWidth: 1792
+imageHeight: 1024
+imageLoading: "lazy"
+imageFetchPriority: "auto"
+author: "Thomas Mullberg"
+authorSlug: "thomas-mullberg"
+canonical: "https://cryptobonuslist.com/news/us-prosecutors-tornado-cash-retrial-crypto-privacy/"
+contentType: "news"
+draft: false
+noIndex: false
+robots: "index, follow"
+featured: false
+category: "Regulation"
+lastVerified: "2026-03-13"
+schemaJsonLd: |
+  [{"url":"https://cryptobonuslist.com/posts/us-prosecutors-tornado-cash-retrial-crypto-privacy/","@type":"NewsArticle","image":{"url":"https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/images/covers/us-prosecutors-tornado-cash-retrial-crypto-privacy.webp","@type":"ImageObject","width":1792,"height":1024,"caption":"Cover image for US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw"},"author":{"url":"https://cryptobonuslist.com/authors/thomas-mullberg","name":"Thomas Mullberg","@type":"Person","image":"https://hmrslrvxqxwvxixsaars.supabase.co/storage/v1/object/public/images/author-headshots/thomas-mullberg_profile.png","jobTitle":"Senior Crypto & iGaming Analyst","knowsAbout":["Crypto Casino Regulation","Provably Fair Algorithms","Blockchain Payment Rails"],"description":"A veteran of the blockchain space since 2017, Thomas specializes in the intersection of decentralized finance and digital gambling. He focuses on auditing smart contracts, verifying payout speeds, and deconstructing the latest regulatory shifts in the crypto casino industry.","hasCredential":[{"@type":"EducationalOccupationalCredential","credentialCategory":"Certified Blockchain Professional"},{"@type":"EducationalOccupationalCredential","credentialCategory":"iGaming Compliance Specialist"}]},"@context":"https://schema.org","headline":"US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw","keywords":"Tornado Cash, Roman Storm, SDNY, Treasury, DOJ, crypto mixers, sanctions","publisher":{"url":"https://cryptobonuslist.com","logo":{"url":"https://cryptobonuslist.com/favicon.svg","@type":"ImageObject"},"name":"cryptobonuslist.com","@type":"Organization"},"wordCount":2198,"description":"Industry analysis of the SDNY's push to retry Tornado Cash co-founder Roman Storm in October 2026, contrasting with the US Treasury's recent acknowledgment","dateModified":"2026-03-13T09:32:35.583Z","timeRequired":"PT11M","datePublished":"2026-03-13T09:32:35.583Z","mainEntityOfPage":{"@id":"https://cryptobonuslist.com/posts/us-prosecutors-tornado-cash-retrial-crypto-privacy/","@type":"WebPage"}},{"@type":"FAQPage","@context":"https://schema.org","mainEntity":[{"name":"Why is Roman Storm being retried?","@type":"Question","acceptedAnswer":{"text":"Roman Storm is being retried because the jury in his first trial in August 2025 could not reach a unanimous verdict on two of the three charges against him. Prosecutors from the SDNY are now seeking a new trial to secure a conviction on these deadlocked counts: conspiracy to commit money laundering and conspiracy to violate sanctions.","@type":"Answer"}},{"name":"What did the US Treasury say about crypto mixers?","@type":"Question","acceptedAnswer":{"text":"In a March 2026 report to Congress, the U.S. Treasury acknowledged that crypto mixers like Tornado Cash have lawful applications. It stated that individuals and businesses might use them for legitimate financial privacy, such as protecting personal wealth or shielding commercial transactions from public view on transparent blockchains.","@type":"Answer"}},{"name":"Are crypto mixers like Tornado Cash legal in the US?","@type":"Question","acceptedAnswer":{"text":"The legality of crypto mixers is a contentious and unresolved issue in the United States. While the Treasury has acknowledged legal uses for them, the Department of Justice is actively prosecuting developers like Roman Storm, alleging the tools facilitate money laundering and sanctions evasion. Using a mixer is not explicitly illegal, but providing or operating such a service carries significant legal risk.","@type":"Answer"}},{"name":"What are the specific charges against Roman Storm in the upcoming retrial?","@type":"Question","acceptedAnswer":{"text":"The upcoming retrial in October 2026 will focus on two specific charges: conspiracy to commit money laundering and conspiracy to violate the International Emergency Economic Powers Act (IEEPA), the law underpinning U.S. sanctions. Each of these charges carries a maximum potential sentence of 20 years in prison.","@type":"Answer"}}]},{"@type":"BreadcrumbList","@context":"https://schema.org","itemListElement":[{"item":"https://cryptobonuslist.com/","name":"Home","@type":"ListItem","position":1},{"item":"https://cryptobonuslist.com/posts/us-prosecutors-tornado-cash-retrial-crypto-privacy/","name":"US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw","@type":"ListItem","position":2}]},{"url":"https://cryptobonuslist.com","name":"cryptobonuslist.com","@type":"WebSite","@context":"https://schema.org","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://cryptobonuslist.com/search?q={search_term_string}"},"query-input":"required name=search_term_string"}}]
+isNewCasino: false
+wordCount: 2030
+readingTime: "11 min read"
+---
+# US Prosecutors Push for Tornado Cash Retrial, Undermining Crypto Privacy Thaw
+
+## Key Takeaways
+*   Federal prosecutors from the Southern District of New York (SDNY) have formally proposed an October 2026 retrial for Tornado Cash co-founder Roman Storm.
+*   The retrial focuses on two counts where the jury deadlocked in August 2025: conspiracy to commit money laundering and conspiracy to violate sanctions. Each charge carries a maximum sentence of 20 years.
+*   This aggressive legal posture from the Department of Justice (DOJ) directly conflicts with a recent U.S. Treasury report to Congress in March 2026, which explicitly acknowledged that crypto mixers have lawful uses for financial privacy.
+*   The split verdict from the initial trial convicted Storm on one count of operating an unlicensed money transmitting business, which has a maximum five-year sentence, but left the more severe charges unresolved.
+*   This development signals a bifurcated U.S. policy. While a regulatory thaw may be occurring for mainstream crypto infrastructure, privacy-centric tools remain under intense scrutiny, creating a distinct and elevated risk category for developers and investors in the space.
+
+## The Core Story
+Prosecutors in the Southern District of New York are seeking to retry Tornado Cash co-founder Roman Storm in October 2026. The move targets the two most serious charges on which a jury failed to reach a verdict during his first trial in August 2025. This push for a second trial on conspiracy to commit money laundering and conspiracy to violate sanctions sends a clear signal that the Department of Justice maintains a hardline stance against crypto privacy tools, even as other parts of the U.S. government soften their tone.
+
+The timing of the SDNY's filing is critical. It arrived just days after the U.S. Treasury submitted a report to Congress in March 2026 that, for the first time, officially recognized legitimate reasons for using crypto mixers. The Treasury noted that lawful users might leverage such tools to protect personal wealth, shield business payments, and maintain privacy for charitable donations. This acknowledgment was seen as a major step forward, but the DOJ's subsequent action against Storm creates a deeply contradictory policy environment for digital asset privacy.
+
+Last August's trial resulted in a split decision that provided little clarity for the industry. The jury convicted Storm on the lesser charge of operating an unlicensed money transmitting business, which carries a maximum sentence of five years. They remained deadlocked on the two conspiracy counts, each of which carries a potential 20-year maximum sentence. Prosecutors now want a second chance to secure convictions on these national-security-related charges, proposing a trial start date around October 5 or October 12, 2026, with an estimated three-week duration. This legal battle continues to be a bellwether case for developer liability in decentralized finance.
+
+## Regulatory Context
+The U.S. government is sending profoundly mixed messages about crypto privacy. The proposed retrial of Roman Storm must be viewed against a complex backdrop of recent, and often conflicting, policy statements from different federal agencies. This creates a challenging environment for developers, investors, and users of privacy-enhancing technologies. The math doesn't lie; the signals are not aligned.
+
+The most significant development was the March 2026 Treasury report to Congress. In that document, the agency explicitly stated that lawful users of digital assets may use mixers for valid financial privacy reasons. This was a landmark admission. The same report, however, also highlighted illicit financial flows linked to mixers and recommended that Congress provide stronger enforcement tools. One such recommendation was a potential "hold law" that would allow authorities to temporarily freeze suspicious assets, indicating that while legitimate use is acknowledged, the enforcement posture remains aggressive.
+
+This duality echoes a broader theme. In April 2025, the Department of Justice issued a memo declaring an end to "regulation by prosecution." The memo stated the DOJ would cease targeting exchanges, mixers, and wallets for the actions of their end users or for unwitting regulatory violations. Critically, the memo included a massive carve-out. It preserved priority treatment for cases involving sanctions violations, hacking, terrorism, organized crime, and sanctioned states like North Korea. The charges against Roman Storm, particularly the conspiracy to violate sanctions, fall squarely within this preserved hardline bucket, effectively exempting his case from the DOJ's professed policy shift.
+
+Even a move that seemed like a concession had caveats. The Treasury's delisting of Tornado Cash on March 21, 2025, was interpreted by some as an easing of its sanctions posture. It signaled that Washington understood the policy complexity of sanctioning immutable code. Yet, the Treasury simultaneously stated it remained deeply concerned about hacking and money laundering activities linked to the Democratic People's Republic of Korea (DPRK). The delisting did not de-risk privacy infrastructure; it merely shifted the focus of enforcement.
+
+> The following table breaks down the recent government actions and the contradictory signals they send to the digital asset industry:
+
+| Government Action / Statement | What Softened | What Stayed Hardline | Investor Takeaway |
+| :--- | :--- | :--- | :--- |
+| **Treasury delists Tornado Cash (Mar. 21, 2025)** | Sanctions posture eased; Washington acknowledged the legal and policy complexity around applying sanctions in an evolving technology environment. | Treasury still said it remained deeply concerned about DPRK-linked hacking and laundering. | Delisting did not mean privacy infrastructure was broadly de-risked. |
+| **DOJ memo ending “regulation by prosecution” (Apr. 2025)** | DOJ said it would stop targeting exchanges, mixers, and wallets for the acts of end users or unwitting regulatory violations. | DOJ preserved priority treatment for cases involving sanctions, hacking, terrorism, organized crime, and sanctioned states. | The policy thaw looks real for some crypto sectors, but not for the national-security bucket. |
+| **Treasury report to Congress (Mar. 2026)** | Treasury explicitly acknowledged that lawful users may use mixers for financial privacy. | The same report highlighted mixer-linked illicit flows and recommended stronger tools, including a possible “hold law” to freeze suspicious assets temporarily. | Privacy use is being acknowledged, but privacy infrastructure is still being framed as a live enforcement risk. |
+| **SDNY retrial push on Roman Storm (Mar. 2026)** | No visible softening in this step. | Prosecutors want another shot on the money-laundering and sanctions counts, the two counts most aligned with the government’s preserved hardline priorities. | Privacy-adjacent projects still appear to sit in a different legal-risk bucket from the rest of crypto. |
+
+## The Numbers
+The legal figures in the Roman Storm case are stark and define the high-stakes nature of this prosecution. The initial trial in August 2025 concluded with a conviction on one count: operating an unlicensed money transmitting business. This charge carries a maximum statutory penalty of five years in prison. While significant, it is dwarfed by the severity of the charges now slated for retrial.
+
+The SDNY's focus is on the two counts where the jury deadlocked. The first is conspiracy to commit money laundering, and the second is conspiracy to violate the International Emergency Economic Powers Act (IEEPA), which is the legal basis for sanctions. Each of these two counts independently carries a maximum sentence of 20 years. A conviction on both could theoretically lead to a 40-year sentence, illustrating the immense legal pressure being applied by the government. The proposed retrial is scheduled for October 2026, with prosecutors suggesting a start date of either October 5 or October 12, and they have allocated an estimated three weeks for the proceedings.
+
+## Market Impact
+The decision to retry Roman Storm sends a chilling effect through the privacy-focused segment of the cryptocurrency market. For investors, the key takeaway is that the perceived "pro-crypto policy" shift in Washington is not a uniform tide lifting all boats. Instead, regulators are creating a clear distinction between market structure and infrastructure projects versus privacy-enabling technologies. The latter remains in a high-risk category with a significant legal target on its back.
+
+This legal action will likely cause a re-pricing of risk for tokens and projects associated with privacy. Investors should stop applying a single discount rate across the entire digital asset sector. Protocols that facilitate anonymous transactions, even if they have legitimate uses, now face a demonstrably higher threat of enforcement action than, for example, a decentralized exchange or a layer-2 scaling solution. The government's message is clear: aggressiveness will continue where privacy tools can be linked, even tangentially, to sanctions evasion or illicit finance.
+
+This could trigger a flight of capital and developer talent away from privacy-centric innovation in jurisdictions under U.S. influence. Projects may feel compelled to build in more centralized control points or surveillance capabilities to appease regulators, undermining the core principles of decentralization and privacy. The evidence suggests that markets may not have correctly priced this bifurcated regulatory posture. The continued prosecution of a developer for writing and deploying code represents a fundamental risk that extends far beyond Tornado Cash itself. Here is the bottom line: the thaw is real, but it stops where privacy tools begin.
+
+## What Happens Next
+The legal road ahead for Roman Storm is now clearly defined, with several key dates and procedural steps on the horizon. The immediate next step is a hearing scheduled for April 9, where Storm's legal team will present a Rule 29 motion for a judgment of acquittal. This motion argues that the evidence presented during the first trial was legally insufficient to sustain the single conviction for operating an unlicensed money transmitting business. The judge's ruling on this motion will be a critical early indicator of the court's stance.
+
+Following the Rule 29 hearing, the focus will shift entirely to the proposed retrial. The government has put forward dates in early October 2026, specifically the weeks of October 5 or October 12, for the new trial to commence. This second trial will be a focused affair, dealing only with the money laundering and sanctions conspiracy charges that previously resulted in a hung jury. The prosecution has estimated a three-week timeline to present its case again, likely with a refined strategy aimed at convincing a new set of jurors.
+
+The outcome of this retrial will have massive implications for the entire DeFi and open-source software development landscape. An acquittal would be a landmark victory for developers, potentially setting a precedent that writing and publishing code does not equate to criminal conspiracy. A conviction, on the other hand, would solidify the government's ability to hold developers liable for how third parties use their open-source tools, a precedent that could stifle innovation in privacy technology for years to come. The entire industry will be watching the proceedings in the Southern District of New York in October 2026.
+
+## Frequently Asked Questions
+
+### Why is Roman Storm being retried?
+Roman Storm is being retried because the jury in his first trial in August 2025 could not reach a unanimous verdict on two of the three charges against him. Prosecutors from the SDNY are now seeking a new trial to secure a conviction on these deadlocked counts: conspiracy to commit money laundering and conspiracy to violate sanctions.
+
+### What did the US Treasury say about crypto mixers?
+In a March 2026 report to Congress, the U.S. Treasury acknowledged that crypto mixers like Tornado Cash have lawful applications. It stated that individuals and businesses might use them for legitimate financial privacy, such as protecting personal wealth or shielding commercial transactions from public view on transparent blockchains.
+
+### Are crypto mixers like Tornado Cash legal in the US?
+The legality of crypto mixers is a contentious and unresolved issue in the United States. While the Treasury has acknowledged legal uses for them, the Department of Justice is actively prosecuting developers like Roman Storm, alleging the tools facilitate money laundering and sanctions evasion. Using a mixer is not explicitly illegal, but providing or operating such a service carries significant legal risk.
+
+### What are the specific charges against Roman Storm in the upcoming retrial?
+The upcoming retrial in October 2026 will focus on two specific charges: conspiracy to commit money laundering and conspiracy to violate the International Emergency Economic Powers Act (IEEPA), the law underpinning U.S. sanctions. Each of these charges carries a maximum potential sentence of 20 years in prison.
