@@ -529,7 +529,7 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
 
   {/* Sticky Mobile CTA */}
   {claimUrl && (
-    <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
+    <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
       <a href={claimUrl} rel="nofollow sponsored" class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF]">
         CLAIM BONUS
       </a>

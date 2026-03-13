@@ -39,7 +39,7 @@ function isActive(prefix: string): boolean {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content={description} />
     <meta name="robots" content={robots} />
     <link rel="canonical" href={canonicalUrl} />
@@ -93,16 +93,16 @@ function isActive(prefix: string): boolean {
             {isActive('/casinos') && <span class="absolute -bottom-4 left-0 right-0 h-[3px] bg-[#39FF14]"></span>}
             <div class="absolute top-full left-0 pt-2 hidden group-hover:block group-focus-within:block" role="menu" data-dropdown-menu>
               <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#39FF14] min-w-55">
-                <a href="/casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Reviews</a>
-                <a href="/best-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Best Crypto Casinos</a>
-                <a href="/bitcoin-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Bitcoin Casinos</a>
-                <a href="/ethereum-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Ethereum Casinos</a>
-                <a href="/fast-withdrawal-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Fast Withdrawals</a>
-                <a href="/no-wagering-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">No Wagering</a>
-                <a href="/no-kyc-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">No KYC Casinos</a>
-                <a href="/solana-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Solana Casinos</a>
-                <a href="/new-crypto-casinos" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">New Casinos</a>
-                <a href="/compare" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">Compare Casinos</a>
+                <a href="/casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Reviews</a>
+                <a href="/best-crypto-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Best Crypto Casinos</a>
+                <a href="/bitcoin-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Bitcoin Casinos</a>
+                <a href="/ethereum-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Ethereum Casinos</a>
+                <a href="/fast-withdrawal-crypto-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Fast Withdrawals</a>
+                <a href="/no-wagering-crypto-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">No Wagering</a>
+                <a href="/no-kyc-crypto-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">No KYC Casinos</a>
+                <a href="/solana-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Solana Casinos</a>
+                <a href="/new-crypto-casinos" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">New Casinos</a>
+                <a href="/compare" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">Compare Casinos</a>
               </div>
             </div>
           </div>
@@ -115,8 +115,8 @@ function isActive(prefix: string): boolean {
             {isActive('/bonus') && <span class="absolute -bottom-4 left-0 right-0 h-[3px] bg-[#39FF14]"></span>}
             <div class="absolute top-full left-0 pt-2 hidden group-hover:block group-focus-within:block" role="menu" data-dropdown-menu>
               <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#8A2BE2] min-w-55">
-                <a href="/bonus" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Bonuses</a>
-                <a href="/crypto-casino-bonuses" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">Bonus Guide 2026</a>
+                <a href="/bonus" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Bonuses</a>
+                <a href="/crypto-casino-bonuses" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">Bonus Guide 2026</a>
               </div>
             </div>
           </div>
@@ -129,12 +129,12 @@ function isActive(prefix: string): boolean {
             {isActive('/guides') && <span class="absolute -bottom-4 left-0 right-0 h-[3px] bg-[#39FF14]"></span>}
             <div class="absolute top-full right-0 pt-2 hidden group-hover:block group-focus-within:block" role="menu" data-dropdown-menu>
               <div class="bg-black border-[3px] border-white shadow-[4px_4px_0px_0px_#39FF14] min-w-70">
-                <a href="/guides" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Guides</a>
-                <a href="/guides/is-crypto-gambling-safe" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Is Crypto Gambling Safe?</a>
-                <a href="/guides/crypto-casino-vs-regular-casino" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Crypto vs Regular Casino</a>
-                <a href="/guides/crypto-casino-fees-explained" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Fees Explained</a>
-                <a href="/guides/is-crypto-gambling-legal" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Is It Legal?</a>
-                <a href="/guides/how-crypto-casino-withdrawals-work" class="block px-4 py-3 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">How Withdrawals Work</a>
+                <a href="/guides" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">All Guides</a>
+                <a href="/guides/is-crypto-gambling-safe" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Is Crypto Gambling Safe?</a>
+                <a href="/guides/crypto-casino-vs-regular-casino" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Crypto vs Regular Casino</a>
+                <a href="/guides/crypto-casino-fees-explained" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Fees Explained</a>
+                <a href="/guides/is-crypto-gambling-legal" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 border-b border-white/20 text-xs tracking-wider" role="menuitem">Is It Legal?</a>
+                <a href="/guides/how-crypto-casino-withdrawals-work" class="block px-4 py-3.5 text-[#D4D4D4] hover:text-[#39FF14] hover:bg-white/5 text-xs tracking-wider" role="menuitem">How Withdrawals Work</a>
               </div>
             </div>
           </div>
@@ -144,7 +144,7 @@ function isActive(prefix: string): boolean {
           </a>
         </nav>
         <!-- Mobile menu button -->
-        <button id="mobile-menu-btn" class="md:hidden text-white" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <button id="mobile-menu-btn" class="md:hidden text-white min-w-11 min-h-11 flex items-center justify-center" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
           <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
       </div>
@@ -181,7 +181,7 @@ function isActive(prefix: string): boolean {
     </header>
 
     <!-- Marquee -->
-    <div class="border-b-[3px] border-white bg-black overflow-hidden py-2">
+    <div class="border-b-[3px] border-white bg-black overflow-hidden py-2" aria-hidden="true">
       <div class="flex whitespace-nowrap animate-marquee">
         <span class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold tracking-wider px-8">
           &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt; UNREGULATED YIELDS &gt; 0% KYC OPTIONS &gt; DECENTRALIZED PAYOUTS &gt;
@@ -215,25 +215,25 @@ function isActive(prefix: string): boolean {
             <nav aria-label="Browse pages" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
               <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">BROWSE</p>
               <ul class="space-y-2 text-sm font-[Public_Sans]">
-                <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Casino Reviews</a></li>
-                <li><a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Best Crypto Casinos</a></li>
-                <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Bonuses</a></li>
-                <li><a href="/compare" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Compare Casinos</a></li>
-                <li><a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Guides</a></li>
-                <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">News</a></li>
+                <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Casino Reviews</a></li>
+                <li><a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Best Crypto Casinos</a></li>
+                <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Bonuses</a></li>
+                <li><a href="/compare" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Compare Casinos</a></li>
+                <li><a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Guides</a></li>
+                <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">News</a></li>
               </ul>
             </nav>
             <nav aria-label="Category pages" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
               <p class="font-[Space_Grotesk] text-xs font-bold text-white/40 mb-4 uppercase tracking-wider">BY CATEGORY</p>
               <ul class="space-y-2 text-sm font-[Public_Sans]">
-                <li><a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Bitcoin Casinos</a></li>
-                <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Ethereum Casinos</a></li>
-                <li><a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Solana Casinos</a></li>
-                <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Fast Withdrawals</a></li>
-                <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">No Wagering</a></li>
-                <li><a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">No KYC Casinos</a></li>
-                <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">New Casinos</a></li>
-                <li><a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Crypto Casino Bonuses</a></li>
+                <li><a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Bitcoin Casinos</a></li>
+                <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Ethereum Casinos</a></li>
+                <li><a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Solana Casinos</a></li>
+                <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Fast Withdrawals</a></li>
+                <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">No Wagering</a></li>
+                <li><a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">No KYC Casinos</a></li>
+                <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">New Casinos</a></li>
+                <li><a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Crypto Casino Bonuses</a></li>
               </ul>
             </nav>
           </div>
@@ -241,20 +241,20 @@ function isActive(prefix: string): boolean {
           <nav aria-label="Company links" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 md:border-r-[3px] md:border-white ml-4 md:ml-0">
             <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">COMPANY</p>
             <ul class="space-y-2 text-sm font-[Public_Sans]">
-              <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">About Us</a></li>
-              <li><a href="/team" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Our Team</a></li>
-              <li><a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">How We Review</a></li>
-              <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Contact</a></li>
+              <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">About Us</a></li>
+              <li><a href="/team" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Our Team</a></li>
+              <li><a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">How We Review</a></li>
+              <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Contact</a></li>
             </ul>
           </nav>
           <!-- Legal Column -->
           <nav aria-label="Legal and trust links" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
             <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">LEGAL & TRUST</p>
             <ul class="space-y-2 text-sm font-[Public_Sans]">
-              <li><a href="/affiliate-disclosure" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Affiliate Disclosure</a></li>
-              <li><a href="/responsible-gambling" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Responsible Gambling</a></li>
-              <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Privacy Policy</a></li>
-              <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all">Terms & Conditions</a></li>
+              <li><a href="/affiliate-disclosure" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Affiliate Disclosure</a></li>
+              <li><a href="/responsible-gambling" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Responsible Gambling</a></li>
+              <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Privacy Policy</a></li>
+              <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Terms & Conditions</a></li>
             </ul>
           </nav>
         </div>
