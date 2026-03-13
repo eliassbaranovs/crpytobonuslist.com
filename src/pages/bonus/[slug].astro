@@ -148,11 +148,11 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
 ---
 
 <Layout
-  title={d.seoTitle}
+  title={d.seoTitle || d.title}
   description={d.description}
   jsonld={jsonld}
   ogType="article"
-  ogImage={d.image || "/favicon.svg"}
+  ogImage={d.image || "/images/og-default.jpg"}
   canonical={canonical}
   robots={robots}
 >

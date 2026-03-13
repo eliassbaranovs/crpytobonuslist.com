@@ -6,10 +6,13 @@ import { getReviews, getRatingBg, getReviewUrl, getClaimUrl, getWithdrawalSpeedL
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts);
 
+const siteUrl = "https://cryptobonuslist.com";
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
+  "@graph": [
+    {
+    "@type": "FAQPage",
+    "mainEntity": [
     {
       "@type": "Question",
       "name": "What is a crypto casino?",
@@ -51,6 +54,32 @@ const schemaJsonLd = JSON.stringify({
       }
     }
   ]
+},
+    {
+      "@type": "CollectionPage",
+      name: "Best Crypto Casinos 2026",
+      description: "Ranked list of the best crypto casinos in 2026.",
+      url: `${siteUrl}/best-crypto-casinos`,
+    },
+    {
+      "@type": "ItemList",
+      name: "Best Crypto Casinos 2026",
+      numberOfItems: reviews.length,
+      itemListElement: reviews.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${siteUrl}${getReviewUrl(r)}`,
+        name: r.data.casino_name || r.data.casinoName || r.data.title,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Best Crypto Casinos" },
+      ],
+    },
+  ],
 });
 ---
 

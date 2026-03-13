@@ -18,9 +18,15 @@ export function getReviews(posts: Post[]): Post[] {
 
 /** Check if casino accepts a specific cryptocurrency */
 export function acceptsCrypto(review: Post, coin: string): boolean {
-  // Parse depositMethods string (normalized in config.ts transform)
+  const lower = coin.toLowerCase();
+  // Check acceptedCryptos array first
+  const cryptos = (review.data as any).acceptedCryptos;
+  if (Array.isArray(cryptos) && cryptos.some((c: string) => c.toLowerCase().includes(lower))) {
+    return true;
+  }
+  // Fall back to depositMethods string
   const methods = review.data.depositMethods || "";
-  return methods.toLowerCase().includes(coin.toLowerCase());
+  return methods.toLowerCase().includes(lower);
 }
 
 /** Check if casino has fast crypto withdrawals (under 6 hours) */

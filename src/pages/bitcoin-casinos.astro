@@ -36,17 +36,46 @@ const faqItems = [
   },
 ];
 
+const siteUrl = "https://cryptobonuslist.com";
 const jsonld = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
+  "@graph": [
+    {
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+    {
+      "@type": "CollectionPage",
+      name: "Best Bitcoin Casinos 2026",
+      description: "Top Bitcoin casinos ranked by real testing.",
+      url: `${siteUrl}/bitcoin-casinos`,
     },
-  })),
+    {
+      "@type": "ItemList",
+      name: "Best Bitcoin Casinos 2026",
+      numberOfItems: reviews.length,
+      itemListElement: reviews.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${siteUrl}${getReviewUrl(r)}`,
+        name: r.data.casino_name || r.data.casinoName || r.data.title,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Bitcoin Casinos" },
+      ],
+    },
+  ],
 });
 ---
 

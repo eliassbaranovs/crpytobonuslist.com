@@ -8,10 +8,13 @@ const allPosts = await getCollection("posts");
 const bonuses = sortByDate(allPosts.filter(isBonus));
 const reviews = getReviews(allPosts);
 
+const siteUrl = "https://cryptobonuslist.com";
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
+  "@graph": [
+    {
+    "@type": "FAQPage",
+    "mainEntity": [
     {
       "@type": "Question",
       "name": "What is a crypto casino bonus?",
@@ -61,6 +64,32 @@ const schemaJsonLd = JSON.stringify({
       }
     }
   ]
+},
+    {
+      "@type": "CollectionPage",
+      name: "Crypto Casino Bonuses 2026",
+      description: "Best crypto casino welcome offers and bonus deals.",
+      url: `${siteUrl}/crypto-casino-bonuses`,
+    },
+    {
+      "@type": "ItemList",
+      name: "Crypto Casino Bonuses 2026",
+      numberOfItems: bonuses.length,
+      itemListElement: bonuses.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${siteUrl}${getPostUrl(r)}`,
+        name: r.data.title,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Crypto Casino Bonuses" },
+      ],
+    },
+  ],
 });
 ---
 

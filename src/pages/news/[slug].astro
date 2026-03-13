@@ -85,11 +85,11 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
 ---
 
 <Layout
-  title={post.data.seoTitle}
+  title={post.data.seoTitle || post.data.title}
   description={post.data.description}
   jsonld={jsonld}
   ogType="article"
-  ogImage={post.data.image || "/favicon.svg"}
+  ogImage={post.data.image || "/images/og-default.jpg"}
   canonical={computedCanonical}
   robots={robots}
 >

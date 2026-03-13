@@ -37,17 +37,46 @@ const faqItems = [
   },
 ];
 
+const siteUrl = "https://cryptobonuslist.com";
 const jsonld = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
+  "@graph": [
+    {
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+    {
+      "@type": "CollectionPage",
+      name: "Low Wagering Crypto Casinos 2026",
+      description: "Crypto casinos with wagering requirements of 10x or less.",
+      url: `${siteUrl}/no-wagering-crypto-casinos`,
     },
-  })),
+    {
+      "@type": "ItemList",
+      name: "Low Wagering Crypto Casinos 2026",
+      numberOfItems: reviews.length,
+      itemListElement: reviews.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${siteUrl}${getReviewUrl(r)}`,
+        name: r.data.casino_name || r.data.casinoName || r.data.title,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Low Wagering Casinos" },
+      ],
+    },
+  ],
 });
 ---
 
@@ -59,7 +88,7 @@ const jsonld = JSON.stringify({
   <section class="px-6 py-12">
     <div class="max-w-7xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
-        <span class="text-[#39FF14]">LOW WAGERING</span> CRYPTO CASINOS
+        <span class="text-[#39FF14]">NO WAGERING</span> & LOW WAGERING CRYPTO CASINOS 2026
       </h1>
       <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
         High wagering requirements turn bonuses into traps. These crypto casinos keep it at 10x or less, giving you a real chance of withdrawing your winnings. Some offer 0x wagering, meaning you keep everything you win.

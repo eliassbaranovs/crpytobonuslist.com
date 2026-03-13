@@ -173,11 +173,11 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
 ---
 
 <Layout
-  title={d.seoTitle}
+  title={d.seoTitle || d.title}
   description={d.description}
   jsonld={jsonld}
   ogType="article"
-  ogImage={d.image || "/favicon.svg"}
+  ogImage={d.image || "/images/og-default.jpg"}
   canonical={canonical}
   robots={robots}
 >

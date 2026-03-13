@@ -2,15 +2,27 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { getAllNews, getPostUrl, isBonus, isGuide, isReview, sortByDate } from "../lib/posts";
+import { getRatingBg } from "../lib/casino-filters";
 
 const allPosts = await getCollection("posts");
 const latestBonuses = sortByDate(allPosts.filter(isBonus)).slice(0, 3);
-const latestReviews = sortByDate(allPosts.filter(isReview)).slice(0, 3);
+const latestReviews = sortByDate(allPosts.filter(isReview)).slice(0, 5);
 const latestGuides = sortByDate(allPosts.filter(isGuide)).slice(0, 3);
 const latestNews = (await getAllNews()).slice(0, 2);
 
 const totalReviews = allPosts.filter(isReview).length;
 const totalBonuses = allPosts.filter(isBonus).length;
+
+// Freshness: find most recently updated review
+const allReviews = sortByDate(allPosts.filter(isReview));
+const lastUpdated = allReviews.length > 0 && allReviews[0].data.publishedAt
+  ? new Date(allReviews[0].data.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })
+  : null;
+
+// Top-rated casino for featured slot
+const topRated = [...allPosts.filter(isReview)]
+  .filter(r => !r.data.draft && r.data.ourRating)
+  .sort((a, b) => (b.data.ourRating || 0) - (a.data.ourRating || 0))[0];
 
 const schemaJsonLd = JSON.stringify([
   {
@@ -25,7 +37,7 @@ const schemaJsonLd = JSON.stringify([
       "url": "https://cryptobonuslist.com",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://cryptobonuslist.com/favicon.svg"
+        "url": "https://cryptobonuslist.com/favicon.ico"
       }
     }
   },
@@ -34,7 +46,7 @@ const schemaJsonLd = JSON.stringify([
     "@type": "Organization",
     "name": "CryptoBonusList",
     "url": "https://cryptobonuslist.com",
-    "logo": "https://cryptobonuslist.com/favicon.svg",
+    "logo": "https://cryptobonuslist.com/favicon.ico",
     "foundingDate": "2025",
     "description": "Independent crypto casino review and bonus comparison site.",
     "ethicsPolicy": "https://cryptobonuslist.com/affiliate-disclosure",
@@ -87,264 +99,472 @@ const schemaJsonLd = JSON.stringify([
   jsonld={schemaJsonLd}
 >
   <!-- Hero -->
-  <section class="px-6 py-16 md:py-24 border-b-[3px] border-white">
-    <div class="max-w-7xl mx-auto">
-      <h1 class="font-[Space_Grotesk] text-5xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight">
-        CRYPTO CASINO REVIEWS.<br />
-        <span class="text-[#39FF14]">TESTED WITH REAL MONEY.</span>
-      </h1>
-      <p class="mt-6 text-[#D4D4D4] font-[Public_Sans] text-lg md:text-xl max-w-2xl">
-        We deposit, play, and withdraw at every casino before writing a review. Wagering breakdowns, payout speeds, and honest ratings on a 0-10 scale.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-4">
-        <a href="/casinos" class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all">VIEW CASINOS</a>
-        <a href="/bonus" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#39FF14] transition-all">VIEW BONUSES</a>
+  <section class="relative px-6 py-20 md:py-28 lg:py-32 border-b-[3px] border-white overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px); background-size: 48px 48px;"></div>
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#39FF14] opacity-[0.04] blur-[120px] pointer-events-none"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#8A2BE2] opacity-[0.06] blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-12">
+        <div class="lg:max-w-3xl">
+          <div class="inline-flex items-center gap-2 mb-6 border-[3px] border-[#39FF14] px-4 py-2 bg-[#39FF14]/5">
+            <span class="w-2 h-2 bg-[#39FF14] inline-block animate-pulse"></span>
+            {lastUpdated ? (
+              <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold tracking-wider uppercase">Last updated: <time>{lastUpdated}</time></span>
+            ) : (
+              <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold tracking-wider uppercase">Live reviews</span>
+            )}
+          </div>
+
+          <h1 class="font-[Space_Grotesk] text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[0.9] tracking-tight">
+            CRYPTO CASINO<br />
+            REVIEWS.<br />
+            <span class="text-[#39FF14]">TESTED WITH<br class="md:hidden" /> REAL MONEY.</span>
+          </h1>
+
+          <p class="mt-8 text-[#D4D4D4] font-[Public_Sans] text-lg md:text-xl max-w-xl leading-relaxed">
+            We deposit, play, and withdraw at every casino before writing a review. Wagering breakdowns, payout speeds, and honest ratings on a 0-10 scale.
+          </p>
+
+          <div class="mt-10 flex flex-wrap gap-4">
+            <a href="/casinos" class="group inline-flex items-center gap-3 bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#FFFFFF] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_0px_#FFFFFF] transition-all">
+              VIEW CASINOS
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/bonus" class="group inline-flex items-center gap-3 bg-transparent text-white font-[Space_Grotesk] font-bold px-8 py-4 text-lg border-[3px] border-white shadow-[6px_6px_0px_0px_#A855F7] hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_0px_#A855F7] hover:bg-[#A855F7]/10 transition-all">
+              VIEW BONUSES
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Featured top-rated casino (desktop only) -->
+        {topRated && (
+          <div class="hidden lg:block w-80 shrink-0">
+            <p class="font-[JetBrains_Mono] text-[#FAFF00] text-xs font-bold uppercase tracking-wider mb-3">&gt; Top rated</p>
+            <a href={getPostUrl(topRated)} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]">
+              <div class="flex items-center gap-3 mb-4">
+                {topRated.data.logo && (
+                  <img src={topRated.data.logo} alt={topRated.data.casinoName || "Casino logo"} class="w-10 h-10 object-cover border border-white/20" loading="lazy" />
+                )}
+                <div>
+                  <h3 class="font-[Space_Grotesk] text-lg font-bold text-white leading-tight">{topRated.data.casinoName || topRated.data.title}</h3>
+                  {topRated.data.licences && (
+                    <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">{topRated.data.licences}</span>
+                  )}
+                </div>
+              </div>
+              {topRated.data.ourRating && (
+                <div class="flex items-center gap-3 mb-4">
+                  <span class={`inline-flex items-center justify-center w-14 h-14 font-[JetBrains_Mono] font-bold text-2xl border-[3px] border-white ${getRatingBg(topRated.data.ourRating)}`}>
+                    {topRated.data.ourRating}
+                  </span>
+                  <div>
+                    <span class="text-white font-[JetBrains_Mono] text-sm font-bold block">/10</span>
+                    <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">Our Rating</span>
+                  </div>
+                </div>
+              )}
+              <span class="inline-block w-full text-center bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-sm py-2 border-[3px] border-white mt-2">READ REVIEW</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </section>
 
   <!-- Trust Strip -->
-  <section class="border-b-[3px] border-white">
-    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-white">
-      <div class="p-6 text-center">
-        <p class="font-[JetBrains_Mono] text-3xl font-bold text-[#39FF14]">{totalReviews}</p>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-1">Casinos Reviewed</p>
+  <section class="border-b-[3px] border-white bg-black">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4">
+      <div class="p-6 md:p-8 text-center border-r-[3px] border-b-[3px] md:border-b-0 border-white" aria-label={`${totalReviews} Casinos Reviewed`}>
+        <p class="font-[JetBrains_Mono] text-4xl md:text-5xl font-bold text-[#39FF14] tracking-tight">{totalReviews}</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-2 uppercase tracking-wider">Casinos Reviewed</p>
       </div>
-      <div class="p-6 text-center">
-        <p class="font-[JetBrains_Mono] text-3xl font-bold text-[#39FF14]">{totalBonuses}</p>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-1">Bonuses Tested</p>
+      <div class="p-6 md:p-8 text-center md:border-r-[3px] border-b-[3px] md:border-b-0 border-white" aria-label={`${totalBonuses} Bonuses Tested`}>
+        <p class="font-[JetBrains_Mono] text-4xl md:text-5xl font-bold text-[#A855F7] tracking-tight">{totalBonuses}</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-2 uppercase tracking-wider">Bonuses Tested</p>
       </div>
-      <div class="p-6 text-center">
-        <p class="font-[JetBrains_Mono] text-3xl font-bold text-[#39FF14]">0-10</p>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-1">Rating Scale</p>
+      <div class="p-6 md:p-8 text-center border-r-[3px] border-white" aria-label="0-10 Rating Scale">
+        <p class="font-[JetBrains_Mono] text-4xl md:text-5xl font-bold text-[#FAFF00] tracking-tight">0-10</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-2 uppercase tracking-wider">Rating Scale</p>
       </div>
-      <div class="p-6 text-center">
-        <p class="font-[JetBrains_Mono] text-3xl font-bold text-[#39FF14]">100%</p>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-1">Real Deposits</p>
+      <div class="p-6 md:p-8 text-center" aria-label="100% Real Deposits">
+        <p class="font-[JetBrains_Mono] text-4xl md:text-5xl font-bold text-white tracking-tight">100%</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mt-2 uppercase tracking-wider">Real Deposits</p>
       </div>
     </div>
   </section>
 
   <!-- Casino Reviews -->
   {latestReviews.length > 0 && (
-    <section class="px-6 py-12">
+    <section class="px-6 py-16 md:py-20">
       <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold text-white">
-            CASINO <span class="text-[#39FF14]">REVIEWS</span>
-          </h2>
-          <a href="/casinos" class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold hover:underline">VIEW ALL</a>
+        <div class="flex items-end justify-between mb-10">
+          <div>
+            <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold uppercase tracking-widest block mb-2">&gt; Latest reviews</span>
+            <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">CASINO REVIEWS</h2>
+          </div>
+          <a href="/casinos" class="hidden md:inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+            VIEW ALL
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+          </a>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {latestReviews.map((review) => (
-            <a href={getPostUrl(review)} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex gap-2 items-center">
-                  {review.data.logo && (
-                    <img src={review.data.logo} alt={review.data.casinoName || ""} class="w-8 h-8 rounded object-cover" loading="lazy" />
-                  )}
-                  <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] font-bold uppercase">Review</span>
-                </div>
-                {review.data.ourRating && (
-                  <span class={`font-[JetBrains_Mono] font-bold text-lg ${review.data.ourRating >= 8 ? "text-[#39FF14]" : review.data.ourRating >= 6 ? "text-[#FAFF00]" : "text-white"}`}>
-                    {review.data.ourRating}/10
+          {latestReviews.slice(0, 3).map((review) => (
+            <a href={getPostUrl(review)} class="card-brutal group block bg-black border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:shadow-[2px_2px_0px_0px_#39FF14]">
+              {review.data.ourRating && (
+                <div class={`flex items-center justify-between px-6 py-3 border-b-[3px] border-white ${getRatingBg(review.data.ourRating)}`}>
+                  <span class="font-[JetBrains_Mono] font-bold text-sm uppercase tracking-wider">
+                    {review.data.ourRating >= 8 ? "EXCELLENT" : review.data.ourRating >= 6 ? "GOOD" : "AVERAGE"}
                   </span>
-                )}
-              </div>
-              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{review.data.casinoName || review.data.title}</h3>
-              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-2">{review.data.description}</p>
-              <div class="flex flex-wrap gap-2">
-                {review.data.licences && (
-                  <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono] border border-white px-2 py-1">{review.data.licences}</span>
-                )}
-                {review.data.established && (
-                  <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono] border border-white px-2 py-1">Est. {review.data.established}</span>
-                )}
+                  <span class="font-[JetBrains_Mono] font-bold text-2xl">{review.data.ourRating}/10</span>
+                </div>
+              )}
+              <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                  {review.data.logo && (
+                    <img src={review.data.logo} alt={review.data.casinoName || "Casino logo"} class="w-10 h-10 object-cover border border-white/20" loading="lazy" />
+                  )}
+                  <div>
+                    <h3 class="font-[Space_Grotesk] text-xl font-bold text-white leading-tight">{review.data.casinoName || review.data.title}</h3>
+                    {review.data.established && (
+                      <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">Est. {review.data.established}</span>
+                    )}
+                  </div>
+                </div>
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-5 line-clamp-2 leading-relaxed">{review.data.description}</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                  {review.data.licences && (
+                    <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono] border border-white/30 px-2 py-1">{review.data.licences}</span>
+                  )}
+                </div>
+                <span class="inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold group-hover:gap-3 transition-all">
+                  READ REVIEW
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+                </span>
               </div>
             </a>
           ))}
         </div>
+
+        {latestReviews.length > 3 && (
+          <div class="mt-6 space-y-3">
+            {latestReviews.slice(3, 5).map((review) => (
+              <a href={getPostUrl(review)} class="card-brutal group flex items-center justify-between bg-black border-[3px] border-white p-4 shadow-[4px_4px_0px_0px_#39FF14] hover:shadow-[2px_2px_0px_0px_#39FF14]">
+                <div class="flex items-center gap-4">
+                  {review.data.logo && (
+                    <img src={review.data.logo} alt={review.data.casinoName || "Casino logo"} class="w-8 h-8 object-cover border border-white/20" loading="lazy" />
+                  )}
+                  <div>
+                    <h3 class="font-[Space_Grotesk] text-base font-bold text-white">{review.data.casinoName || review.data.title}</h3>
+                    <p class="text-[#D4D4D4] text-xs font-[Public_Sans] line-clamp-1">{review.data.description}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 shrink-0 ml-4">
+                  {review.data.ourRating && (
+                    <span class={`font-[JetBrains_Mono] font-bold text-lg ${review.data.ourRating >= 8 ? "text-[#39FF14]" : review.data.ourRating >= 6 ? "text-[#FAFF00]" : "text-white"}`}>
+                      {review.data.ourRating}/10
+                    </span>
+                  )}
+                  <span class="hidden sm:inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold group-hover:gap-3 transition-all">
+                    READ
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+
+        <a href="/casinos" class="md:hidden mt-6 inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+          VIEW ALL CASINOS
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </section>
   )}
 
-  <!-- Latest Bonuses -->
-  <section class="px-6 py-12 border-t-[3px] border-white">
+  <!-- How We Work (moved up for trust) -->
+  <section class="px-6 py-16 md:py-20 border-t-[3px] border-white">
     <div class="max-w-7xl mx-auto">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold text-white">
-          LATEST <span class="text-[#8A2BE2]">BONUSES</span>
-        </h2>
-        <a href="/bonus" class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold hover:underline">VIEW ALL</a>
+      <div class="mb-10">
+        <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold uppercase tracking-widest block mb-2">&gt; Our process</span>
+        <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">HOW WE WORK</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-0">
+        <div class="border-[3px] border-white p-8 relative md:border-r-0">
+          <div class="flex items-center gap-4 mb-5">
+            <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xl w-12 h-12 flex items-center justify-center border-[3px] border-white shrink-0">1</span>
+            <div class="hidden md:block w-full h-[3px] bg-white/20"></div>
+          </div>
+          <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">DEPOSIT</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">We deposit real crypto at every casino. BTC, ETH, or USDT. Transaction times and fees recorded.</p>
+        </div>
+        <div class="border-[3px] border-white p-8 relative md:border-r-0 border-t-0 md:border-t-[3px]">
+          <div class="flex items-center gap-4 mb-5">
+            <span class="bg-[#A855F7] text-white font-[JetBrains_Mono] font-bold text-xl w-12 h-12 flex items-center justify-center border-[3px] border-white shrink-0">2</span>
+            <div class="hidden md:block w-full h-[3px] bg-white/20"></div>
+          </div>
+          <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">PLAY</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Claim bonuses, test wagering requirements, check game contributions and max bet rules.</p>
+        </div>
+        <div class="border-[3px] border-white p-8 relative md:border-r-0 border-t-0 md:border-t-[3px]">
+          <div class="flex items-center gap-4 mb-5">
+            <span class="bg-[#FAFF00] text-black font-[JetBrains_Mono] font-bold text-xl w-12 h-12 flex items-center justify-center border-[3px] border-white shrink-0">3</span>
+            <div class="hidden md:block w-full h-[3px] bg-white/20"></div>
+          </div>
+          <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">WITHDRAW</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Request a payout and time it. KYC process, pending periods, and actual withdrawal speed documented.</p>
+        </div>
+        <div class="border-[3px] border-white p-8 relative border-t-0 md:border-t-[3px]">
+          <div class="flex items-center gap-4 mb-5">
+            <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xl w-12 h-12 flex items-center justify-center border-[3px] border-white shrink-0">4</span>
+          </div>
+          <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">RATE</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Score on a 0-10 scale across six categories. Pros, cons, and evidence. No paid ratings.</p>
+        </div>
+      </div>
+      <div class="mt-8">
+        <a href="/methodology" class="inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+          READ FULL METHODOLOGY
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Bonuses -->
+  <section class="px-6 py-16 md:py-20 border-t-[3px] border-white relative">
+    <div class="absolute left-0 top-0 bottom-0 w-1 bg-[#A855F7] hidden lg:block"></div>
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <span class="font-[JetBrains_Mono] text-[#A855F7] text-xs font-bold uppercase tracking-widest block mb-2">&gt; Latest offers</span>
+          <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">BONUSES</h2>
+        </div>
+        <a href="/bonus" class="hidden md:inline-flex items-center gap-2 text-[#A855F7] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+          VIEW ALL
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+        </a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {latestBonuses.map((bonus) => (
-          <a href={getPostUrl(bonus)} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
-            <div class="mb-3 flex gap-2 items-center">
+          <a href={getPostUrl(bonus)} class="card-brutal group block bg-black border-[3px] border-white shadow-[6px_6px_0px_0px_#A855F7] hover:shadow-[2px_2px_0px_0px_#A855F7]">
+            <div class="flex items-center gap-2 px-6 py-3 border-b-[3px] border-white bg-[#A855F7]/10">
               {bonus.data.bonusType && (
-                <span class="inline-block bg-[#8A2BE2] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">{bonus.data.bonusType}</span>
+                <span class="inline-block bg-[#A855F7] text-white text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">{bonus.data.bonusType}</span>
               )}
               {bonus.data.verified && (
                 <span class="inline-block bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">VERIFIED</span>
               )}
             </div>
-            <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{bonus.data.title}</h3>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-2">{bonus.data.description}</p>
-            <div class="flex flex-wrap gap-2">
+            <div class="p-6">
+              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3 leading-tight">{bonus.data.title}</h3>
               {bonus.data.bonus && (
-                <span class="text-white text-xs font-[JetBrains_Mono] border border-white px-2 py-1">{bonus.data.bonus}</span>
+                <div class="mb-4 py-3 px-4 border-l-[4px] border-[#A855F7] bg-[#A855F7]/5">
+                  <span class="font-[JetBrains_Mono] text-[#A855F7] font-bold text-lg">{bonus.data.bonus}</span>
+                </div>
               )}
-              {bonus.data.wageringRequirements && (
-                <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">{bonus.data.wageringRequirements} WR</span>
-              )}
+              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-5 line-clamp-2 leading-relaxed">{bonus.data.description}</p>
+              <div class="flex flex-wrap gap-2 mb-5">
+                {bonus.data.wageringRequirements && (
+                  <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00]/40 px-2 py-1 bg-[#FAFF00]/5">{bonus.data.wageringRequirements} Wagering</span>
+                )}
+              </div>
+              <span class="inline-flex items-center gap-2 text-[#A855F7] font-[JetBrains_Mono] text-sm font-bold group-hover:gap-3 transition-all">
+                VIEW BONUS
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+              </span>
             </div>
           </a>
         ))}
+      </div>
+      <a href="/bonus" class="md:hidden mt-6 inline-flex items-center gap-2 text-[#A855F7] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+        VIEW ALL BONUSES
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Category Quick Links -->
+  <section class="px-6 py-12 border-t-[3px] border-white bg-black">
+    <div class="max-w-7xl mx-auto">
+      <span class="font-[JetBrains_Mono] text-[#FAFF00] text-xs font-bold uppercase tracking-widest block mb-6">&gt; Browse by category</span>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/best-crypto-casinos" class="group border-[3px] border-white p-5 hover:bg-[#39FF14]/5 hover:border-[#39FF14] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#39FF14] transition-colors block">Best Crypto Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">Top rated overall</span>
+        </a>
+        <a href="/bitcoin-casinos" class="group border-[3px] border-white p-5 hover:bg-[#FAFF00]/5 hover:border-[#FAFF00] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#FAFF00] transition-colors block">Bitcoin Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">BTC deposits and payouts</span>
+        </a>
+        <a href="/ethereum-casinos" class="group border-[3px] border-white p-5 hover:bg-[#A855F7]/5 hover:border-[#A855F7] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#A855F7] transition-colors block">Ethereum Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">ETH deposits and payouts</span>
+        </a>
+        <a href="/solana-casinos" class="group border-[3px] border-white p-5 hover:bg-[#39FF14]/5 hover:border-[#39FF14] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#39FF14] transition-colors block">Solana Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">SOL deposits and payouts</span>
+        </a>
+        <a href="/no-kyc-crypto-casinos" class="group border-[3px] border-white p-5 hover:bg-[#FAFF00]/5 hover:border-[#FAFF00] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#FAFF00] transition-colors block">No KYC Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">Anonymous play</span>
+        </a>
+        <a href="/fast-withdrawal-crypto-casinos" class="group border-[3px] border-white p-5 hover:bg-[#A855F7]/5 hover:border-[#A855F7] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#A855F7] transition-colors block">Fast Withdrawals</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">Under 1 hour payouts</span>
+        </a>
+        <a href="/no-wagering-crypto-casinos" class="group border-[3px] border-white p-5 hover:bg-[#39FF14]/5 hover:border-[#39FF14] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#39FF14] transition-colors block">No Wagering</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">Zero or low playthrough</span>
+        </a>
+        <a href="/new-crypto-casinos" class="group border-[3px] border-white p-5 hover:bg-[#FAFF00]/5 hover:border-[#FAFF00] transition-colors">
+          <span class="font-[Space_Grotesk] text-white font-bold text-sm md:text-base group-hover:text-[#FAFF00] transition-colors block">New Casinos</span>
+          <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs mt-1 block">Recently launched</span>
+        </a>
       </div>
     </div>
   </section>
 
   <!-- Guides -->
   {latestGuides.length > 0 && (
-    <section class="px-6 py-12 border-t-[3px] border-white">
+    <section class="px-6 py-16 md:py-20 border-t-[3px] border-white">
       <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold text-white">
-            <span class="text-[#39FF14]">GUIDES</span>
-          </h2>
-          <a href="/guides" class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold hover:underline">VIEW ALL</a>
+        <div class="flex items-end justify-between mb-10">
+          <div>
+            <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold uppercase tracking-widest block mb-2">&gt; Learn</span>
+            <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">GUIDES</h2>
+          </div>
+          <a href="/guides" class="hidden md:inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+            VIEW ALL
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+          </a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           {latestGuides.map((guide) => (
-            <a href={getPostUrl(guide)} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]">
-              <span class="text-[#39FF14] text-xs font-[JetBrains_Mono] font-bold uppercase mb-3 block">Guide</span>
-              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{guide.data.title}</h3>
-              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] line-clamp-3">{guide.data.description}</p>
+            <a href={getPostUrl(guide)} class="card-brutal group block bg-black border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:shadow-[2px_2px_0px_0px_#39FF14]">
+              <div class="p-6">
+                <span class="bg-[#39FF14] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider inline-block mb-4">Guide</span>
+                <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3 leading-tight group-hover:text-[#39FF14] transition-colors">{guide.data.title}</h3>
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] line-clamp-3 leading-relaxed">{guide.data.description}</p>
+                <span class="inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold mt-5 group-hover:gap-3 transition-all">
+                  READ GUIDE
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+                </span>
+              </div>
             </a>
           ))}
         </div>
+        <a href="/guides" class="md:hidden mt-6 inline-flex items-center gap-2 text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+          VIEW ALL GUIDES
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </section>
   )}
 
   <!-- Latest News -->
   {latestNews.length > 0 && (
-    <section class="px-6 py-12 border-t-[3px] border-white">
+    <section class="px-6 py-16 md:py-20 border-t-[3px] border-white">
       <div class="max-w-7xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold text-white">
-            LATEST <span class="text-[#FAFF00]">NEWS</span>
-          </h2>
-          <a href="/news" class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold hover:underline">VIEW ALL</a>
+        <div class="flex items-end justify-between mb-10">
+          <div>
+            <span class="font-[JetBrains_Mono] text-[#FAFF00] text-xs font-bold uppercase tracking-widest block mb-2">&gt; Industry updates</span>
+            <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">LATEST NEWS</h2>
+          </div>
+          <a href="/news" class="hidden md:inline-flex items-center gap-2 text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+            VIEW ALL
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+          </a>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           {latestNews.map((article) => (
-            <a href={`/news/${article.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#FAFF00]">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-[#39FF14] text-xs font-[JetBrains_Mono]">
-                  {new Date(article.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </span>
-                <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">{article.data.author}</span>
-              </div>
-              <h3 class="font-[Space_Grotesk] text-xl font-bold text-white mb-3">{article.data.title}</h3>
-              <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-4 line-clamp-3">{article.data.description}</p>
-              <div class="flex flex-wrap gap-2">
-                {article.data.tags.slice(0, 3).map((tag: string) => (
-                  <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00] px-2 py-1">{tag}</span>
-                ))}
+            <a href={`/news/${article.data.slug}`} class="card-brutal group block bg-black border-[3px] border-white shadow-[6px_6px_0px_0px_#FAFF00] hover:shadow-[2px_2px_0px_0px_#FAFF00]">
+              <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                  <span class="bg-[#FAFF00] text-black text-xs font-[JetBrains_Mono] font-bold px-3 py-1 uppercase tracking-wider">News</span>
+                  <span class="text-[#D4D4D4] text-xs font-[JetBrains_Mono]">
+                    {new Date(article.data.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </span>
+                  {article.data.author && (
+                    <span class="text-[#D4D4D4] text-xs font-[Public_Sans]">by {article.data.author}</span>
+                  )}
+                </div>
+                <h3 class="font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white mb-3 leading-tight group-hover:text-[#FAFF00] transition-colors">{article.data.title}</h3>
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mb-5 line-clamp-3 leading-relaxed">{article.data.description}</p>
+                <div class="flex items-center justify-between">
+                  <div class="flex flex-wrap gap-2">
+                    {article.data.tags.slice(0, 3).map((tag: string) => (
+                      <span class="text-[#FAFF00] text-xs font-[JetBrains_Mono] border border-[#FAFF00]/40 px-2 py-1 bg-[#FAFF00]/5">{tag}</span>
+                    ))}
+                  </div>
+                  <span class="inline-flex items-center gap-2 text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold shrink-0 group-hover:gap-3 transition-all">
+                    READ
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+                  </span>
+                </div>
               </div>
             </a>
           ))}
         </div>
+        <a href="/news" class="md:hidden mt-6 inline-flex items-center gap-2 text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold py-2 px-3 hover:underline underline-offset-4 decoration-2">
+          VIEW ALL NEWS
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="square" d="M9 5l7 7-7 7"/></svg>
+        </a>
       </div>
     </section>
   )}
 
-  <!-- How We Work -->
-  <section class="px-6 py-12 border-t-[3px] border-white">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold mb-8 text-white">
-        HOW WE <span class="text-[#39FF14]">WORK</span>
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="border-[3px] border-white p-6">
-          <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xl w-10 h-10 flex items-center justify-center mb-4">1</span>
-          <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">DEPOSIT</h3>
-          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">We deposit real crypto at every casino. BTC, ETH, or USDT. Transaction times and fees recorded.</p>
-        </div>
-        <div class="border-[3px] border-white p-6">
-          <span class="bg-[#8A2BE2] text-white font-[JetBrains_Mono] font-bold text-xl w-10 h-10 flex items-center justify-center mb-4">2</span>
-          <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">PLAY</h3>
-          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Claim bonuses, test wagering requirements, check game contributions and max bet rules.</p>
-        </div>
-        <div class="border-[3px] border-white p-6">
-          <span class="bg-[#FAFF00] text-black font-[JetBrains_Mono] font-bold text-xl w-10 h-10 flex items-center justify-center mb-4">3</span>
-          <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">WITHDRAW</h3>
-          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Request a payout and time it. KYC process, pending periods, and actual withdrawal speed documented.</p>
-        </div>
-        <div class="border-[3px] border-white p-6">
-          <span class="bg-[#39FF14] text-black font-[JetBrains_Mono] font-bold text-xl w-10 h-10 flex items-center justify-center mb-4">4</span>
-          <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">RATE</h3>
-          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm">Score on a 0-10 scale across six categories. Pros, cons, and evidence. No paid ratings.</p>
-        </div>
-      </div>
-      <div class="mt-6 text-right">
-        <a href="/methodology" class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold hover:underline">READ FULL METHODOLOGY</a>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ -->
-  <section class="px-6 py-12 border-t-[3px] border-white">
+  <section class="px-6 py-16 md:py-20 border-t-[3px] border-white">
     <div class="max-w-4xl mx-auto">
-      <h2 class="font-[Space_Grotesk] text-3xl md:text-4xl font-bold mb-8 text-white">
-        FREQUENTLY ASKED <span class="text-[#39FF14]">QUESTIONS</span>
-      </h2>
-
-      <div class="space-y-4">
+      <div class="mb-10">
+        <span class="font-[JetBrains_Mono] text-[#39FF14] text-xs font-bold uppercase tracking-widest block mb-2">&gt; FAQ</span>
+        <h2 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-none">FREQUENTLY ASKED QUESTIONS</h2>
+      </div>
+      <div class="space-y-0">
         <details class="border-[3px] border-white bg-black group" open>
-          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between">
-            <h3>What is CryptoBonusList?</h3>
-            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl group-open:rotate-45 transition-transform">+</span>
+          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+            <span>What is CryptoBonusList?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-2xl w-8 h-8 flex items-center justify-center border-[3px] border-white shrink-0 ml-4 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <div class="px-6 pb-6">
-            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <div class="px-6 pb-6 border-t border-white/10">
+            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed pt-4">
               CryptoBonusList is an independent review site for crypto casinos and their bonuses. We test every casino with real deposits, play through wagering requirements, and attempt withdrawals before publishing a review. No copy-paste from casino websites.
             </p>
           </div>
         </details>
-
-        <details class="border-[3px] border-white bg-black group">
-          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between">
-            <h3>How do you rate crypto casinos?</h3>
-            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl group-open:rotate-45 transition-transform">+</span>
+        <details class="border-[3px] border-white border-t-0 bg-black group">
+          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+            <span>How do you rate crypto casinos?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-2xl w-8 h-8 flex items-center justify-center border-[3px] border-white shrink-0 ml-4 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <div class="px-6 pb-6">
-            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-              We use a 0-10 rating scale based on six weighted categories: bonus value (20%), withdrawal speed (20%), terms fairness (20%), licensing and trust (20%), game selection (10%), and customer support (10%). Every casino goes through the same testing process. Full details on our <a href="/methodology" class="text-[#39FF14] underline">methodology page</a>.
+          <div class="px-6 pb-6 border-t border-white/10">
+            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed pt-4">
+              We use a 0-10 rating scale based on six weighted categories: bonus value (20%), withdrawal speed (20%), terms fairness (20%), licensing and trust (20%), game selection (10%), and customer support (10%). Every casino goes through the same testing process. Full details on our <a href="/methodology" class="text-[#39FF14] underline underline-offset-4 decoration-2 hover:text-white transition-colors">methodology page</a>.
             </p>
           </div>
         </details>
-
-        <details class="border-[3px] border-white bg-black group">
-          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between">
-            <h3>Are your casino reviews independent?</h3>
-            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl group-open:rotate-45 transition-transform">+</span>
+        <details class="border-[3px] border-white border-t-0 bg-black group">
+          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+            <span>Are your casino reviews independent?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-2xl w-8 h-8 flex items-center justify-center border-[3px] border-white shrink-0 ml-4 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <div class="px-6 pb-6">
-            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
-              Yes. We earn affiliate commissions when users sign up through our links, but commission rates do not affect scores. We have declined partnerships with casinos that asked for guaranteed minimum ratings. Full transparency in our <a href="/affiliate-disclosure" class="text-[#39FF14] underline">affiliate disclosure</a>.
+          <div class="px-6 pb-6 border-t border-white/10">
+            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed pt-4">
+              Yes. We earn affiliate commissions when users sign up through our links, but commission rates do not affect scores. We have declined partnerships with casinos that asked for guaranteed minimum ratings. Full transparency in our <a href="/affiliate-disclosure" class="text-[#39FF14] underline underline-offset-4 decoration-2 hover:text-white transition-colors">affiliate disclosure</a>.
             </p>
           </div>
         </details>
-
-        <details class="border-[3px] border-white bg-black group">
-          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between">
-            <h3>How often are reviews updated?</h3>
-            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl group-open:rotate-45 transition-transform">+</span>
+        <details class="border-[3px] border-white border-t-0 bg-black group">
+          <summary class="p-6 cursor-pointer font-[Space_Grotesk] font-bold text-lg text-white flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+            <span>How often are reviews updated?</span>
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-2xl w-8 h-8 flex items-center justify-center border-[3px] border-white shrink-0 ml-4 group-open:rotate-45 transition-transform">+</span>
           </summary>
-          <div class="px-6 pb-6">
-            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed">
+          <div class="px-6 pb-6 border-t border-white/10">
+            <p class="text-[#D4D4D4] font-[Public_Sans] leading-relaxed pt-4">
               Reviews are updated when casino conditions change. Bonus terms get modified, withdrawal policies shift, licenses get suspended. Every review displays its last update date so you know how current the information is.
             </p>
           </div>

@@ -36,17 +36,46 @@ const faqItems = [
   },
 ];
 
+const siteUrl = "https://cryptobonuslist.com";
 const jsonld = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqItems.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
+  "@graph": [
+    {
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  },
+    {
+      "@type": "CollectionPage",
+      name: "Fast Withdrawal Crypto Casinos 2026",
+      description: "Crypto casinos with withdrawals under 6 hours.",
+      url: `${siteUrl}/fast-withdrawal-crypto-casinos`,
     },
-  })),
+    {
+      "@type": "ItemList",
+      name: "Fast Withdrawal Crypto Casinos 2026",
+      numberOfItems: reviews.length,
+      itemListElement: reviews.map((r, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${siteUrl}${getReviewUrl(r)}`,
+        name: r.data.casino_name || r.data.casinoName || r.data.title,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Fast Withdrawal Casinos" },
+      ],
+    },
+  ],
 });
 ---
 
@@ -58,7 +87,7 @@ const jsonld = JSON.stringify({
   <section class="px-6 py-12">
     <div class="max-w-7xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
-        FAST <span class="text-[#39FF14]">WITHDRAWAL</span> CRYPTO CASINOS
+        FAST <span class="text-[#39FF14]">WITHDRAWAL</span> CRYPTO CASINOS 2026
       </h1>
       <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-3xl">
         The whole point of crypto gambling is speed. These casinos process crypto withdrawals in under 6 hours. We timed every single one with real withdrawal requests.
