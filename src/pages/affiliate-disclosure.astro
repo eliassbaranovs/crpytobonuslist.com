@@ -3,14 +3,26 @@ import Layout from "../layouts/Layout.astro";
 
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Affiliate Disclosure",
-  "description": "Full disclosure about how CryptoBonusList earns money through affiliate partnerships with crypto casinos.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CryptoBonusList",
-    "url": "https://cryptobonuslist.com"
-  }
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Affiliate Disclosure",
+      "url": "https://cryptobonuslist.com/affiliate-disclosure",
+      "description": "Full disclosure about how CryptoBonusList earns money through affiliate partnerships with crypto casinos.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CryptoBonusList",
+        "url": "https://cryptobonuslist.com"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com" },
+        { "@type": "ListItem", "position": 2, "name": "Affiliate Disclosure" }
+      ]
+    }
+  ]
 });
 ---
 

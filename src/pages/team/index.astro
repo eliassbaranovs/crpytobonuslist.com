@@ -29,9 +29,21 @@ const authorStats = sortedAuthors.map((author) => {
     totalCount: bonusCount + newsCount
   };
 });
+const siteUrl = "https://cryptobonuslist.com";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "CollectionPage", name: "Our Team", description: "Meet the people behind CryptoBonusList.", url: `${siteUrl}/team` },
+    { "@type": "BreadcrumbList", itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Our Team" }
+    ]}
+  ]
+});
 ---
 
-<Layout title="Our Team | CryptoBonusList" description="Meet the people behind CryptoBonusList. Crypto gambling analysts and writers who test casinos with real money.">
+<Layout title="Our Team | CryptoBonusList" description="Meet the people behind CryptoBonusList. Crypto gambling analysts and writers who test casinos with real money." jsonld={schemaJsonLd} canonical={`${siteUrl}/team`}>
   <section class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">

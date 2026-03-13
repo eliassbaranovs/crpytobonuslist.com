@@ -3,58 +3,69 @@ import Layout from "../layouts/Layout.astro";
 
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "HowTo",
-  "name": "How CryptoBonusList Reviews Crypto Casinos",
-  "description": "Our step-by-step methodology for testing and rating crypto casinos and bonuses. Real deposits, real wagering, real withdrawal attempts.",
-  "step": [
+  "@graph": [
     {
-      "@type": "HowToStep",
-      "position": 1,
-      "name": "Registration and Deposit",
-      "text": "We create a new account and deposit real cryptocurrency to test the sign-up flow, KYC requirements, and deposit processing times."
+      "@type": "HowTo",
+      "name": "How CryptoBonusList Reviews Crypto Casinos",
+      "description": "Our step-by-step methodology for testing and rating crypto casinos and bonuses. Real deposits, real wagering, real withdrawal attempts.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Registration and Deposit",
+          "text": "We create a new account and deposit real cryptocurrency to test the sign-up flow, KYC requirements, and deposit processing times."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Bonus Claim",
+          "text": "We claim the bonus as a new player would, documenting any codes, opt-in requirements, or friction in the process."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Wagering Playthrough",
+          "text": "We play through wagering requirements, testing game contributions, max bet enforcement, and overall gameplay quality."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Withdrawal Test",
+          "text": "We request a withdrawal and time the entire process from request to funds arriving in our wallet."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Support Test",
+          "text": "We contact customer support with questions to evaluate response time, helpfulness, and availability."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "Terms and Licensing Audit",
+          "text": "We read the full bonus terms, privacy policy, and verify the casino license with the issuing authority."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 7,
+          "name": "Scoring and Review",
+          "text": "We assign a score based on six weighted categories and write the review with documented pros, cons, and evidence."
+        }
+      ],
+      "publisher": {
+        "@type": "Organization",
+        "name": "CryptoBonusList",
+        "url": "https://cryptobonuslist.com"
+      }
     },
     {
-      "@type": "HowToStep",
-      "position": 2,
-      "name": "Bonus Claim",
-      "text": "We claim the bonus as a new player would, documenting any codes, opt-in requirements, or friction in the process."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 3,
-      "name": "Wagering Playthrough",
-      "text": "We play through wagering requirements, testing game contributions, max bet enforcement, and overall gameplay quality."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 4,
-      "name": "Withdrawal Test",
-      "text": "We request a withdrawal and time the entire process from request to funds arriving in our wallet."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 5,
-      "name": "Support Test",
-      "text": "We contact customer support with questions to evaluate response time, helpfulness, and availability."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 6,
-      "name": "Terms and Licensing Audit",
-      "text": "We read the full bonus terms, privacy policy, and verify the casino license with the issuing authority."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 7,
-      "name": "Scoring and Review",
-      "text": "We assign a score based on six weighted categories and write the review with documented pros, cons, and evidence."
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com" },
+        { "@type": "ListItem", "position": 2, "name": "Our Methodology" }
+      ]
     }
-  ],
-  "publisher": {
-    "@type": "Organization",
-    "name": "CryptoBonusList",
-    "url": "https://cryptobonuslist.com"
-  }
+  ]
 });
 ---
 

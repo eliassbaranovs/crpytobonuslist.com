@@ -138,7 +138,7 @@ const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "i
         <div class="relative">
           <img
             src={post.data.image}
-            alt={post.data.imageAlt}
+            alt={post.data.imageAlt || post.data.title}
             width={post.data.imageWidth}
             height={post.data.imageHeight}
             loading="eager"

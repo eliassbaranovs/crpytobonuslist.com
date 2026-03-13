@@ -128,14 +128,13 @@ export function getReviewUrl(review: Post): string {
   return `/casinos/${review.data.slug}`;
 }
 
-/** Get claim URL */
+/** Get claim URL - always routes through /go/ redirect */
 export function getClaimUrl(review: Post): string {
   const claimUrl = review.data.claim_url;
-  // If claim_url is a full external URL, use it directly
-  if (claimUrl && claimUrl.startsWith("https://")) {
-    return claimUrl;
+  // Route through /go/ using claim_url as slug if it's a plain slug, otherwise use post slug
+  if (claimUrl && !claimUrl.includes("/")) {
+    return `/go/${claimUrl}`;
   }
-  // Otherwise route through /go/ using the post slug (matches [slug].astro generation)
   return `/go/${review.data.slug}`;
 }
 

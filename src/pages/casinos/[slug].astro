@@ -201,7 +201,7 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         <div class="relative">
           <img
             src={d.image}
-            alt={d.imageAlt}
+            alt={d.imageAlt || d.title}
             width={d.imageWidth}
             height={d.imageHeight}
             loading="eager"

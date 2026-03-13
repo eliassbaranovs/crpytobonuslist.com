@@ -3,14 +3,26 @@ import Layout from "../layouts/Layout.astro";
 
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Responsible Gambling",
-  "description": "Information about responsible gambling and resources for help. Gambling should be entertainment, not a financial strategy.",
-  "publisher": {
-    "@type": "Organization",
-    "name": "CryptoBonusList",
-    "url": "https://cryptobonuslist.com"
-  }
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Responsible Gambling",
+      "url": "https://cryptobonuslist.com/responsible-gambling",
+      "description": "Information about responsible gambling and resources for help. Gambling should be entertainment, not a financial strategy.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CryptoBonusList",
+        "url": "https://cryptobonuslist.com"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com" },
+        { "@type": "ListItem", "position": 2, "name": "Responsible Gambling" }
+      ]
+    }
+  ]
 });
 ---
 

@@ -76,7 +76,7 @@ schemas.push({
 schemas.push({
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: `${siteUrl}/` },
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
     { "@type": "ListItem", position: 2, name: breadcrumbName, item: canonicalUrl },
   ],
 });
@@ -84,7 +84,7 @@ schemas.push({
 const schemaJsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 ---
 
-<Layout title={pageTitle} description="Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals." canonical={canonicalUrl} jsonld={schemaJsonLd} headExtra={headExtra}>
+<Layout title={pageTitle} description={`Crypto gambling news. Regulation changes, network updates, and what affects your deposits and withdrawals.${page.currentPage > 1 ? ` - Page ${page.currentPage}` : ""}`} canonical={canonicalUrl} jsonld={schemaJsonLd} headExtra={headExtra}>
   <section class="px-6 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">

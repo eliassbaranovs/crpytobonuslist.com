@@ -17,29 +17,77 @@ const { Content } = await render(post);
 const slug = post.data.slug;
 const computedCanonical = `https://cryptobonuslist.com/guides/${slug}`;
 const robots = post.data.robots || (post.data.noIndex ? "noindex, nofollow" : "index, follow");
+const siteUrl = "https://cryptobonuslist.com";
 
-// Build JSON-LD: merge existing schema with BreadcrumbList in @graph
-const existingSchema = post.data.schema_jsonld ? JSON.parse(post.data.schema_jsonld) : null;
-const breadcrumbLd = {
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com/" },
-    { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://cryptobonuslist.com/guides" },
-    { "@type": "ListItem", "position": 3, "name": post.data.title, "item": computedCanonical }
-  ]
+const lastUpdated = post.data.updatedAt || post.data.publishedAt;
+const lastUpdatedFormatted = lastUpdated
+  ? new Date(lastUpdated).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+  : null;
+const publishedDate = post.data.publishedAt ? new Date(post.data.publishedAt) : new Date();
+
+// Author data
+const authors = await getCollection("authors");
+const authorData = authors.find((a) => a.data.slug === post.data.authorSlug);
+
+// Build JSON-LD programmatically
+const articleSchema: Record<string, any> = {
+  "@type": "Article",
+  headline: post.data.title,
+  description: post.data.description,
+  url: computedCanonical,
+  datePublished: publishedDate.toISOString(),
+  dateModified: lastUpdated ? new Date(lastUpdated).toISOString() : publishedDate.toISOString(),
+  mainEntityOfPage: { "@type": "WebPage", "@id": computedCanonical },
+  publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
 };
 
-let graphItems: any[] = [breadcrumbLd];
-if (existingSchema) {
-  if (existingSchema["@graph"]) {
-    graphItems = [...existingSchema["@graph"], breadcrumbLd];
-  } else {
-    const { "@context": _ctx, ...rest } = existingSchema;
-    graphItems = [rest, breadcrumbLd];
-  }
+if (authorData) {
+  articleSchema.author = {
+    "@type": "Person",
+    name: authorData.data.name,
+    url: `${siteUrl}/team/${authorData.data.slug}`,
+  };
+} else if (post.data.author) {
+  articleSchema.author = {
+    "@type": "Person",
+    name: post.data.author,
+    ...(post.data.authorSlug ? { url: `${siteUrl}/team/${post.data.authorSlug}` } : {}),
+  };
+} else {
+  articleSchema.author = { "@type": "Organization", name: "CryptoBonusList" };
 }
 
-const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": graphItems });
+if (post.data.image) {
+  articleSchema.image = {
+    "@type": "ImageObject",
+    url: post.data.image.startsWith("http") ? post.data.image : `${siteUrl}${post.data.image}`,
+    width: post.data.imageWidth || 1792,
+    height: post.data.imageHeight || 1024,
+    ...(post.data.imageAlt ? { caption: post.data.imageAlt } : {}),
+  };
+}
+
+if (post.data.tags?.length) {
+  articleSchema.keywords = post.data.tags.join(", ");
+}
+
+const breadcrumbLd = {
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: "Guides", item: `${siteUrl}/guides` },
+    { "@type": "ListItem", position: 3, name: post.data.title },
+  ],
+};
+
+const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": [articleSchema, breadcrumbLd] });
+
+// Related guides
+const allPosts = await getCollection("posts");
+const otherGuides = allPosts
+  .filter(isGuide)
+  .filter((g) => g.data.slug !== post.data.slug)
+  .slice(0, 3);
 ---
 
 <Layout
@@ -70,12 +118,20 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
           </span>
         )}
         <h1 class="font-[Space_Grotesk] text-3xl md:text-5xl font-bold text-white leading-tight mb-4">{post.data.title}</h1>
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg">{post.data.description}</p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{post.data.description}</p>
+        {lastUpdatedFormatted && (
+          <div class="flex items-center gap-2">
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-sm font-bold">Updated:</span>
+            <time datetime={lastUpdated ? new Date(lastUpdated).toISOString() : ""} class="text-[#D4D4D4] font-[JetBrains_Mono] text-sm">
+              {lastUpdatedFormatted}
+            </time>
+          </div>
+        )}
       </header>
 
       {post.data.image && (
         <div class="mb-8">
-          <img src={post.data.image} alt={post.data.imageAlt} width={post.data.imageWidth} height={post.data.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14]" />
+          <img src={post.data.image} alt={post.data.imageAlt || post.data.title} width={post.data.imageWidth} height={post.data.imageHeight} loading="eager" fetchpriority="high" class="w-full h-auto border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14]" />
         </div>
       )}
 
@@ -88,6 +144,57 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
         prose-code:text-[#39FF14] prose-code:font-[JetBrains_Mono]
       ">
         <Content />
+      </div>
+
+      {/* Author card */}
+      {authorData && (
+        <div class="mt-12 border-[3px] border-white bg-black p-6 md:p-8">
+          <div class="flex items-start gap-5">
+            {authorData.data.avatar ? (
+              <img src={authorData.data.avatar} alt={authorData.data.name} class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] object-cover shrink-0" />
+            ) : (
+              <div class="w-16 h-16 md:w-20 md:h-20 border-[3px] border-[#39FF14] bg-[#1a1a1a] flex items-center justify-center shrink-0">
+                <span class="text-[#39FF14] font-[Space_Grotesk] font-bold text-2xl">{authorData.data.name.charAt(0)}</span>
+              </div>
+            )}
+            <div class="flex-1">
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs font-bold tracking-wider">WRITTEN BY</span>
+              <a href={`/team/${authorData.data.slug}`} rel="author" class="block font-[Space_Grotesk] text-xl md:text-2xl font-bold text-white hover:text-[#39FF14] transition-colors mt-1">
+                {authorData.data.name}
+              </a>
+              {authorData.data.role && (
+                <p class="text-[#D4D4D4] text-sm font-[JetBrains_Mono] mt-1">{authorData.data.role}</p>
+              )}
+              {authorData.data.bio && (
+                <p class="text-[#D4D4D4] text-sm font-[Public_Sans] mt-3 leading-relaxed">{authorData.data.bio}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Related guides */}
+      {otherGuides.length > 0 && (
+        <aside class="mt-12 pt-8 border-t-[3px] border-white" aria-label="Related guides">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">MORE GUIDES</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {otherGuides.map((guide) => (
+              <a href={`/guides/${guide.data.slug}`} class="group block bg-black border-[3px] border-white p-5 shadow-none hover:shadow-[6px_6px_0px_0px_#39FF14] transition-all">
+                <h3 class="font-[Space_Grotesk] text-sm font-bold text-white mb-2 line-clamp-2 group-hover:text-[#39FF14] transition-colors">{guide.data.title}</h3>
+                {guide.data.description && (
+                  <p class="text-[#D4D4D4] text-xs font-[Public_Sans] line-clamp-3">{guide.data.description}</p>
+                )}
+              </a>
+            ))}
+          </div>
+        </aside>
+      )}
+
+      {/* Back to guides */}
+      <div class="mt-12 pt-8 border-t-[3px] border-white">
+        <a href="/guides" class="inline-block bg-transparent text-white font-[Space_Grotesk] font-bold px-6 py-3 border-[3px] border-white shadow-[6px_6px_0px_0px_#39FF14] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_#39FF14] transition-all">
+          BACK TO GUIDES
+        </a>
       </div>
     </div>
   </article>

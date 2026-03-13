@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { getAllNews, isBonus } from "../../lib/posts";
+import { getAllNews, isBonus, isReview } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const authors = await getCollection("authors");
@@ -16,6 +16,9 @@ const allPosts = await getCollection("posts");
 const authorBonuses = allPosts.filter(isBonus).filter(
   (b) => b.data.authorSlug === author.data.slug || b.data.author === author.data.name
 );
+const authorReviews = allPosts.filter(isReview).filter(
+  (r) => r.data.authorSlug === author.data.slug || r.data.author === author.data.name
+);
 const allNewsItems = await getAllNews();
 const authorNews = allNewsItems.filter(
   (n) => n.data.authorSlug === author.data.slug || n.data.author === author.data.name
@@ -23,11 +26,14 @@ const authorNews = allNewsItems.filter(
 
 // Dynamic statistics
 const totalBonuses = authorBonuses.length;
+const totalReviews = authorReviews.length;
 const totalNews = authorNews.length;
-const totalContributions = totalBonuses + totalNews;
+const totalContributions = totalBonuses + totalReviews + totalNews;
 const bonusesToShow = 6;
+const reviewsToShow = 6;
 const newsToShow = 4;
 const hasMoreBonuses = totalBonuses > bonusesToShow;
+const hasMoreReviews = totalReviews > reviewsToShow;
 const hasMoreNews = totalNews > newsToShow;
 
 // Resolve author image (image field takes precedence over avatar)
@@ -36,9 +42,10 @@ const authorImageUrl = authorImage
   ? (authorImage.startsWith("http") ? authorImage : `https://cryptobonuslist.com${authorImage.startsWith("/") ? "" : "/"}${authorImage}`)
   : undefined;
 
+const siteUrl = "https://cryptobonuslist.com";
+
 // Build enriched Person schema
 const personSchema: Record<string, any> = {
-  "@context": "https://schema.org",
   "@type": "Person",
   name: author.data.name,
   jobTitle: author.data.role,
@@ -76,10 +83,23 @@ if (author.data.socialLinks) {
   }
 }
 
-const schemaJsonLd = JSON.stringify(personSchema);
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    personSchema,
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Team", item: `${siteUrl}/team` },
+        { "@type": "ListItem", position: 3, name: author.data.name },
+      ],
+    },
+  ],
+});
 ---
 
-<Layout title={`${author.data.name} | CryptoBonusList Team`} description={author.data.bio} jsonld={schemaJsonLd}>
+<Layout title={`${author.data.name} | CryptoBonusList Team`} description={author.data.bio} jsonld={schemaJsonLd} canonical={`${siteUrl}/team/${author.data.slug}`}>
   <article class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <header class="border-[3px] border-white bg-black p-8 shadow-[6px_6px_0px_0px_#39FF14] mb-10">
@@ -125,7 +145,7 @@ const schemaJsonLd = JSON.stringify(personSchema);
           {totalContributions > 0 && (
             <p class="text-[#39FF14]">
               {totalContributions} {totalContributions === 1 ? 'contribution' : 'contributions'}
-              {totalBonuses > 0 && totalNews > 0 && ` (${totalBonuses} ${totalBonuses === 1 ? 'bonus' : 'bonuses'}, ${totalNews} ${totalNews === 1 ? 'article' : 'articles'})`}
+              {(totalBonuses > 0 || totalReviews > 0 || totalNews > 0) && ` (${[totalBonuses > 0 ? `${totalBonuses} ${totalBonuses === 1 ? 'bonus' : 'bonuses'}` : '', totalReviews > 0 ? `${totalReviews} ${totalReviews === 1 ? 'review' : 'reviews'}` : '', totalNews > 0 ? `${totalNews} ${totalNews === 1 ? 'article' : 'articles'}` : ''].filter(Boolean).join(', ')})`}
             </p>
           )}
         </div>
@@ -158,6 +178,36 @@ const schemaJsonLd = JSON.stringify(personSchema);
           </>
         ) : (
           <p class="text-[#D4D4D4] font-[Public_Sans] italic">No bonuses reviewed yet. Coming soon!</p>
+        )}
+      </section>
+
+      <section class="mb-12">
+        <div class="flex items-center justify-between mb-6 border-b-[3px] border-[#39FF14] pb-2">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold">
+            REVIEWS BY {author.data.name.toUpperCase()}
+            {totalReviews > 0 && <span class="text-[#39FF14] text-lg ml-2">({totalReviews})</span>}
+          </h2>
+        </div>
+        {totalReviews > 0 ? (
+          <>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {authorReviews.slice(0, reviewsToShow).map((review) => (
+                <a href={`/casinos/${review.data.slug}`} class="card-brutal block bg-black border-[3px] border-white p-4 shadow-[6px_6px_0px_0px_#FAFF00]">
+                  <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-1">{review.data.title}</h3>
+                  {review.data.ourRating && <p class="text-[#FAFF00] font-[JetBrains_Mono] text-sm">{review.data.ourRating}/10</p>}
+                </a>
+              ))}
+            </div>
+            {hasMoreReviews && (
+              <div class="mt-6 text-center">
+                <a href="/casinos" class="inline-block bg-[#FAFF00] text-black font-[JetBrains_Mono] font-bold px-6 py-3 uppercase tracking-wider hover:bg-white transition-colors">
+                  View All {totalReviews} Reviews →
+                </a>
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="text-[#D4D4D4] font-[Public_Sans] italic">No casino reviews yet. Coming soon!</p>
         )}
       </section>
 

@@ -1,8 +1,32 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "name": "Terms of Service",
+      "url": "https://cryptobonuslist.com/terms",
+      "description": "Terms of use for CryptoBonusList.com. Read before using the site.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CryptoBonusList",
+        "url": "https://cryptobonuslist.com"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cryptobonuslist.com" },
+        { "@type": "ListItem", "position": 2, "name": "Terms of Service" }
+      ]
+    }
+  ]
+});
 ---
 
-<Layout title="Terms & Conditions | CryptoBonusList" description="Terms of use for CryptoBonusList.com. Read before using the site.">
+<Layout title="Terms & Conditions | CryptoBonusList" description="Terms of use for CryptoBonusList.com. Read before using the site." jsonld={schemaJsonLd}>
   <section class="px-6 py-12">
     <div class="max-w-4xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
