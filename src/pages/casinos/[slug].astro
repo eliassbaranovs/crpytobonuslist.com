@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { isReview, sortByDate } from "../../lib/posts";
 import { getReviewUrl, getClaimUrl, getRatingBg } from "../../lib/casino-filters";
+import { generatePairs, getCasinoName } from "../../lib/compare";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -53,6 +54,12 @@ const relatedReviews = sortByDate(
     .filter(isReview)
     .filter((r) => r.data.slug !== d.slug && !r.data.draft)
 ).slice(0, 3);
+
+// Comparison pairs for this casino
+const comparisonPairs = generatePairs(allPosts)
+  .filter((p) => p.slugA === d.slug || p.slugB === d.slug)
+  .slice(0, 6);
+const comparisonReviews = allPosts.filter(isReview).filter((r) => !r.data.draft);
 
 // Reading time
 const wordCount = d.wordCount || (post.body ? post.body.split(/\s+/).filter(Boolean).length : 0);
@@ -520,6 +527,33 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
                       </ul>
                     )}
                   </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Compare with other casinos */}
+      {comparisonPairs.length > 0 && (
+        <section class="mt-12 pt-8 border-t-[3px] border-white">
+          <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-[#FAFF00]">
+            COMPARE {(d.casino_name || d.casinoName || d.title.replace(/ Review.*$/i, "")).toUpperCase()}
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {comparisonPairs.map((pair) => {
+              const otherSlug = pair.slugA === d.slug ? pair.slugB : pair.slugA;
+              const otherReview = comparisonReviews.find((r) => r.data.slug === otherSlug);
+              if (!otherReview) return null;
+              const otherName = getCasinoName(otherReview);
+              return (
+                <a href={`/compare/${pair.compareSlug}`} class="group block bg-black border-[3px] border-white p-4 shadow-none hover:shadow-[6px_6px_0px_0px_#8A2BE2] transition-all">
+                  <p class="font-[Space_Grotesk] text-sm font-bold text-white group-hover:text-[#8A2BE2] transition-colors">
+                    vs {otherName}
+                  </p>
+                  <p class="text-[#D4D4D4] text-xs font-[JetBrains_Mono] mt-1">
+                    {(otherReview.data.ourRating || 0).toFixed(1)}/10
+                  </p>
                 </a>
               );
             })}

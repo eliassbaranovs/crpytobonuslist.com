@@ -1,0 +1,89 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { isReview } from "../../lib/posts";
+import { generatePairs, getCasinoName, getRatingBg } from "../../lib/compare";
+
+const allPosts = await getCollection("posts");
+const reviews = allPosts.filter(isReview).filter((r) => !r.data.draft).sort((a, b) => (b.data.ourRating || 0) - (a.data.ourRating || 0));
+const pairs = generatePairs(allPosts);
+
+const siteUrl = "https://cryptobonuslist.com";
+
+const schemaJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      name: "Compare Crypto Casinos",
+      description: "Side-by-side crypto casino comparisons. Ratings, bonuses, withdrawal speeds, and more.",
+      url: `${siteUrl}/compare`,
+      publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+        { "@type": "ListItem", position: 2, name: "Compare Casinos" },
+      ],
+    },
+  ],
+});
+---
+
+<Layout
+  title="Compare Crypto Casinos | CryptoBonusList"
+  description="Side-by-side crypto casino comparisons. Pick two casinos and see how they stack up on ratings, bonuses, withdrawal speed, and crypto support."
+  jsonld={schemaJsonLd}
+  canonical={`${siteUrl}/compare`}
+>
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+        COMPARE <span class="text-[#8A2BE2]">CASINOS</span>
+      </h1>
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
+        Pick any two casinos and see how they compare on the things that matter. Ratings, bonuses, wagering, payout speed, and crypto support.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {pairs.map((pair) => {
+          const reviewA = reviews.find((r) => r.data.slug === pair.slugA);
+          const reviewB = reviews.find((r) => r.data.slug === pair.slugB);
+          if (!reviewA || !reviewB) return null;
+          const pairNameA = getCasinoName(reviewA);
+          const pairNameB = getCasinoName(reviewB);
+          const ratingA = reviewA.data.ourRating || 0;
+          const ratingB = reviewB.data.ourRating || 0;
+          return (
+            <a href={`/compare/${pair.compareSlug}`} class="card-brutal block bg-black border-[3px] border-white p-5 shadow-[6px_6px_0px_0px_#8A2BE2]">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  {reviewA.data.logo && <img src={reviewA.data.logo} alt="" width="24" height="24" loading="lazy" />}
+                  <span class="font-[Space_Grotesk] font-bold text-white text-sm">{pairNameA}</span>
+                </div>
+                <span class="text-[#8A2BE2] font-[JetBrains_Mono] text-xs font-bold">VS</span>
+                <div class="flex items-center gap-2">
+                  <span class="font-[Space_Grotesk] font-bold text-white text-sm">{pairNameB}</span>
+                  {reviewB.data.logo && <img src={reviewB.data.logo} alt="" width="24" height="24" loading="lazy" />}
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class={`${getRatingBg(ratingA)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{ratingA.toFixed(1)}</span>
+                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">vs</span>
+                <span class={`${getRatingBg(ratingB)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{ratingB.toFixed(1)}</span>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+
+      {/* Related */}
+      <div class="mt-12 border-t-[3px] border-white pt-8">
+        <p class="text-[#D4D4D4] font-[Public_Sans]">
+          Looking for individual reviews? Check our <a href="/casinos" class="text-[#39FF14] underline">casino reviews</a> or <a href="/best-crypto-casinos" class="text-[#39FF14] underline">best crypto casinos</a> ranking.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
