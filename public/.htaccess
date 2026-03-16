@@ -1,2 +1,7 @@
-# Intentionally empty - do not add rewrite rules
-# Astro build.format: 'file' handles URL structure
+# Serve clean URLs by mapping to .html files
+# e.g. /best-crypto-casinos -> /best-crypto-casinos.html
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L]
