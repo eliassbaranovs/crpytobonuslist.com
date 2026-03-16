@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://cryptobonuslist.com',
   trailingSlash: 'never',
+  build: { format: 'file' },
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()]
