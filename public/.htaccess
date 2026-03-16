@@ -1,0 +1,5 @@
+# Remove trailing slashes to match Astro's trailingSlash: 'never'
+# Prevents canonical mismatch and duplicate URLs in Google's index
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [R=301,L]
