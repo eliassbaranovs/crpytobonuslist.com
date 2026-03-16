@@ -4,9 +4,9 @@ slug: "usdc-surges-to-79b-as-circle-captures-institutional-flow-from-tether"
 description: "USDC surged 8% to $79B, challenging Tether's dominance. See how this stablecoin shift impacts crypto casino deposits and withdrawals in 2026."
 seoTitle: "USDC Hits $79B: What It Means for Crypto Casino Payments"
 excerpt: "This development is particularly notable when contrasted with the recent performance of Tether's USDT. While still the undisputed giant with a circulation of $186 billion, USDT's supply has contracted"
-publishedAt: 2026-03-16T08:05:27.163Z
+publishedAt: 2026-03-16T08:17:58.972Z
 publishDate: "2026-03-16"
-updatedAt: 2026-03-16T08:05:27.163Z
+updatedAt: 2026-03-16T08:17:58.972Z
 tags: ["Stablecoin", "USDC", "USDT", "iGaming", "Payments"]
 image: "/images/usdc-surges-to-79b-as-circle-captures-institutional-flow-from-tether.webp"
 imageAlt: "Cover image for USDC Market Cap Hits $79B, Signals Shift to Regulated Payments for Crypto Casinos"

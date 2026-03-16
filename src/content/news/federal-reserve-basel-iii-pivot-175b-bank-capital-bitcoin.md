@@ -4,9 +4,9 @@ slug: "federal-reserve-basel-iii-pivot-175b-bank-capital-bitcoin"
 description: "The Federal Reserve's Basel III pivot frees $175B for banks while Bitcoin faces a 1,250% risk weight. Expert breakdown of what it means for crypto."
 seoTitle: "Fed's Basel III Reversal: $175B Bank Break vs. Strict Bitcoin Rules"
 excerpt: "On March 12, Federal Reserve Vice Chair for Supervision Michelle Bowman confirmed that regulators are drafting a softer version of the rules. This new proposal stands in stark contrast to the draft ch"
-publishedAt: 2026-03-16T08:05:27.840Z
+publishedAt: 2026-03-16T08:17:58.663Z
 publishDate: "2026-03-16"
-updatedAt: 2026-03-16T08:05:27.840Z
+updatedAt: 2026-03-16T08:17:58.663Z
 tags: ["Banking", "Regulation", "Federal Reserve", "Basel III", "Bitcoin", "Capital Requirements"]
 image: "/images/federal-reserve-basel-iii-pivot-175b-bank-capital-bitcoin.webp"
 imageAlt: "Cover image for Federal Reserve Pivots on Basel III, Unlocking $175B for Banks While Bitcoin Faces Regulatory Headwinds"
