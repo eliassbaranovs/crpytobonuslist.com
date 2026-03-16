@@ -1,6 +1,10 @@
-# Serve clean URLs by mapping to .html files
-# e.g. /best-crypto-casinos -> /best-crypto-casinos.html
+# 1. Strip trailing slashes (301 redirect)
 RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+# 2. Serve clean URLs by mapping to .html files
+# e.g. /best-crypto-casinos -> /best-crypto-casinos.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f

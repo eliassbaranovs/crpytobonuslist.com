@@ -23,8 +23,9 @@ const {
   headExtra,
 } = Astro.props;
 
-const canonicalUrl = canonical || new URL(Astro.url.pathname, Astro.site).href;
-const currentPath = Astro.url.pathname;
+const cleanPath = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const canonicalUrl = canonical || new URL(cleanPath, Astro.site).href;
+const currentPath = cleanPath;
 
 function isActive(prefix: string): boolean {
   if (prefix === '/casinos') return currentPath === '/casinos' || currentPath.startsWith('/casinos/');
