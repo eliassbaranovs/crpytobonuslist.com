@@ -48,4 +48,48 @@ export async function getAllNews(): Promise<AnyPost[]> {
   return sortByDate(all);
 }
 
+export interface BonusInfo {
+  text: string;
+  url: string | null;
+}
+
+/** Build a map of casinoName -> { bonus text, bonus post URL } from bonus/promotion posts */
+export function buildBonusMap(allPosts: Post[]): Map<string, BonusInfo> {
+  const map = new Map<string, BonusInfo>();
+  for (const p of allPosts) {
+    if (!isBonus(p)) continue;
+    const name = (p.data.casinoName || p.data.casino_name || "").toLowerCase();
+    if (name && p.data.bonus) {
+      map.set(name, { text: p.data.bonus, url: `/bonus/${p.data.slug}` });
+    }
+  }
+  return map;
+}
+
+/** Look up bonus text and optional link for a review, cross-referencing bonus posts */
+export function getBonusInfo(review: Post, bonusMap: Map<string, BonusInfo>, fallback = "No bonus listed"): BonusInfo {
+  const d = review.data;
+  // Direct bonus field on the review itself
+  const directText = d.bonus || d.bonus_title || null;
+  if (directText) {
+    const name = (d.casinoName || d.casino_name || "").toLowerCase();
+    const mapped = name ? bonusMap.get(name) : undefined;
+    return { text: directText, url: mapped?.url || null };
+  }
+  // Cross-reference from bonus posts
+  const name = (d.casinoName || d.casino_name || "").toLowerCase();
+  const mapped = name ? bonusMap.get(name) : undefined;
+  if (mapped) return mapped;
+  // maxBonus as last resort (raw number) — prefer bonusTitle for display
+  if (d.maxBonus) {
+    return { text: d.maxBonus, url: null };
+  }
+  return { text: fallback, url: null };
+}
+
+/** Simple text-only helper for backwards compat */
+export function getBonusText(review: Post, bonusMap: Map<string, BonusInfo>, fallback = "No bonus listed"): string {
+  return getBonusInfo(review, bonusMap, fallback).text;
+}
+
 export type { Post, NewsEntry, AnyPost };

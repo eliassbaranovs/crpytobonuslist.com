@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { isReview } from "../../lib/posts";
+import { isReview, buildBonusMap, getBonusInfo } from "../../lib/posts";
 import {
   getCasinoName,
   generatePairs,
@@ -43,6 +43,7 @@ const uniqueB = cryptosB.filter((c) => !cryptosA.map((x) => x.toLowerCase()).inc
 
 // Related comparisons (other pages involving either casino)
 const allPosts = await getCollection("posts");
+const bonusMap = buildBonusMap(allPosts);
 const allPairs = generatePairs(allPosts);
 const relatedPairs = allPairs
   .filter((p) => p.compareSlug !== Astro.params.slugs)
@@ -367,7 +368,7 @@ const ratingBgB = getRatingBg(ratingB);
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#39FF14]">
             <h3 class="font-[Space_Grotesk] font-bold text-white text-xl mb-2">{nameA}</h3>
-            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{a.data.bonus || "Check site for current offers"}</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{(() => { const bi = getBonusInfo(a, bonusMap, "Check site for current offers"); return bi.url ? <a href={bi.url} class="text-[#FAFF00] hover:underline">{bi.text}</a> : bi.text; })()}</p>
             <div class="flex gap-3">
               <a href={getClaimUrl(a)} target="_blank" rel="noopener noreferrer nofollow sponsored"
                 class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#39FF14] text-black px-4 py-3 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
@@ -381,7 +382,7 @@ const ratingBgB = getRatingBg(ratingB);
           </div>
           <div class="border-[3px] border-white bg-black p-6 shadow-[6px_6px_0px_0px_#8A2BE2]">
             <h3 class="font-[Space_Grotesk] font-bold text-white text-xl mb-2">{nameB}</h3>
-            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{b.data.bonus || "Check site for current offers"}</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{(() => { const bi = getBonusInfo(b, bonusMap, "Check site for current offers"); return bi.url ? <a href={bi.url} class="text-[#FAFF00] hover:underline">{bi.text}</a> : bi.text; })()}</p>
             <div class="flex gap-3">
               <a href={getClaimUrl(b)} target="_blank" rel="noopener noreferrer nofollow sponsored"
                 class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#8A2BE2] text-white px-4 py-3 border-[3px] border-[#8A2BE2] hover:bg-[#7a1fd2] transition-colors text-sm">

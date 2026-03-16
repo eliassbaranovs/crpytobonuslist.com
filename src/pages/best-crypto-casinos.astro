@@ -2,9 +2,11 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { getReviews, getRatingBg, getReviewUrl, getClaimUrl, getWithdrawalSpeedLabel } from "../lib/casino-filters";
+import { buildBonusMap, getBonusInfo } from "../lib/posts";
 
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts);
+const bonusMap = buildBonusMap(allPosts);
 
 const latestDate = reviews.reduce((latest, item) => {
   const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
@@ -141,7 +143,7 @@ const schemaJsonLd = JSON.stringify({
                 const rating = review.data.ourRating || 0;
                 const ratingBg = getRatingBg(rating);
                 const licence = review.data.licences || "N/A";
-                const bonus = review.data.bonus || review.data.maxBonus || "No bonus listed";
+                const bonusInfo = getBonusInfo(review, bonusMap);
                 const wagering = review.data.wageringRequirements || review.data.wagering || "N/A";
                 const speed = getWithdrawalSpeedLabel(review);
                 const reviewUrl = getReviewUrl(review);
@@ -165,7 +167,9 @@ const schemaJsonLd = JSON.stringify({
                       </span>
                     </td>
                     <td class="px-4 py-4 text-[#D4D4D4] text-xs">{licence}</td>
-                    <td class="px-4 py-4 text-[#FAFF00] font-[JetBrains_Mono] text-xs">{bonus}</td>
+                    <td class="px-4 py-4 text-[#FAFF00] font-[JetBrains_Mono] text-xs">
+                      {bonusInfo.url ? <a href={bonusInfo.url} class="hover:underline">{bonusInfo.text}</a> : bonusInfo.text}
+                    </td>
                     <td class="px-4 py-4 font-[JetBrains_Mono] text-xs text-[#D4D4D4]">{wagering}</td>
                     <td class="px-4 py-4 font-[JetBrains_Mono] text-xs text-[#D4D4D4]">{speed}</td>
                     <td class="px-4 py-4">
@@ -208,7 +212,7 @@ const schemaJsonLd = JSON.stringify({
           {reviews.map((review, i) => {
             const rating = review.data.ourRating || 0;
             const ratingBg = getRatingBg(rating);
-            const bonus = review.data.bonus || review.data.maxBonus || "Check site for current offers";
+            const bonusInfo = getBonusInfo(review, bonusMap, "Check site for current offers");
             const wagering = review.data.wageringRequirements || review.data.wagering || "N/A";
             const speed = getWithdrawalSpeedLabel(review);
             const pros = review.data.pros || [];
@@ -245,7 +249,9 @@ const schemaJsonLd = JSON.stringify({
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                       <div>
                         <p class="text-[#D4D4D4] text-xs font-[Public_Sans] uppercase tracking-wider">Bonus</p>
-                        <p class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold">{bonus}</p>
+                        <p class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold">
+                          {bonusInfo.url ? <a href={bonusInfo.url} class="hover:underline">{bonusInfo.text}</a> : bonusInfo.text}
+                        </p>
                       </div>
                       <div>
                         <p class="text-[#D4D4D4] text-xs font-[Public_Sans] uppercase tracking-wider">Wagering</p>

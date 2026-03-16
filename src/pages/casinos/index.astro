@@ -2,9 +2,11 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { getReviews, getRatingBg, getReviewUrl, getClaimUrl } from "../../lib/casino-filters";
+import { buildBonusMap, getBonusInfo } from "../../lib/posts";
 
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts);
+const bonusMap = buildBonusMap(allPosts);
 
 const latestDate = reviews.reduce((latest, item) => {
   const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
@@ -76,7 +78,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             const ratingBg = getRatingBg(rating);
             const pros = (review.data.pros || []).slice(0, 3);
             const wagering = review.data.wageringRequirements || "N/A";
-            const bonus = review.data.bonus || "No bonus listed";
+            const bonusInfo = getBonusInfo(review, bonusMap);
             const licence = review.data.licences || "Unknown";
             const established = review.data.established || "N/A";
             const logo = review.data.logo;
@@ -115,7 +117,11 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
                   <!-- Bonus -->
                   <div>
                     <p class="text-xs font-[JetBrains_Mono] text-[#FAFF00] uppercase tracking-wider mb-1">Welcome Bonus</p>
-                    <p class="font-[Public_Sans] text-white text-sm">{bonus}</p>
+                    <p class="font-[Public_Sans] text-white text-sm">
+                      {bonusInfo.url ? (
+                        <a href={bonusInfo.url} class="text-[#FAFF00] hover:underline">{bonusInfo.text}</a>
+                      ) : bonusInfo.text}
+                    </p>
                   </div>
 
                   <!-- Wagering -->

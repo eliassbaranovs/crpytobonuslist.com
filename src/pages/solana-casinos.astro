@@ -9,9 +9,11 @@ import {
   getClaimUrl,
   getWithdrawalSpeedLabel,
 } from "../lib/casino-filters";
+import { buildBonusMap, getBonusInfo } from "../lib/posts";
 
 const allPosts = await getCollection("posts");
 const reviews = getReviews(allPosts).filter((r) => acceptsCrypto(r, "Solana"));
+const bonusMap = buildBonusMap(allPosts);
 
 const latestDate = reviews.reduce((latest, item) => {
   const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
@@ -127,7 +129,7 @@ const jsonld = JSON.stringify({
                   </td>
                   <td class="px-4 py-4 font-[JetBrains_Mono] text-sm">{getWithdrawalSpeedLabel(review)}</td>
                   <td class="px-4 py-4 text-sm">
-                    <a href={getReviewUrl(review)} class="text-[#FAFF00] hover:underline">{review.data.bonus || "See review"}</a>
+                    {(() => { const bi = getBonusInfo(review, bonusMap, "See review"); return bi.url ? <a href={bi.url} class="text-[#FAFF00] hover:underline">{bi.text}</a> : <a href={getReviewUrl(review)} class="text-[#FAFF00] hover:underline">{bi.text}</a>; })()}
                   </td>
                   <td class="px-4 py-4">
                     <a
