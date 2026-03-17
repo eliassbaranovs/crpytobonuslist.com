@@ -8,7 +8,16 @@ export default defineConfig({
   site: 'https://cryptobonuslist.com',
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/go/'),
+      serialize: (item) => {
+        // Add lastmod to key pages
+        item.lastmod = new Date().toISOString();
+        return item;
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()]
   }

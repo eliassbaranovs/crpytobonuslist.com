@@ -2,88 +2,451 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { isReview } from "../../lib/posts";
-import { generatePairs, getCasinoName, getRatingBg } from "../../lib/compare";
+import { generatePairs, getCasinoName, getRatingBg, generateVerdict, getCompareSlug } from "../../lib/compare";
 
 const allPosts = await getCollection("posts");
-const reviews = allPosts.filter(isReview).filter((r) => !r.data.draft).sort((a, b) => (b.data.ourRating || 0) - (a.data.ourRating || 0));
+const reviews = allPosts
+  .filter(isReview)
+  .filter((r) => !r.data.draft)
+  .sort((a, b) => (b.data.ourRating || 0) - (a.data.ourRating || 0));
+
 const pairs = generatePairs(allPosts);
+
+// Build casino data for picker and directory
+const casinos = reviews.map((r) => ({
+  slug: r.data.slug,
+  name: getCasinoName(r),
+  rating: r.data.ourRating || 0,
+  logo: r.data.logo || "",
+}));
+
+// Featured matchups: top 6 pairs by combined rating + rating difference for interest
+const scoredPairs = pairs.map((pair) => {
+  const rA = reviews.find((r) => r.data.slug === pair.slugA);
+  const rB = reviews.find((r) => r.data.slug === pair.slugB);
+  if (!rA || !rB) return { ...pair, score: 0, ratingA: 0, ratingB: 0, nameA: "", nameB: "", logoA: "", logoB: "", verdict: "" };
+  const ratingA = rA.data.ourRating || 0;
+  const ratingB = rB.data.ourRating || 0;
+  const combined = ratingA + ratingB;
+  const diff = Math.abs(ratingA - ratingB);
+  // Score: favor high combined ratings, boost slightly for close matchups
+  const score = combined + (diff < 1 ? 2 : diff < 2 ? 1 : 0);
+  const verdictFull = generateVerdict(rA, rB);
+  const verdict = verdictFull.split(".").slice(0, 1).join(".") + ".";
+  return {
+    ...pair,
+    score,
+    ratingA,
+    ratingB,
+    nameA: getCasinoName(rA),
+    nameB: getCasinoName(rB),
+    logoA: rA.data.logo || "",
+    logoB: rB.data.logo || "",
+    verdict,
+  };
+}).filter((p) => p.nameA).sort((a, b) => b.score - a.score);
+
+const featured = scoredPairs.slice(0, 6);
+
+// Group all pairs by casino for accordion directory
+const casinoDirectory = new Map<string, { name: string; rating: number; logo: string; opponents: Array<{ name: string; rating: number; logo: string; slug: string; compareSlug: string }> }>();
+
+for (const casino of casinos) {
+  const opponents: Array<{ name: string; rating: number; logo: string; slug: string; compareSlug: string; resultLabel: string; resultColor: string }> = [];
+  for (const pair of pairs) {
+    let oppSlug = "";
+    if (pair.slugA === casino.slug) oppSlug = pair.slugB;
+    else if (pair.slugB === casino.slug) oppSlug = pair.slugA;
+    else continue;
+    const opp = casinos.find((c) => c.slug === oppSlug);
+    if (!opp) continue;
+    const diff = casino.rating - opp.rating;
+    let resultLabel = "Even match";
+    let resultColor = "text-[#D4D4D4]";
+    if (diff >= 1.5) { resultLabel = `${casino.name} wins`; resultColor = "text-[#39FF14]"; }
+    else if (diff > 0) { resultLabel = "Close call"; resultColor = "text-[#FAFF00]"; }
+    else if (diff <= -1.5) { resultLabel = `${opp.name} wins`; resultColor = "text-[#39FF14]"; }
+    else if (diff < 0) { resultLabel = "Close call"; resultColor = "text-[#FAFF00]"; }
+    opponents.push({ name: opp.name, rating: opp.rating, logo: opp.logo, slug: opp.slug, compareSlug: pair.compareSlug, resultLabel, resultColor });
+  }
+  opponents.sort((a, b) => b.rating - a.rating);
+  casinoDirectory.set(casino.slug, { name: casino.name, rating: casino.rating, logo: casino.logo, opponents });
+}
 
 const siteUrl = "https://cryptobonuslist.com";
 
+// FAQ data
+const faqs = [
+  {
+    q: "How do I choose between two crypto casinos?",
+    a: "Focus on what matters most to your situation. If you want fast cashouts, compare withdrawal speeds and limits. If you are bonus hunting, compare wagering requirements and max bet rules. Check which cryptocurrencies each platform supports and whether they require KYC. Our side-by-side tool highlights exactly where two casinos differ so you can spot the tradeoffs quickly.",
+  },
+  {
+    q: "What makes one crypto casino better than another?",
+    a: "Fair bonus terms, fast and reliable withdrawals, a wide range of supported cryptocurrencies, and responsive customer support. Licensing from a recognized jurisdiction adds accountability. The best casinos combine all of these without hiding bad terms in the fine print. A high rating on our scale means a platform performed well across every category during hands-on testing.",
+  },
+  {
+    q: "Are no-KYC casinos safe to use?",
+    a: "Some are, some are not. No-KYC casinos offer real privacy advantages and faster onboarding, which is a big draw for crypto-native players. The tradeoff is less regulatory oversight. If something goes wrong, you have fewer options for recourse. Stick to no-KYC platforms with a proven track record, active community presence, and provably fair games.",
+  },
+  {
+    q: "Does withdrawal speed differ by cryptocurrency?",
+    a: "Yes, significantly. Bitcoin withdrawals typically take 10 to 60 minutes depending on network congestion and fees. Litecoin and Solana process much faster, often under five minutes. Ethereum sits somewhere in the middle but gas fees can spike. Some casinos also add their own internal processing time on top of network confirmation.",
+  },
+  {
+    q: "How often are comparisons updated?",
+    a: "We retest casinos on a rolling basis and update comparison data whenever a platform changes its terms, adds new features, or modifies withdrawal policies. Major changes get updated within days. Full retests happen regularly to make sure ratings reflect current conditions, not outdated snapshots.",
+  },
+];
+
+// Schema markup
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "CollectionPage",
-      name: "Compare Crypto Casinos",
-      description: "Side-by-side crypto casino comparisons. Ratings, bonuses, withdrawal speeds, and more.",
+      name: "Compare Crypto Casinos Side by Side",
+      description: `Compare ${casinos.length} crypto casinos head-to-head. See which wins on ratings, bonuses, payout speed, wagering, and KYC requirements. Data from hands-on testing.`,
       url: `${siteUrl}/compare`,
-      publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
+      publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl, logo: { "@type": "ImageObject", url: `${siteUrl}/cryptobonuslist.png` } },
     },
     {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-        { "@type": "ListItem", position: 2, name: "Compare Casinos" },
+        { "@type": "ListItem", position: 2, name: "Compare Casinos", item: `${siteUrl}/compare` },
       ],
+    },
+    {
+      "@type": "ItemList",
+      name: "Crypto Casino Comparisons",
+      numberOfItems: pairs.length,
+      itemListElement: featured.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: `${p.nameA} vs ${p.nameB}`,
+        url: `${siteUrl}/compare/${p.compareSlug}`,
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: faqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
     },
   ],
 });
 ---
 
 <Layout
-  title="Compare Crypto Casinos | CryptoBonusList"
-  description="Side-by-side crypto casino comparisons. Pick two casinos and see how they stack up on ratings, bonuses, withdrawal speed, and crypto support."
+  title={`Compare Crypto Casinos Side by Side (${new Date().getFullYear()}) | CryptoBonusList`}
+  description={`Compare ${casinos.length} crypto casinos head-to-head. See which wins on ratings, bonuses, payout speed, wagering, and KYC requirements. Data from our hands-on testing.`}
   jsonld={schemaJsonLd}
   canonical={`${siteUrl}/compare`}
 >
-  <section class="px-6 py-12">
+  <!-- Breadcrumb -->
+  <nav aria-label="Breadcrumb" class="max-w-7xl mx-auto px-6 pt-6">
+    <ol class="flex items-center gap-2 text-xs font-[JetBrains_Mono] text-[#D4D4D4]">
+      <li><a href="/" class="hover:text-[#39FF14] transition-colors">Home</a></li>
+      <li class="text-white/30">/</li>
+      <li class="text-[#39FF14]">Compare Casinos</li>
+    </ol>
+  </nav>
+
+  <!-- ZONE 1: Hero + Interactive Picker -->
+  <section class="px-6 pt-8 pb-12 border-b-[3px] border-white">
     <div class="max-w-7xl mx-auto">
-      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
+      <p class="font-[JetBrains_Mono] text-[#8A2BE2] text-xs tracking-wider uppercase mb-4">&gt; COMPARE TOOL</p>
+      <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4 leading-none">
         COMPARE <span class="text-[#8A2BE2]">CASINOS</span>
       </h1>
-      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
-        Pick any two casinos and see how they compare on the things that matter. Ratings, bonuses, wagering, payout speed, and crypto support.
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-8 max-w-2xl">
+        Picking a crypto casino based on a homepage and a welcome bonus is how you end up stuck with slow withdrawals and shady wagering terms. This tool lets you compare casinos head to head using the factors that actually affect your experience.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {pairs.map((pair) => {
-          const reviewA = reviews.find((r) => r.data.slug === pair.slugA);
-          const reviewB = reviews.find((r) => r.data.slug === pair.slugB);
-          if (!reviewA || !reviewB) return null;
-          const pairNameA = getCasinoName(reviewA);
-          const pairNameB = getCasinoName(reviewB);
-          const ratingA = reviewA.data.ourRating || 0;
-          const ratingB = reviewB.data.ourRating || 0;
-          return (
-            <a href={`/compare/${pair.compareSlug}`} class="card-brutal block bg-black border-[3px] border-white p-5 shadow-[6px_6px_0px_0px_#8A2BE2]">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                  {reviewA.data.logo && <img src={reviewA.data.logo} alt="" width="24" height="24" loading="lazy" />}
-                  <span class="font-[Space_Grotesk] font-bold text-white text-sm">{pairNameA}</span>
-                </div>
-                <span class="text-[#8A2BE2] font-[JetBrains_Mono] text-xs font-bold">VS</span>
-                <div class="flex items-center gap-2">
-                  <span class="font-[Space_Grotesk] font-bold text-white text-sm">{pairNameB}</span>
-                  {reviewB.data.logo && <img src={reviewB.data.logo} alt="" width="24" height="24" loading="lazy" />}
-                </div>
+      <!-- Picker -->
+      <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6 max-w-3xl">
+        <div class="relative w-full md:w-72" id="picker-a-wrapper">
+          <button type="button" id="picker-a-btn" class="w-full bg-[#0A0A0A] border-[3px] border-white p-4 font-[Space_Grotesk] font-bold text-white text-left flex items-center justify-between shadow-[4px_4px_0px_0px_#8A2BE2] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-all cursor-pointer" aria-haspopup="listbox" aria-expanded="false">
+            <span id="picker-a-label" class="text-[#D4D4D4]">Select Casino A</span>
+            <svg class="w-4 h-4 text-[#D4D4D4] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div id="picker-a-dropdown" class="hidden absolute z-50 top-full left-0 w-full mt-1 bg-black border-[3px] border-[#39FF14] max-h-72 overflow-y-auto" role="listbox">
+            {casinos.map((c) => (
+              <div class="picker-option flex items-center gap-3 px-4 py-3 hover:bg-[#1a1a1a] cursor-pointer border-b border-white/10 last:border-b-0 transition-colors" data-slug={c.slug} data-name={c.name} data-logo={c.logo} data-picker="a" role="option">
+                {c.logo && <img src={c.logo} alt="" width="24" height="24" class="shrink-0" />}
+                <span class="font-[Space_Grotesk] font-bold text-white text-sm flex-1">{c.name}</span>
+                <span class={`${getRatingBg(c.rating)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{c.rating.toFixed(1)}</span>
               </div>
-              <div class="flex items-center justify-between">
-                <span class={`${getRatingBg(ratingA)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{ratingA.toFixed(1)}</span>
-                <span class="text-[#D4D4D4] font-[JetBrains_Mono] text-xs">vs</span>
-                <span class={`${getRatingBg(ratingB)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{ratingB.toFixed(1)}</span>
-              </div>
-            </a>
-          );
-        })}
-      </div>
+            ))}
+          </div>
+        </div>
 
-      {/* Related */}
-      <div class="mt-12 border-t-[3px] border-white pt-8">
-        <p class="text-[#D4D4D4] font-[Public_Sans]">
-          Looking for individual reviews? Check our <a href="/casinos" class="text-[#39FF14] underline">casino reviews</a> or <a href="/best-crypto-casinos" class="text-[#39FF14] underline">best crypto casinos</a> ranking.
-        </p>
+        <span class="text-[#FAFF00] font-[JetBrains_Mono] text-2xl font-bold text-center shrink-0">VS</span>
+
+        <div class="relative w-full md:w-72" id="picker-b-wrapper">
+          <button type="button" id="picker-b-btn" class="w-full bg-[#0A0A0A] border-[3px] border-white p-4 font-[Space_Grotesk] font-bold text-white text-left flex items-center justify-between shadow-[4px_4px_0px_0px_#8A2BE2] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-all cursor-pointer" aria-haspopup="listbox" aria-expanded="false">
+            <span id="picker-b-label" class="text-[#D4D4D4]">Select Casino B</span>
+            <svg class="w-4 h-4 text-[#D4D4D4] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+          </button>
+          <div id="picker-b-dropdown" class="hidden absolute z-50 top-full left-0 w-full mt-1 bg-black border-[3px] border-[#39FF14] max-h-72 overflow-y-auto" role="listbox">
+            {casinos.map((c) => (
+              <div class="picker-option flex items-center gap-3 px-4 py-3 hover:bg-[#1a1a1a] cursor-pointer border-b border-white/10 last:border-b-0 transition-colors" data-slug={c.slug} data-name={c.name} data-logo={c.logo} data-picker="b" role="option">
+                {c.logo && <img src={c.logo} alt="" width="24" height="24" class="shrink-0" />}
+                <span class="font-[Space_Grotesk] font-bold text-white text-sm flex-1">{c.name}</span>
+                <span class={`${getRatingBg(c.rating)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{c.rating.toFixed(1)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <a href="#" id="compare-btn" class="bg-[#39FF14] text-black font-[Space_Grotesk] font-bold text-lg px-8 py-4 border-[3px] border-[#39FF14] shadow-[6px_6px_0px_0px_#8A2BE2] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#8A2BE2] transition-all text-center opacity-40 pointer-events-none whitespace-nowrap">
+          COMPARE &gt;&gt;&gt;
+        </a>
+      </div>
+      <p id="picker-error" class="hidden text-[#FAFF00] font-[JetBrains_Mono] text-xs mt-3">Pick two different casinos.</p>
+    </div>
+  </section>
+
+  <!-- ZONE 2: Featured Matchups -->
+  <section class="px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold text-[#FAFF00] uppercase mb-8 border-b-[3px] border-[#39FF14] pb-3 inline-block">
+        Popular Matchups
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {featured.map((pair) => (
+          <a href={`/compare/${pair.compareSlug}`} class="card-brutal block bg-black border-[3px] border-white p-6 shadow-[6px_6px_0px_0px_#39FF14]">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                {pair.logoA && <img src={pair.logoA} alt="" width="32" height="32" loading="lazy" />}
+                <div>
+                  <span class="font-[Space_Grotesk] font-bold text-white text-base">{pair.nameA}</span>
+                  <span class={`${getRatingBg(pair.ratingA)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs ml-2`}>{pair.ratingA.toFixed(1)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-t border-dashed border-[#8A2BE2]/50 my-3 relative">
+              <span class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black px-3 text-[#8A2BE2] font-[JetBrains_Mono] text-xs font-bold">VS</span>
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                {pair.logoB && <img src={pair.logoB} alt="" width="32" height="32" loading="lazy" />}
+                <div>
+                  <span class="font-[Space_Grotesk] font-bold text-white text-base">{pair.nameB}</span>
+                  <span class={`${getRatingBg(pair.ratingB)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs ml-2`}>{pair.ratingB.toFixed(1)}</span>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed line-clamp-2 mb-3">{pair.verdict}</p>
+
+            <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs uppercase tracking-wider">VIEW COMPARISON &gt;&gt;&gt;</span>
+          </a>
+        ))}
       </div>
     </div>
   </section>
+
+  <!-- ZONE 3: Accordion Directory -->
+  <section class="px-6 py-12 border-t-[3px] border-white">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold text-white uppercase mb-6 border-b-[3px] border-white pb-3 inline-block">
+        All Comparisons
+      </h2>
+
+      <!-- Search filter -->
+      <div class="mb-6">
+        <input
+          type="text"
+          id="directory-search"
+          placeholder="Search casinos..."
+          class="w-full md:w-80 bg-[#0A0A0A] border-[3px] border-white px-4 py-3 font-[JetBrains_Mono] text-white text-sm placeholder:text-white/30 focus:border-[#39FF14] focus:outline-none transition-colors"
+        />
+      </div>
+
+      <!-- Accordion groups -->
+      <div id="directory-list" class="space-y-[-3px]">
+        {[...casinoDirectory.entries()].map(([slug, casino], idx) => (
+          <details class="group directory-item" data-casino-name={casino.name.toLowerCase()} open={idx === 0}>
+            <summary class="cursor-pointer px-6 py-4 border-[3px] border-white bg-black flex items-center justify-between hover:bg-[#111111] transition-colors list-none [&::-webkit-details-marker]:hidden">
+              <div class="flex items-center gap-3">
+                <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl shrink-0 w-5 text-center group-open:hidden">+</span>
+                <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl shrink-0 w-5 text-center hidden group-open:inline">&minus;</span>
+                {casino.logo && <img src={casino.logo} alt="" width="28" height="28" loading="lazy" />}
+                <span class="font-[Space_Grotesk] font-bold text-white text-base">{casino.name}</span>
+                <span class={`${getRatingBg(casino.rating)} font-[JetBrains_Mono] font-bold px-2 py-0.5 text-xs`}>{casino.rating.toFixed(1)}</span>
+              </div>
+              <span class="font-[JetBrains_Mono] text-[#D4D4D4] text-xs">{casino.opponents.length} comparisons</span>
+            </summary>
+            <div class="px-6 py-4 border-[3px] border-t-0 border-white bg-[#0A0A0A]">
+              {casino.opponents.map((opp) => (
+                  <a href={`/compare/${opp.compareSlug}`} class="flex items-center justify-between py-3 border-b border-white/10 last:border-b-0 hover:bg-[#1a1a1a] px-2 -mx-2 transition-colors">
+                    <div class="flex items-center gap-3 min-w-0">
+                      {opp.logo && <img src={opp.logo} alt="" width="20" height="20" loading="lazy" class="shrink-0" />}
+                      <span class="font-[Public_Sans] text-white text-sm font-medium truncate">{opp.name}</span>
+                      <span class="font-[JetBrains_Mono] text-xs text-[#D4D4D4] shrink-0">{opp.rating.toFixed(1)}/10</span>
+                    </div>
+                    <div class="flex items-center gap-4 shrink-0">
+                      <span class={`${opp.resultColor} font-[JetBrains_Mono] text-xs hidden md:inline`}>{opp.resultLabel}</span>
+                      <span class="text-[#39FF14] font-[JetBrains_Mono] text-xs uppercase tracking-wider">COMPARE &gt;&gt;&gt;</span>
+                    </div>
+                  </a>
+              ))}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ZONE 4: Editorial Content -->
+  <section class="px-6 py-12 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+      <!-- Methodology -->
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold text-[#FAFF00] uppercase mb-6">How We Compare Casinos</h2>
+      <div class="text-[#D4D4D4] font-[Public_Sans] text-base leading-relaxed space-y-4 mb-12">
+        <p>
+          Every casino on this site gets tested with real deposits. We create accounts, deposit crypto, play through bonus requirements, and withdraw. No demo accounts. No press kits. No trusting what the casino says about itself.
+        </p>
+        <p>
+          Our rating system runs on a 0-to-10 scale across multiple categories. We look at bonus value and fairness, wagering requirements, withdrawal speed and limits, game selection and provider quality, crypto support (which coins, network fees, minimum deposits), KYC policies, licensing, and customer support responsiveness. Each factor is weighted based on how much it affects the average player. A generous bonus means nothing if withdrawal limits make it impossible to cash out, so we weight payout reliability and speed heavily.
+        </p>
+        <p>
+          We retest casinos on a rolling basis. When a platform changes its bonus terms, adds new coins, or updates withdrawal policies, we update the comparison data. Rankings shift. We also track player reports and community feedback. If a casino starts holding withdrawals or ghosting support tickets, that shows up in our ratings fast.
+        </p>
+      </div>
+
+      <!-- FAQ -->
+      <h2 class="font-[Space_Grotesk] text-2xl font-bold text-[#FAFF00] uppercase mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-[-3px] mb-12">
+        {faqs.map((faq, idx) => (
+          <details class="group" open={idx === 0}>
+            <summary class="cursor-pointer px-6 py-4 border-[3px] border-white bg-black flex items-center justify-between hover:bg-[#111111] transition-colors list-none [&::-webkit-details-marker]:hidden">
+              <h3 class="font-[Space_Grotesk] font-bold text-white text-sm pr-4">{faq.q}</h3>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl shrink-0 w-5 text-center group-open:hidden">+</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-xl shrink-0 w-5 text-center hidden group-open:inline">&minus;</span>
+            </summary>
+            <div class="px-6 py-4 border-[3px] border-t-0 border-white bg-[#0A0A0A]">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">{faq.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+
+      <!-- Related Links -->
+      <div class="border-t-[3px] border-white pt-8">
+        <h2 class="font-[Space_Grotesk] text-lg font-bold text-white uppercase mb-4">Related</h2>
+        <div class="flex flex-wrap gap-4 text-sm font-[Public_Sans]">
+          <a href="/casinos" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">Casino Reviews</a>
+          <a href="/best-crypto-casinos" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">Best Crypto Casinos</a>
+          <a href="/bonus" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">Crypto Casino Bonuses</a>
+          <a href="/no-kyc-crypto-casinos" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">No KYC Casinos</a>
+          <a href="/fast-withdrawal-crypto-casinos" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">Fast Withdrawal Casinos</a>
+          <a href="/bitcoin-casinos" class="text-[#39FF14] underline hover:text-[#FAFF00] transition-colors">Bitcoin Casinos</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Client-side JS for picker and search -->
+  <script is:inline>
+    // Picker logic
+    var pickerState = { a: "", b: "" };
+    var btnA = document.getElementById("picker-a-btn");
+    var btnB = document.getElementById("picker-b-btn");
+    var ddA = document.getElementById("picker-a-dropdown");
+    var ddB = document.getElementById("picker-b-dropdown");
+    var labelA = document.getElementById("picker-a-label");
+    var labelB = document.getElementById("picker-b-label");
+    var compareBtn = document.getElementById("compare-btn");
+    var errorMsg = document.getElementById("picker-error");
+
+    function toggleDropdown(dd, btn) {
+      var isOpen = !dd.classList.contains("hidden");
+      ddA.classList.add("hidden");
+      ddB.classList.add("hidden");
+      btnA.setAttribute("aria-expanded", "false");
+      btnB.setAttribute("aria-expanded", "false");
+      btnA.classList.remove("border-[#39FF14]");
+      btnB.classList.remove("border-[#39FF14]");
+      if (!isOpen) {
+        dd.classList.remove("hidden");
+        btn.setAttribute("aria-expanded", "true");
+        btn.classList.add("border-[#39FF14]");
+      }
+    }
+
+    btnA.addEventListener("click", function() { toggleDropdown(ddA, btnA); });
+    btnB.addEventListener("click", function() { toggleDropdown(ddB, btnB); });
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest("#picker-a-wrapper") && !e.target.closest("#picker-b-wrapper")) {
+        ddA.classList.add("hidden");
+        ddB.classList.add("hidden");
+        btnA.setAttribute("aria-expanded", "false");
+        btnB.setAttribute("aria-expanded", "false");
+        btnA.classList.remove("border-[#39FF14]");
+        btnB.classList.remove("border-[#39FF14]");
+      }
+    });
+
+    function updateCompareBtn() {
+      errorMsg.classList.add("hidden");
+      if (pickerState.a && pickerState.b && pickerState.a !== pickerState.b) {
+        var sorted = [pickerState.a, pickerState.b].sort();
+        compareBtn.href = "/compare/" + sorted[0] + "-vs-" + sorted[1];
+        compareBtn.classList.remove("opacity-40", "pointer-events-none");
+      } else if (pickerState.a && pickerState.b && pickerState.a === pickerState.b) {
+        compareBtn.classList.add("opacity-40", "pointer-events-none");
+        errorMsg.classList.remove("hidden");
+      } else {
+        compareBtn.classList.add("opacity-40", "pointer-events-none");
+      }
+    }
+
+    document.querySelectorAll(".picker-option").forEach(function(opt) {
+      opt.addEventListener("click", function() {
+        var picker = opt.dataset.picker;
+        var slug = opt.dataset.slug;
+        var name = opt.dataset.name;
+        var logo = opt.dataset.logo;
+        pickerState[picker] = slug;
+
+        var label = picker === "a" ? labelA : labelB;
+        var logoHtml = logo ? '<img src="' + logo + '" alt="" width="20" height="20" class="inline-block mr-2" />' : "";
+        label.innerHTML = logoHtml + '<span class="text-white">' + name + '</span>';
+        label.classList.remove("text-[#D4D4D4]");
+
+        var dd = picker === "a" ? ddA : ddB;
+        var btn = picker === "a" ? btnA : btnB;
+        dd.classList.add("hidden");
+        btn.setAttribute("aria-expanded", "false");
+        btn.classList.remove("border-[#39FF14]");
+
+        updateCompareBtn();
+      });
+    });
+
+    // Directory search
+    var searchInput = document.getElementById("directory-search");
+    var directoryItems = document.querySelectorAll(".directory-item");
+
+    searchInput.addEventListener("input", function() {
+      var query = searchInput.value.toLowerCase().trim();
+      directoryItems.forEach(function(item) {
+        var name = item.dataset.casinoName || "";
+        if (!query || name.includes(query)) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+  </script>
 </Layout>

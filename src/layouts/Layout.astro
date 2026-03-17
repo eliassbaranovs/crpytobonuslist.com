@@ -66,12 +66,7 @@ function isActive(prefix: string): boolean {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site).href} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+
     {jsonld && <script type="application/ld+json" set:html={jsonld} />}
     {headExtra && <Fragment set:html={headExtra} />}
   </head>
@@ -200,89 +195,107 @@ function isActive(prefix: string): boolean {
     </main>
 
     <!-- Footer -->
-    <footer class="border-t-[3px] border-white mt-16">
+    <footer class="border-t-[3px] border-[#39FF14] mt-16">
       <div class="max-w-7xl mx-auto">
-        <!-- Link Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-5">
-          <!-- Brand Column -->
-          <div class="p-5 md:px-8 md:pt-8 md:pb-10 border-l-[3px] border-[#39FF14] md:border-l-0 md:border-r-[3px] md:border-white ml-4 md:ml-0">
-            <a href="/" class="block mb-3"><img src="/cryptobonuslist.png" alt="CryptoBonusList" class="h-12 w-auto" /></a>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans] leading-relaxed mb-2">
-              Crypto casino bonuses, reviewed by people who use them. No fluff. No hype.
-            </p>
-            <p class="text-[#39FF14] text-xs font-[Space_Grotesk] font-bold uppercase tracking-widest">Independent reviews since 2025</p>
-          </div>
-          <!-- Pages Columns (spans 2) -->
-          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 md:border-r-[3px] md:border-white">
-            <nav aria-label="Browse pages" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
-              <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">BROWSE</p>
-              <ul class="space-y-2 text-sm font-[Public_Sans]">
-                <li><a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Casino Reviews</a></li>
-                <li><a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Best Crypto Casinos</a></li>
-                <li><a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Bonuses</a></li>
-                <li><a href="/compare" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Compare Casinos</a></li>
-                <li><a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Guides</a></li>
-                <li><a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">News</a></li>
-              </ul>
-            </nav>
-            <nav aria-label="Category pages" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
-              <p class="font-[Space_Grotesk] text-xs font-bold text-white/40 mb-4 uppercase tracking-wider">BY CATEGORY</p>
-              <ul class="space-y-2 text-sm font-[Public_Sans]">
-                <li><a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Bitcoin Casinos</a></li>
-                <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Ethereum Casinos</a></li>
-                <li><a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Solana Casinos</a></li>
-                <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Fast Withdrawals</a></li>
-                <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">No Wagering</a></li>
-                <li><a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">No KYC Casinos</a></li>
-                <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">New Casinos</a></li>
-                <li><a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Crypto Casino Bonuses</a></li>
-              </ul>
-            </nav>
-          </div>
-          <!-- Company Column -->
-          <nav aria-label="Company links" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 md:border-r-[3px] md:border-white ml-4 md:ml-0">
-            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">COMPANY</p>
+        <!-- Brand Row -->
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 px-6 py-6 md:py-8">
+          <a href="/" class="shrink-0"><img src="/cryptobonuslist.png" alt="CryptoBonusList" class="h-10 w-auto" /></a>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] leading-relaxed">
+            Crypto casino bonuses, reviewed by people who use them. No fluff. No hype.
+          </p>
+          <p class="text-[#39FF14] text-xs font-[Space_Grotesk] font-bold uppercase tracking-widest whitespace-nowrap md:ml-auto">Independent reviews since 2025</p>
+        </div>
+
+        <!-- Primary Nav Row -->
+        <div class="border-t border-white/10 px-6 py-4">
+          <nav aria-label="Primary navigation" class="flex flex-wrap gap-x-6 gap-y-2 text-sm font-[Public_Sans]">
+            <a href="/casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Casino Reviews</a>
+            <a href="/best-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Best Casinos</a>
+            <a href="/bonus" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Bonuses</a>
+            <a href="/guides" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Guides</a>
+            <a href="/news" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">News</a>
+            <a href="/compare" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Compare</a>
+            <a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">How We Review</a>
+          </nav>
+        </div>
+
+        <!-- Category Columns -->
+        <div class="border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-0">
+          <!-- By Crypto -->
+          <nav aria-label="Casino by cryptocurrency" class="p-6 border-r border-white/10">
+            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">By Crypto</p>
             <ul class="space-y-2 text-sm font-[Public_Sans]">
-              <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">About Us</a></li>
-              <li><a href="/team" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Our Team</a></li>
-              <li><a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">How We Review</a></li>
-              <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Contact</a></li>
+              <li><a href="/bitcoin-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Bitcoin Casinos</a></li>
+              <li><a href="/ethereum-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Ethereum Casinos</a></li>
+              <li><a href="/solana-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Solana Casinos</a></li>
+              <li><a href="/crypto-casino-bonuses" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Crypto Bonuses</a></li>
             </ul>
           </nav>
-          <!-- Legal Column -->
-          <nav aria-label="Legal and trust links" class="p-5 md:p-8 border-l-[3px] border-[#39FF14] md:border-l-0 ml-4 md:ml-0">
-            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">LEGAL & TRUST</p>
+          <!-- By Feature -->
+          <nav aria-label="Casino by feature" class="p-6 md:border-r border-white/10">
+            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">By Feature</p>
             <ul class="space-y-2 text-sm font-[Public_Sans]">
-              <li><a href="/affiliate-disclosure" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Affiliate Disclosure</a></li>
-              <li><a href="/responsible-gambling" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Responsible Gambling</a></li>
-              <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Privacy Policy</a></li>
-              <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14] hover:translate-x-1 inline-block transition-all py-1">Terms & Conditions</a></li>
+              <li><a href="/fast-withdrawal-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Fast Withdrawals</a></li>
+              <li><a href="/no-wagering-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">No Wagering</a></li>
+              <li><a href="/no-kyc-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">No KYC Casinos</a></li>
+              <li><a href="/new-crypto-casinos" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">New Casinos</a></li>
+            </ul>
+          </nav>
+          <!-- Company -->
+          <nav aria-label="Company links" class="p-6 border-r border-white/10 border-t md:border-t-0">
+            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">Company</p>
+            <ul class="space-y-2 text-sm font-[Public_Sans]">
+              <li><a href="/about" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">About Us</a></li>
+              <li><a href="/team" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Our Team</a></li>
+              <li><a href="/methodology" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">How We Review</a></li>
+              <li><a href="/contact" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Contact</a></li>
+            </ul>
+          </nav>
+          <!-- Legal & Trust -->
+          <nav aria-label="Legal and trust links" class="p-6 border-t md:border-t-0">
+            <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] mb-4 uppercase tracking-widest">Legal & Trust</p>
+            <ul class="space-y-2 text-sm font-[Public_Sans]">
+              <li><a href="/affiliate-disclosure" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Affiliate Disclosure</a></li>
+              <li><a href="/responsible-gambling" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Responsible Gambling</a></li>
+              <li><a href="/privacy" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" class="text-[#D4D4D4] hover:text-[#39FF14] transition-colors">Terms & Conditions</a></li>
             </ul>
           </nav>
         </div>
-        <!-- Responsible Gambling Strip -->
-        <div class="border-t border-white/10 py-6 px-4 md:px-6">
-          <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] uppercase tracking-widest text-center mb-4">RESPONSIBLE GAMBLING</p>
-          <div class="flex items-center justify-center gap-6 md:gap-10 flex-wrap">
-            <a href="/responsible-gambling" class="opacity-60 hover:opacity-90 transition-opacity" title="18+ Only">
-              <img src="/18years_over.webp" alt="18+ Only" class="h-10 w-auto" loading="lazy" />
+
+        <!-- Responsible Gambling Section -->
+        <div class="border-t-[3px] border-white py-8 px-6">
+          <p class="font-[Space_Grotesk] text-xs font-bold text-[#FAFF00] uppercase tracking-widest text-center mb-2">Responsible Gambling</p>
+          <p class="text-[#D4D4D4] text-sm font-[Public_Sans] text-center mb-6 max-w-xl mx-auto">
+            Gambling should be entertainment, not income. If it stops being fun, stop playing.
+          </p>
+          <div class="flex items-center justify-center gap-4 md:gap-8 flex-wrap mb-6">
+            <a href="/responsible-gambling" class="border border-white/20 p-2 hover:border-[#39FF14] transition-colors" title="18+ Only">
+              <img src="/18years_over.webp" alt="18+ Only" class="h-9 w-auto" loading="lazy" />
             </a>
-            <a href="https://www.gamcare.org.uk/" target="_blank" rel="noopener noreferrer" class="opacity-60 hover:opacity-90 transition-opacity" title="GamCare">
-              <img src="/gamcare.webp" alt="GamCare" class="h-10 w-auto" loading="lazy" />
+            <a href="https://www.gamcare.org.uk/" target="_blank" rel="noopener noreferrer" class="border border-white/20 p-2 hover:border-[#39FF14] transition-colors" title="GamCare">
+              <img src="/gamcare.webp" alt="GamCare" class="h-9 w-auto" loading="lazy" />
             </a>
-            <a href="https://www.gambleaware.org/" target="_blank" rel="noopener noreferrer" class="opacity-60 hover:opacity-90 transition-opacity" title="GambleAware">
-              <img src="/gamble-aware.webp" alt="GambleAware" class="h-10 w-auto" loading="lazy" />
+            <a href="https://www.gambleaware.org/" target="_blank" rel="noopener noreferrer" class="border border-white/20 p-2 hover:border-[#39FF14] transition-colors" title="GambleAware">
+              <img src="/gamble-aware.webp" alt="GambleAware" class="h-9 w-auto" loading="lazy" />
             </a>
-            <a href="https://gamblersanonymous.org/" target="_blank" rel="noopener noreferrer" class="opacity-60 hover:opacity-90 transition-opacity" title="Gamblers Anonymous">
-              <img src="/gamblers-anonymous.webp" alt="Gamblers Anonymous" class="h-10 w-auto" loading="lazy" />
+            <a href="https://gamblersanonymous.org/" target="_blank" rel="noopener noreferrer" class="border border-white/20 p-2 hover:border-[#39FF14] transition-colors" title="Gamblers Anonymous">
+              <img src="/gamblers-anonymous.webp" alt="Gamblers Anonymous" class="h-9 w-auto" loading="lazy" />
             </a>
-            <a href="https://responsiblegambling.org/" target="_blank" rel="noopener noreferrer" class="opacity-60 hover:opacity-90 transition-opacity" title="Responsible Gambling Council">
-              <img src="/responsible-gambling-council.webp" alt="Responsible Gambling Council" class="h-10 w-auto" loading="lazy" />
+            <a href="https://responsiblegambling.org/" target="_blank" rel="noopener noreferrer" class="border border-white/20 p-2 hover:border-[#39FF14] transition-colors" title="Responsible Gambling Council">
+              <img src="/responsible-gambling-council.webp" alt="Responsible Gambling Council" class="h-9 w-auto" loading="lazy" />
             </a>
           </div>
+          <p class="text-center text-sm font-[JetBrains_Mono]">
+            <span class="text-[#FAFF00]">Need help?</span>
+            <span class="text-[#D4D4D4]"> GamCare: 0808 8020 133</span>
+            <span class="text-white/30 mx-2">|</span>
+            <span class="text-[#D4D4D4]">1-800-GAMBLER</span>
+          </p>
         </div>
+
         <!-- Copyright -->
-        <div class="border-t border-white/10 py-5 px-4 md:px-6">
+        <div class="border-t border-white/10 py-5 px-6">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
             <p class="text-[#D4D4D4] text-xs font-[Public_Sans]">
               &copy; 2026 CryptoBonusList.com. 18+ Only. Gambling involves risk. Content is for informational purposes.

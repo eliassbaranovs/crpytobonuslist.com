@@ -2,14 +2,18 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { isBonus, sortByDate } from "../../lib/posts";
+import { getRatingBg } from "../../lib/casino-filters";
 
 const allPosts = await getCollection("posts");
 const bonuses = sortByDate(allPosts.filter(isBonus));
+const bonusesByRating = [...bonuses].sort((a, b) => ((b.data.ourRating ?? b.data.rating ?? 0) as number) - ((a.data.ourRating ?? a.data.rating ?? 0) as number));
 
 const latestDate = bonuses.reduce((latest, item) => {
-  const d = new Date(item.data.lastUpdated || item.data.publishedAt || item.data.publishedDate || 0);
+  const d = new Date(item.data.updatedAt || item.data.publishedAt || 0);
   return d > latest ? d : latest;
 }, new Date(0));
+
+const lastUpdatedStr = latestDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
 const siteUrl = "https://cryptobonuslist.com";
 const canonical = `${siteUrl}/bonus`;
@@ -24,6 +28,21 @@ schemas.push({
   url: `${siteUrl}/bonus`,
   dateModified: latestDate.toISOString(),
   numberOfItems: bonuses.length,
+  author: {
+    "@type": "Person",
+    name: "Thomas Mullberg",
+    url: "https://cryptobonuslist.com/team/thomas-mullberg",
+    jobTitle: "Senior Crypto & iGaming Analyst",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "CryptoBonusList",
+    url: "https://cryptobonuslist.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://cryptobonuslist.com/cryptobonuslist.png",
+    },
+  },
   itemListElement: bonuses.map((b, i) => ({
     "@type": "ListItem",
     position: i + 1,
@@ -41,18 +60,226 @@ schemas.push({
   ],
 });
 
+// FAQPage
+const faqItems = [
+  {
+    q: "What is a crypto casino welcome bonus?",
+    a: "A crypto casino welcome bonus is an offer given to new players when they sign up and make their first deposit using cryptocurrency. It typically matches a percentage of your deposit, giving you extra funds to play with. Match rates range from 100% to 300%, with wagering requirements attached.",
+  },
+  {
+    q: "How do wagering requirements work?",
+    a: "Wagering requirements tell you how many times you must bet the bonus amount before you can withdraw winnings. A 30x requirement on a $100 bonus means you need to place $3,000 in total bets. Check whether the requirement applies to the bonus only or to the bonus plus your deposit.",
+  },
+  {
+    q: "Can you withdraw a casino bonus immediately?",
+    a: "No. Almost every casino bonus comes with wagering requirements that must be cleared first. The rare exceptions are no-wagering bonuses, which let you withdraw winnings right away. These are uncommon and usually come with lower bonus amounts.",
+  },
+  {
+    q: "What is the best crypto casino bonus right now?",
+    a: "The best bonus depends on your play style. For casual players, a low-wagering welcome bonus offers the most realistic value. For high-volume players, rakeback deals provide consistent returns. Check our rated list above for current top picks sorted by real value.",
+  },
+  {
+    q: "Are no-deposit bonuses real?",
+    a: "Yes, no-deposit bonuses exist. You sign up and receive a small amount of free funds or free spins without depositing. The catch is tight restrictions: high wagering (40x to 60x), low withdrawal caps ($50 to $200), and limited game selection. Treat them as a way to test a casino, not as free money.",
+  },
+  {
+    q: "What does 30x wagering mean?",
+    a: "It means you must bet 30 times the bonus amount before withdrawing. On a $100 bonus, that is $3,000 in total wagers. At a 3% house edge, you can expect to lose about $90 of that $100 bonus while clearing it. Anything under 35x is considered fair by industry standards.",
+  },
+  {
+    q: "Do bonus codes expire?",
+    a: "Yes. Most bonus codes have expiration dates, and the bonus itself usually has a time limit for clearing wagering requirements (typically 7 to 30 days). Always check the terms for both the code validity period and the wagering deadline before claiming.",
+  },
+  {
+    q: "What is rakeback at a crypto casino?",
+    a: "Rakeback returns a percentage of every bet you place, regardless of whether you win or lose. Typical rates range from 0.1% to 3% for regular players and up to 10% to 30% for VIPs. It is considered the most mathematically honest bonus type because it rewards play volume rather than luck.",
+  },
+];
+
+schemas.push({
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+});
+
 const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": schemas });
 ---
 
-<Layout title="Crypto Casino Bonuses | CryptoBonusList" description="Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers reviewed." jsonld={jsonLd} canonical={canonical}>
+<Layout title="Best Crypto Casino Bonuses 2026 | Tested Offers | CryptoBonusList" description="Compare tested crypto casino bonuses for 2026. Welcome matches, free spins, rakeback deals. Wagering requirements analyzed with real math. Updated monthly." jsonld={jsonLd} canonical={canonical}>
   <section class="px-6 py-12">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-7xl mx-auto">
       <h1 class="font-[Space_Grotesk] text-4xl md:text-6xl font-bold mb-4">
-        CRYPTO <span class="text-[#39FF14]">BONUSES</span>
+        CRYPTO CASINO <span class="text-[#39FF14]">BONUSES</span>
       </h1>
-      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-10 max-w-2xl">
+      <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6 max-w-2xl">
         Every crypto casino bonus worth looking at. Match deposits, free spins, rakeback, and reload offers. Reviewed with the numbers that matter.
       </p>
+
+      <!-- Affiliate Disclosure -->
+      <div class="border-[2px] border-white/20 bg-[#1a1a1a] px-5 py-3 mb-6">
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">
+          Some links on this page are affiliate links. We earn a commission if you sign up through them. This does not affect our ratings or rankings. All bonuses are independently reviewed.
+          <a href="/affiliate-disclosure" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">Read our full affiliate disclosure</a>.
+        </p>
+      </div>
+
+      <!-- Author Attribution + Freshness -->
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mb-10 text-xs font-[JetBrains_Mono] uppercase tracking-wide">
+        <span class="text-[#D4D4D4]">
+          Reviewed by <a href="/team/thomas-mullberg" class="text-[#FAFF00] underline underline-offset-2 hover:text-white transition-colors">Thomas Mullberg</a>, Senior Crypto & iGaming Analyst
+        </span>
+        <span class="text-white/30 hidden sm:inline">|</span>
+        <span class="text-[#D4D4D4]">Last updated: {lastUpdatedStr}</span>
+        <span class="text-white/30 hidden sm:inline">|</span>
+        <span class="text-[#39FF14]">{bonuses.length} bonuses reviewed</span>
+      </div>
+
+
+      <!-- Top 3 Quick Picks -->
+      <div class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-black mb-6">
+          TOP 3 <span class="text-[#39FF14]">BONUS PICKS</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {bonusesByRating.slice(0, 3).map((b, i) => {
+            const d = b.data;
+            const casinoName = d.casino_name || d.casinoName || d.title;
+            const rating = (d.ourRating ?? d.rating ?? 0) as number;
+            const ratingBg = getRatingBg(rating);
+            const bonusText = d.bonus || d.title;
+            const wagering = d.wageringRequirements || "N/A";
+            const logo = d.logo;
+            const shadowColors = ["#39FF14", "#FAFF00", "#A855F7"];
+            const rankColors = ["bg-[#39FF14] text-black", "bg-[#FAFF00] text-black", "bg-[#A855F7] text-white"];
+            const shadowColor = shadowColors[i];
+            const rankColor = rankColors[i];
+            const claimUrl = d.claim_url
+              ? (d.claim_url.includes("/") ? `/go/${d.slug}` : `/go/${d.claim_url}`)
+              : d.website ? `/go/${d.slug}` : null;
+
+            return (
+              <div class={`bg-[#0A0A0A] border-[3px] border-white p-6`} style={`box-shadow: 6px 6px 0px 0px ${shadowColor}`}>
+                <div class="flex items-center gap-3 mb-4">
+                  <span class={`${rankColor} font-[JetBrains_Mono] font-bold text-lg w-9 h-9 flex items-center justify-center shrink-0`}>
+                    {i + 1}
+                  </span>
+                  {logo ? (
+                    <img
+                      src={logo}
+                      alt={`${casinoName} logo`}
+                      width="48"
+                      height="48"
+                      class="w-12 h-12 object-contain border border-white/20 shrink-0 bg-white"
+                      loading="lazy"
+                    />
+                  ) : d.image ? (
+                    <div class="w-12 h-12 overflow-hidden border border-white/20 shrink-0">
+                      <img src={d.image} alt={casinoName} class="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                  ) : null}
+                  <div class="min-w-0">
+                    <h3 class="font-[Space_Grotesk] font-bold text-white text-lg truncate">{casinoName}</h3>
+                  </div>
+                </div>
+                <p class="text-[#FAFF00] font-[JetBrains_Mono] text-sm font-bold mb-1">{bonusText}</p>
+                <div class="flex items-center gap-3 mb-4">
+                  <span class={`${ratingBg} font-[JetBrains_Mono] text-xs font-bold px-2 py-0.5`}>
+                    {typeof rating === 'number' ? rating.toFixed(1) : rating}/10
+                  </span>
+                  <span class="font-[JetBrains_Mono] text-xs text-[#D4D4D4]">Wagering: {wagering}</span>
+                </div>
+                <div class="flex gap-3">
+                  {claimUrl && (
+                    <a
+                      href={claimUrl}
+                      rel="nofollow sponsored"
+                      class="flex-1 text-center font-[Space_Grotesk] font-bold text-xs py-2.5 bg-[#39FF14] text-black border-2 border-[#39FF14] hover:bg-[#2ECC0F] transition-colors uppercase"
+                    >
+                      Claim Bonus
+                    </a>
+                  )}
+                  <a
+                    href={`/bonus/${d.slug}`}
+                    class="flex-1 text-center font-[Space_Grotesk] font-bold text-xs py-2.5 border-2 border-white text-white hover:bg-white hover:text-black transition-colors uppercase"
+                  >
+                    Read Review
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <!-- Bonus Comparison Table -->
+      <div class="mb-10">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-black mb-6">
+          BONUS <span class="text-[#FAFF00]">COMPARISON</span>
+        </h2>
+        <div class="overflow-x-auto border-[3px] border-white">
+          <table class="w-full min-w-[700px] text-left" role="table" aria-label="Bonus comparison table">
+            <thead>
+              <tr class="bg-[#1a1a1a]">
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Casino / Bonus</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Bonus Amount</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Type</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Wagering</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Min Deposit</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3">Rating</th>
+                <th class="font-[JetBrains_Mono] text-[#FAFF00] text-xs uppercase tracking-wider px-4 py-3 text-right">Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bonusesByRating.map((b) => {
+                const d = b.data;
+                const casinoName = d.casino_name || d.casinoName || d.title;
+                const rating = (d.ourRating ?? d.rating ?? 0) as number;
+                const ratingBg = getRatingBg(rating);
+                const bonusText = d.bonus || "N/A";
+                const bonusType = d.bonusType || "N/A";
+                const wagering = d.wageringRequirements || "N/A";
+                const minDeposit = d.minimumDeposit || d.minimum_deposit || "N/A";
+                const logo = d.logo;
+
+                return (
+                  <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td class="px-4 py-3">
+                      <div class="flex items-center gap-2">
+                        {logo && (
+                          <img src={logo} alt="" width="28" height="28" class="w-7 h-7 object-contain border border-white/20 shrink-0 bg-white" loading="lazy" />
+                        )}
+                        <span class="font-[Space_Grotesk] font-bold text-white text-sm truncate max-w-[160px]">{casinoName}</span>
+                      </div>
+                    </td>
+                    <td class="px-4 py-3 font-[JetBrains_Mono] text-xs text-white max-w-[150px] truncate">{bonusText}</td>
+                    <td class="px-4 py-3">
+                      {bonusType !== "N/A" ? (
+                        <span class="bg-[#A855F7]/20 text-[#A855F7] font-[JetBrains_Mono] text-xs px-2 py-0.5">{bonusType}</span>
+                      ) : (
+                        <span class="font-[JetBrains_Mono] text-xs text-[#D4D4D4]">N/A</span>
+                      )}
+                    </td>
+                    <td class="px-4 py-3 font-[JetBrains_Mono] text-xs text-white">{wagering}</td>
+                    <td class="px-4 py-3 font-[JetBrains_Mono] text-xs text-white">{minDeposit}</td>
+                    <td class="px-4 py-3">
+                      <span class={`${ratingBg} font-[JetBrains_Mono] text-xs font-bold px-2 py-0.5`}>{typeof rating === 'number' ? rating.toFixed(1) : rating}</span>
+                    </td>
+                    <td class="px-4 py-3 text-right">
+                      <a href={`/bonus/${d.slug}`} class="font-[JetBrains_Mono] text-[#39FF14] text-xs underline underline-offset-2 hover:text-white transition-colors">Details</a>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <!-- Filter Controls -->
       <div class="flex flex-wrap gap-4 mb-8 p-6 border-[3px] border-white bg-[#0A0A0A]" id="bonus-filters">
@@ -230,15 +457,489 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
         })}
       </div>
 
-      <div class="mt-12 pt-8 border-t-[3px] border-white">
-        <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-4 text-[#FAFF00]">ABOUT CRYPTO BONUSES</h2>
+      <!-- ============================================================ -->
+      <!-- EDITORIAL AUTHORITY SECTIONS                                  -->
+      <!-- ============================================================ -->
+
+      <!-- Section A: Types of Crypto Casino Bonuses -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8 text-[#FAFF00]">TYPES OF CRYPTO CASINO BONUSES</h2>
+
+        <div class="space-y-8">
+          <!-- Welcome / Deposit Match -->
+          <div class="border-l-[3px] border-[#39FF14] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Welcome / Deposit Match</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              A deposit match gives you extra funds based on a percentage of your first deposit. Deposit 1 BTC at a casino offering 100% match and you play with 2 BTC. Simple enough on the surface.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Match percentages range from 100% to 300%. Higher percentages almost always come with higher wagering. A 100% match with 25x wagering beats a 300% match with 60x every single time. The math on that is not close.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Most welcome bonuses spread across multiple deposits. A "package" might offer 100% on your first deposit, 75% on your second, 50% on your third. Each deposit typically comes with its own wagering requirement and deadline. Read the terms for each part separately.
+            </p>
+          </div>
+
+          <!-- No Deposit -->
+          <div class="border-l-[3px] border-[#FAFF00] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">No Deposit</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Sign up, get free funds. No deposit required. Sounds great but these come with the tightest restrictions of any bonus type.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Withdrawal caps usually sit between $50 and $200. Wagering runs 40x to 60x. The bonus amount is small, typically $5 to $25. Think of it as a free test drive of the casino, not as a path to profit.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              The real value of a no-deposit bonus is trying the casino's interface, game selection, and withdrawal speed without risking your own funds. If the casino passes your test, you deposit. If not, you leave with zero downside.
+            </p>
+          </div>
+
+          <!-- Free Spins -->
+          <div class="border-l-[3px] border-[#A855F7] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Free Spins</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Play specific slots without using your balance. Check which games they work on before getting excited. A hundred free spins on a game you would never choose is not much of a bonus.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Key details to check: spin value (usually $0.10 to $0.25 each), whether winnings go to your real balance or bonus balance, and the wagering requirement on winnings. Most carry 30x to 50x wagering on whatever you win.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Wager-free spins are genuinely better. They are rare, but when you find them, winnings go straight to your withdrawable balance. No wagering, no hoops. If a casino offers wager-free spins, that tells you something good about how they treat players.
+            </p>
+          </div>
+
+          <!-- Rakeback -->
+          <div class="border-l-[3px] border-[#39FF14] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Rakeback</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Rakeback returns a percentage of every bet you place, win or lose. Typical rates: 0.1% to 3% for regular players, scaling up to 10% or even 30% for VIPs.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              This is the most mathematically honest bonus type. It rewards volume, not luck. If you play regularly, rakeback provides consistent value regardless of whether you are on a winning or losing streak.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Some casinos pay rakeback instantly per bet. Others accumulate it and pay daily, weekly, or monthly. Instant rakeback is better because you can reinvest it immediately. Check the payout frequency before committing to a platform.
+            </p>
+          </div>
+
+          <!-- Cashback -->
+          <div class="border-l-[3px] border-[#FAFF00] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Cashback</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Cashback returns a percentage of your net losses over a set period. Unlike rakeback, it only applies to losses. If you had a winning week, cashback pays nothing.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Rates range from 5% to 20% depending on the casino and your VIP tier. A 10% cashback on $500 in net losses returns $50 to your account. Some casinos pay this as real cash, others as bonus funds with wagering attached.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Cashback as real cash (no wagering) is the gold standard. If it comes with wagering requirements, the value drops significantly. Always check the terms.
+            </p>
+          </div>
+
+          <!-- Reload -->
+          <div class="border-l-[3px] border-[#A855F7] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Reload</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Reload bonuses reward existing players for additional deposits. The match percentage is lower than welcome bonuses (usually 25% to 75%) but they come back regularly.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              A casino with regular 50% reloads every week can deliver more total value than one offering a massive one-time welcome bonus. Consistency matters more than a single headline number. Look for casinos where reload offers are a regular feature, not a one-off promotion.
+            </p>
+          </div>
+
+          <!-- VIP/Loyalty -->
+          <div class="border-l-[3px] border-[#39FF14] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">VIP / Loyalty Programs</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+              Tier-based programs where higher levels come with better cashback, improved rakeback, faster withdrawals, higher limits, and a dedicated account manager.
+            </p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Look for programs that disclose tier requirements upfront. If a casino will not tell you exactly what it takes to reach the next level, that is a red flag. The best programs show clear point thresholds and explain what each tier unlocks. Avoid programs that feel deliberately opaque.
+            </p>
+          </div>
+
+          <!-- Referral -->
+          <div class="border-l-[3px] border-[#FAFF00] pl-5">
+            <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-2">Referral</h3>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+              Refer a friend, both of you get a bonus. These usually carry minimal restrictions compared to other bonus types. Nice extra if friends are interested, but not something to build a strategy around. Some programs offer a percentage of your referral's wagering as ongoing income, which can add up if you bring in active players.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section B: Understanding Wagering Requirements -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-[#FAFF00]">UNDERSTANDING WAGERING REQUIREMENTS</h2>
+
         <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
-          Crypto casino bonuses come in many forms. Welcome bonuses match your first deposit, sometimes up to 200% or more. Free spins give you risk-free rounds on slot games. Rakeback returns a percentage of your wagering losses. Reload bonuses reward repeat deposits with smaller percentage matches.
+          Wagering requirements are the single most important number attached to any casino bonus. They determine how much you need to bet before the bonus money (and any winnings from it) become withdrawable.
         </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Here is how they work. A 30x requirement on a $100 bonus means you must place $3,000 in total bets before you can withdraw. That does not mean you need to lose $3,000. Each bet counts toward the requirement, win or lose. But the house edge eats into your balance over those bets.
+        </p>
+
         <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-6">
-          Always check the wagering requirements before claiming. A 100% match bonus with 60x wagering is worse than a 50% match with 20x wagering. We list the wagering multiplier for every bonus so you can compare the actual value, not just the headline number.
+          Critical detail: check whether the wagering applies to the bonus only or to the bonus plus your deposit. "30x bonus" on a $100 bonus means $3,000 in bets. "30x (bonus + deposit)" on a $100 bonus with a $100 deposit means $6,000 in bets. That doubles your workload.
         </p>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+        <!-- Wagering Tiers -->
+        <div class="border-[3px] border-white bg-[#0A0A0A] p-6 mb-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#39FF14] mb-4">WAGERING REQUIREMENT TIERS (2025-2026)</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-4">
+              <span class="w-28 shrink-0 font-[JetBrains_Mono] text-xs font-bold text-[#39FF14] uppercase">Excellent</span>
+              <span class="font-[JetBrains_Mono] text-sm text-white">1x - 15x</span>
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-xs ml-2">Rare, near-free offers. Grab these immediately.</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="w-28 shrink-0 font-[JetBrains_Mono] text-xs font-bold text-[#FAFF00] uppercase">Good</span>
+              <span class="font-[JetBrains_Mono] text-sm text-white">20x - 30x</span>
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-xs ml-2">Fair and clearable with normal play.</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="w-28 shrink-0 font-[JetBrains_Mono] text-xs font-bold text-white uppercase">Average</span>
+              <span class="font-[JetBrains_Mono] text-sm text-white">35x - 40x</span>
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-xs ml-2">Industry standard. Proceed with realistic expectations.</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="w-28 shrink-0 font-[JetBrains_Mono] text-xs font-bold text-[#F97316] uppercase">Poor</span>
+              <span class="font-[JetBrains_Mono] text-sm text-white">45x - 55x</span>
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-xs ml-2">Difficult to clear. Only take with large bankroll.</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="w-28 shrink-0 font-[JetBrains_Mono] text-xs font-bold text-[#EF4444] uppercase">Predatory</span>
+              <span class="font-[JetBrains_Mono] text-sm text-white">60x+</span>
+              <span class="text-[#D4D4D4] font-[Public_Sans] text-xs ml-2">Nearly impossible. Avoid unless you do not care about the bonus.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Quick Math Test -->
+        <div class="border-[3px] border-[#FAFF00] bg-[#0A0A0A] p-6 mb-6">
+          <h3 class="font-[Space_Grotesk] text-lg font-bold text-[#FAFF00] mb-4">THE QUICK MATH TEST</h3>
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+            Run this on every bonus before claiming:
+          </p>
+          <ol class="space-y-2 text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed list-decimal list-inside">
+            <li><span class="text-white font-bold">Bonus amount x wagering multiplier = total bets needed.</span> Example: $100 x 30 = $3,000.</li>
+            <li><span class="text-white font-bold">Total bets x 0.03 (3% average house edge) = expected loss.</span> $3,000 x 0.03 = $90.</li>
+            <li><span class="text-white font-bold">If expected loss exceeds the bonus amount, it is negative expected value.</span> $90 loss on a $100 bonus? You keep about $10 on average. Marginal but positive.</li>
+            <li><span class="text-white font-bold">Breakeven at 3% house edge is roughly 33x wagering.</span> Above that, you are statistically expected to lose more than the bonus gives you.</li>
+          </ol>
+        </div>
+
+        <!-- Game Weighting -->
+        <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-3">Game Weighting</h3>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+          Not all games count equally toward wagering. Casinos use game weighting to steer you toward higher-edge games.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div class="border-[2px] border-white p-3 text-center">
+            <div class="font-[JetBrains_Mono] text-lg font-bold text-[#39FF14]">100%</div>
+            <div class="font-[Public_Sans] text-xs text-[#D4D4D4]">Slots</div>
+          </div>
+          <div class="border-[2px] border-white p-3 text-center">
+            <div class="font-[JetBrains_Mono] text-lg font-bold text-[#FAFF00]">5-10%</div>
+            <div class="font-[Public_Sans] text-xs text-[#D4D4D4]">Blackjack</div>
+          </div>
+          <div class="border-[2px] border-white p-3 text-center">
+            <div class="font-[JetBrains_Mono] text-lg font-bold text-[#F97316]">0-10%</div>
+            <div class="font-[Public_Sans] text-xs text-[#D4D4D4]">Live Dealer</div>
+          </div>
+          <div class="border-[2px] border-white p-3 text-center">
+            <div class="font-[JetBrains_Mono] text-lg font-bold text-[#EF4444]">0%</div>
+            <div class="font-[Public_Sans] text-xs text-[#D4D4D4]">High-RTP Slots</div>
+          </div>
+        </div>
+
+        <h3 class="font-[Space_Grotesk] text-lg font-bold text-white mb-3">Other Key Terms</h3>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-2">
+          <span class="text-white font-bold">Maximum bet while wagering:</span> $5 is the industry standard. Bet more and the casino can void your bonus and all winnings. This rule exists in nearly every set of bonus terms.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-2">
+          <span class="text-white font-bold">Time limits:</span> Most bonuses give you 7 to 30 days to complete wagering. Fail to clear it in time and the bonus and any associated winnings get removed.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+          <span class="text-white font-bold">Withdrawal caps:</span> No-deposit bonuses almost always cap withdrawals at $50 to $200. Deposit match bonuses are often uncapped, but check. Some cap winnings at 5x or 10x the bonus amount.
+        </p>
+      </div>
+
+      <!-- Section C: Bonus Red Flags -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-[#FAFF00]">BONUS RED FLAGS TO WATCH FOR</h2>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-6">
+          Not every bonus is worth claiming. Some are structured to look generous while being nearly impossible to convert into real money. Watch for these warning signs.
+        </p>
+
+        <div class="space-y-4">
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">1.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">Wagering above 50x</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">At 60x on a $100 bonus, you need to bet $6,000. At 3% house edge, you lose $180 clearing a $100 bonus. The math does not work. Anything above 50x is a net negative for the player.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">2.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">Vague bonus language</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Phrases like "standard terms apply" or "management reserves the right to modify" without specifying what those terms are. Legitimate casinos spell out every condition clearly.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">3.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">500% match offers</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">A 500% match grabs attention but always comes with impossible terms. Wagering of 80x or higher, strict game restrictions, and tiny maximum cashout. If it sounds too good to be true, check the wagering.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">4.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">Less than 7 days to clear</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Clearing 40x wagering in 3 days requires an unrealistic pace of play. Short deadlines pressure players into reckless betting. Reasonable casinos give 14 to 30 days.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">5.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">No visible license</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Without a license from a recognized regulator like the <a href="https://www.cga.cw" target="_blank" rel="noopener noreferrer" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">Curacao Gaming Authority</a>, <a href="https://www.mga.org.mt" target="_blank" rel="noopener noreferrer" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">Malta Gaming Authority</a>, or <a href="https://gamingcommission.ca" target="_blank" rel="noopener noreferrer" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">Kahnawake Gaming Commission</a>, there is no regulatory body to enforce bonus terms. If a casino refuses to pay out, you have no recourse.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">6.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">Retroactive term changes</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Some casinos change bonus terms after players have already claimed. Screenshot the terms when you claim. If the casino changes rules mid-bonus, you have documentation for a dispute.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 items-start">
+            <span class="text-[#EF4444] font-[Space_Grotesk] font-bold text-lg shrink-0 w-6">7.</span>
+            <div>
+              <p class="text-white font-[Public_Sans] font-bold text-sm mb-1">Restricted payment methods</p>
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Some bonuses exclude certain deposit methods. Confirm your preferred cryptocurrency qualifies before depositing. Finding out your Bitcoin deposit does not trigger the bonus after you have already sent funds is a frustrating experience.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section D: Why Crypto Bonuses Beat Fiat -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-[#FAFF00]">WHY CRYPTO BONUSES BEAT FIAT</h2>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Crypto casino bonuses have structural advantages over traditional fiat bonuses. This is not marketing spin. The economics of cryptocurrency transactions create real differences in what casinos can offer.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">Faster Payouts</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Crypto withdrawals process in minutes. Fiat withdrawals take 3 to 7 business days. When you clear wagering and want your money, speed matters.</p>
+          </div>
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">Lower Minimums</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Crypto minimum deposits typically start at $5 to $10. Fiat casinos often require $20 to $50. Lower entry means more players can access bonus offers.</p>
+          </div>
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">No Banking Restrictions</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Many banks block gambling transactions. Crypto bypasses this entirely. Your deposits reach the casino without interference from financial intermediaries.</p>
+          </div>
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">Better Terms</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Lower processing fees for the casino translate to better bonus terms for players. Crypto casinos save 2% to 5% per transaction compared to credit card processors.</p>
+          </div>
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">Provably Fair Games</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Blockchain verification lets you independently confirm game outcomes are fair. Fiat casinos rely on trust. Crypto casinos can offer mathematical proof.</p>
+          </div>
+          <div class="border-[2px] border-[#39FF14] p-4">
+            <p class="text-[#39FF14] font-[Space_Grotesk] font-bold text-sm mb-1">Privacy</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs leading-relaxed">Many crypto casinos require minimal personal information. No bank statements, no credit checks, no gambling transactions appearing on your financial records.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section E: How We Evaluate Bonus Value -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-[#FAFF00]">HOW WE EVALUATE BONUS VALUE</h2>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Headline numbers are misleading. A "400% up to $40,000" bonus sounds incredible until you check the 60x wagering requirement. Our rating system looks past the marketing to assess what a bonus is actually worth to a real player.
+        </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+          <span class="text-white font-bold">Wagering requirement weight:</span> This is the single biggest factor. We calculate the expected cost of clearing each bonus using average house edges. Lower wagering means higher real value.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+          <span class="text-white font-bold">Time limit fairness:</span> A 30x requirement with 30 days is reasonable. The same requirement with 7 days forces rushed, reckless play. We penalize unrealistic deadlines.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+          <span class="text-white font-bold">Game restriction analysis:</span> If only low-RTP slots count toward wagering, the real cost of clearing increases. We factor in which games contribute and at what weight.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-3">
+          <span class="text-white font-bold">Withdrawal cap impact:</span> A $100 no-deposit bonus with a $50 withdrawal cap means you can never realize the full bonus value. We adjust our ratings to reflect maximum achievable value.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          <span class="text-white font-bold">Overall real value to players:</span> We combine all factors into a single score that reflects what the bonus is worth in expected withdrawable cash, not what the headline says.
+        </p>
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+          Read our full rating methodology at <a href="/methodology" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">our methodology page</a>.
+        </p>
+      </div>
+
+      <!-- Section F: Responsible Gambling -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-6 text-[#FAFF00]">RESPONSIBLE GAMBLING</h2>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Casino bonuses are designed to extend your playtime, not to generate guaranteed profit. Gambling involves risk and the house always has an edge. Approach it as entertainment, not income.
+        </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Set a deposit limit before you start and stick to it. Every reputable crypto casino offers deposit limit tools in your account settings. Use them. Decide your budget for the week or month and do not exceed it, regardless of whether you are winning or losing.
+        </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          Warning signs that gambling may be becoming a problem: chasing losses by depositing more than planned, gambling with money needed for bills, lying to others about how much you gamble, feeling anxious or irritable when not gambling, and borrowing money to fund gambling.
+        </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-4">
+          If any of these apply, take a break. Most casinos offer self-exclusion tools that lock your account for a set period. Use them without hesitation.
+        </p>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed mb-6">
+          Professional help is available and free. Reach out to these organizations if you or someone you know needs support.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <a href="https://www.gamcare.org.uk" target="_blank" rel="noopener noreferrer" class="block border-[2px] border-white p-4 hover:border-[#39FF14] transition-colors">
+            <p class="text-white font-[Space_Grotesk] font-bold text-sm mb-1">GamCare</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs">Helpline: 0808 8020 133</p>
+            <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs mt-1">gamcare.org.uk</p>
+          </a>
+          <a href="https://www.gamblersanonymous.org" target="_blank" rel="noopener noreferrer" class="block border-[2px] border-white p-4 hover:border-[#39FF14] transition-colors">
+            <p class="text-white font-[Space_Grotesk] font-bold text-sm mb-1">Gamblers Anonymous</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs">Free peer support groups</p>
+            <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs mt-1">gamblersanonymous.org</p>
+          </a>
+          <a href="https://www.ncpgambling.org" target="_blank" rel="noopener noreferrer" class="block border-[2px] border-white p-4 hover:border-[#39FF14] transition-colors">
+            <p class="text-white font-[Space_Grotesk] font-bold text-sm mb-1">NCPG</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs">Call: 1-800-GAMBLER</p>
+            <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs mt-1">ncpgambling.org</p>
+          </a>
+          <a href="https://www.gambleaware.org" target="_blank" rel="noopener noreferrer" class="block border-[2px] border-white p-4 hover:border-[#39FF14] transition-colors">
+            <p class="text-white font-[Space_Grotesk] font-bold text-sm mb-1">GambleAware</p>
+            <p class="text-[#D4D4D4] font-[Public_Sans] text-xs">Free advice and resources</p>
+            <p class="text-[#39FF14] font-[JetBrains_Mono] text-xs mt-1">gambleaware.org</p>
+          </a>
+        </div>
+
+        <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">
+          Read our full <a href="/responsible-gambling" class="text-[#39FF14] underline underline-offset-2 hover:text-white transition-colors">responsible gambling policy</a> for more resources and information.
+        </p>
+      </div>
+
+      <!-- Section G: FAQ -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl md:text-3xl font-bold mb-8 text-[#FAFF00]">FREQUENTLY ASKED QUESTIONS</h2>
+
+        <div class="space-y-4">
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>What is a crypto casino welcome bonus?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">A crypto casino welcome bonus is an offer given to new players when they sign up and make their first deposit using cryptocurrency. It typically matches a percentage of your deposit, giving you extra funds to play with. Match rates range from 100% to 300%, with wagering requirements attached.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>How do wagering requirements work?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Wagering requirements tell you how many times you must bet the bonus amount before you can withdraw winnings. A 30x requirement on a $100 bonus means you need to place $3,000 in total bets. Check whether the requirement applies to the bonus only or to the bonus plus your deposit.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>Can you withdraw a casino bonus immediately?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">No. Almost every casino bonus comes with wagering requirements that must be cleared first. The rare exceptions are no-wagering bonuses, which let you withdraw winnings right away. These are uncommon and usually come with lower bonus amounts.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>What is the best crypto casino bonus right now?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">The best bonus depends on your play style. For casual players, a low-wagering welcome bonus offers the most realistic value. For high-volume players, rakeback deals provide consistent returns. Check our rated list above for current top picks sorted by real value.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>Are no-deposit bonuses real?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Yes, no-deposit bonuses exist. You sign up and receive a small amount of free funds or free spins without depositing. The catch is tight restrictions: high wagering (40x to 60x), low withdrawal caps ($50 to $200), and limited game selection. Treat them as a way to test a casino, not as free money.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>What does 30x wagering mean?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">It means you must bet 30 times the bonus amount before withdrawing. On a $100 bonus, that is $3,000 in total wagers. At a 3% house edge, you can expect to lose about $90 of that $100 bonus while clearing it. Anything under 35x is considered fair by industry standards.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>Do bonus codes expire?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Yes. Most bonus codes have expiration dates, and the bonus itself usually has a time limit for clearing wagering requirements (typically 7 to 30 days). Always check the terms for both the code validity period and the wagering deadline before claiming.</p>
+            </div>
+          </details>
+
+          <details class="border-[3px] border-white bg-[#0A0A0A] group">
+            <summary class="flex items-center justify-between px-5 py-4 cursor-pointer font-[Space_Grotesk] font-bold text-white text-sm hover:text-[#39FF14] transition-colors list-none">
+              <span>What is rakeback at a crypto casino?</span>
+              <span class="text-[#39FF14] font-[JetBrains_Mono] text-lg group-open:rotate-45 transition-transform">+</span>
+            </summary>
+            <div class="px-5 pb-4 border-t border-white/10 pt-3">
+              <p class="text-[#D4D4D4] font-[Public_Sans] text-sm leading-relaxed">Rakeback returns a percentage of every bet you place, regardless of whether you win or lose. Typical rates range from 0.1% to 3% for regular players and up to 10% to 30% for VIPs. It is considered the most mathematically honest bonus type because it rewards play volume rather than luck.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Internal Links Section -->
+      <div class="mt-16 pt-10 border-t-[3px] border-white">
+        <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-6 text-white">EXPLORE MORE</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <a href="/casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#39FF14] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-shadow">
             <p class="font-[Space_Grotesk] font-bold text-white mb-1">Casino Reviews</p>
             <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Full reviews of every casino behind these bonuses.</p>
@@ -249,10 +950,23 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
           </a>
           <a href="/no-wagering-crypto-casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#A855F7] hover:shadow-[6px_6px_0px_0px_#A855F7] transition-shadow">
             <p class="font-[Space_Grotesk] font-bold text-white mb-1">No Wagering Casinos</p>
-            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Bonuses you can actually withdraw without jumping through hoops.</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Bonuses you can actually withdraw without clearing requirements.</p>
+          </a>
+          <a href="/bitcoin-casinos" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#39FF14] hover:shadow-[6px_6px_0px_0px_#39FF14] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">Bitcoin Casinos</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Casinos that accept BTC with the best Bitcoin-specific bonuses.</p>
+          </a>
+          <a href="/guides" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#FAFF00] hover:shadow-[6px_6px_0px_0px_#FAFF00] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">Guides</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">Crypto gambling guides covering strategy, deposits, and more.</p>
+          </a>
+          <a href="/methodology" class="block bg-[#0A0A0A] border-[3px] border-white p-5 shadow-[4px_4px_0px_0px_#A855F7] hover:shadow-[6px_6px_0px_0px_#A855F7] transition-shadow">
+            <p class="font-[Space_Grotesk] font-bold text-white mb-1">Our Methodology</p>
+            <p class="text-[#D4D4D4] text-sm font-[Public_Sans]">How we rate and review every casino and bonus on this site.</p>
           </a>
         </div>
       </div>
+
     </div>
   </section>
 </Layout>
