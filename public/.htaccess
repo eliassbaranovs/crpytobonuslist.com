@@ -3,7 +3,11 @@ DirectorySlash Off
 
 RewriteEngine On
 
-# 1. Strip trailing slashes (301 redirect)
+# 1. Collapse multiple slashes into one (301 redirect)
+RewriteCond %{THE_REQUEST} //
+RewriteRule ^(.*?)//+(.*)$ /$1/$2 [R=301,L]
+
+# 2. Strip trailing slashes (301 redirect)
 RewriteRule ^(.*)/$ /$1 [R=301,L]
 
 # 2. Strip .html extension (301 redirect)
