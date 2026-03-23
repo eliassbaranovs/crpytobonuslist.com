@@ -23,6 +23,13 @@ const toNum = (v: unknown): number | undefined => {
   return isNaN(n) ? undefined : n;
 };
 
+// Pipeline-safe optional string that also accepts arrays (joins with " | ")
+const pStrOrArray = () =>
+  z.preprocess(
+    (v) => (Array.isArray(v) ? v.map(String).join(" | ") : toStr(v)),
+    z.string().optional(),
+  );
+
 // Pipeline-safe optional string: accepts string, number, or boolean from YAML
 const pStr = () => z.preprocess((v) => toStr(v), z.string().optional());
 
@@ -119,15 +126,15 @@ const contentSchema = z
       languages: z.string().optional(),
       mobileApps: z.string().optional(),
       readReview: z.string().optional(),
-      licences: z.string().optional(),
+      licences: pStrOrArray(),
       rtp: pStr(),
       rngTested: pStr(),
-      currencies: z.string().optional(),
+      currencies: pStrOrArray(),
       // Payment fields (snake_case + camelCase)
-      deposit_methods: z.string().optional(),
-      depositMethods: z.string().optional(),
-      withdrawal_methods: z.string().optional(),
-      withdrawalMethods: z.string().optional(),
+      deposit_methods: pStrOrArray(),
+      depositMethods: pStrOrArray(),
+      withdrawal_methods: pStrOrArray(),
+      withdrawalMethods: pStrOrArray(),
       minimum_deposit: pStr(),
       minimumDeposit: pStr(),
       min_deposit: pStr(),
@@ -138,8 +145,8 @@ const contentSchema = z
       withdrawalLimit: pStr(),
       pendingTime: z.string().optional(),
       // Game providers (snake_case + camelCase)
-      game_providers: z.string().optional(),
-      gameProviders: z.string().optional(),
+      game_providers: pStrOrArray(),
+      gameProviders: pStrOrArray(),
       // Support fields
       live_chat: pStrBool(),
       liveChat: pStrBool(),
