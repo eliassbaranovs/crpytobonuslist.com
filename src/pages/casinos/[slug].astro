@@ -72,7 +72,7 @@ const schemas: Record<string, any>[] = [];
 const reviewSchema: Record<string, any> = {
   "@type": "Review",
   name: d.seoTitle || d.title,
-  description: d.description,
+  ...(d.description ? { description: d.description } : {}),
   url: pageUrl,
   datePublished: d.publishedAt ? new Date(d.publishedAt).toISOString() : undefined,
   dateModified: lastUpdated ? new Date(lastUpdated).toISOString() : undefined,
@@ -173,7 +173,7 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
 
 <Layout
   title={d.seoTitle || d.title}
-  description={d.description}
+  description={d.description || d.title}
   jsonld={jsonld}
   ogType="article"
   ogImage={d.image || "/images/og-default.jpg"}
@@ -257,7 +257,9 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
           </div>
         </div>
 
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{d.description}</p>
+        {d.description && (
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-4">{d.description}</p>
+        )}
 
         {d.best_for && (
           <p class="text-[#39FF14] font-[JetBrains_Mono] text-sm mb-4">BEST FOR: {d.best_for}</p>
@@ -450,17 +452,17 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             </div>
           </div>
         </div>
-      ) : (
+      ) : (d.author || d.authorSlug) ? (
         <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
           <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-3">
               <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
               {d.authorSlug ? (
                 <a href={`/team/${d.authorSlug}`} class="text-[#A855F7] font-[Space_Grotesk] font-bold hover:underline">
-                  {d.author}
+                  {d.author || "Editorial Team"}
                 </a>
               ) : (
-                <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
+                <span class="text-white font-[Space_Grotesk] font-bold">{d.author || "Editorial Team"}</span>
               )}
             </div>
             {lastUpdatedFormatted && (
@@ -468,7 +470,7 @@ const jsonld = JSON.stringify({ "@context": "https://schema.org", "@graph": sche
             )}
           </div>
         </aside>
-      )}
+      ) : null}
 
       {/* Visible FAQ section */}
       {d.faqs && d.faqs.length > 0 && (

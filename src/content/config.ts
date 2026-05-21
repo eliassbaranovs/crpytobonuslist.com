@@ -44,7 +44,7 @@ const contentSchema = z
     .object({
       title: z.string(),
       slug: z.string(),
-      description: z.string(),
+      description: z.string().optional(),
       seoTitle: z.string().optional(),
       excerpt: z.string().optional(),
       publishedAt: z.coerce.date(),
@@ -54,15 +54,15 @@ const contentSchema = z
         z.string().optional(),
       ),
       tags: z.preprocess((v) => toStrArray(v) ?? [], z.array(z.string())),
-      image: z.string(),
+      image: z.string().optional(),
       imageAlt: z.string().optional(),
       imageWidth: z.preprocess((v) => toNum(v) ?? 1792, z.number()),
       imageHeight: z.preprocess((v) => toNum(v) ?? 1024, z.number()),
       imageLoading: z.enum(["lazy", "eager"]).default("lazy"),
       imageFetchPriority: z.enum(["high", "low", "auto"]).default("auto"),
       logo: z.string().optional(),
-      author: z.string(),
-      authorSlug: z.preprocess((v) => toStr(v) ?? "", z.string()),
+      author: z.string().optional(),
+      authorSlug: z.preprocess((v) => toStr(v) ?? "", z.string().optional()),
       canonical: z.string().default(""),
       schema_jsonld: z.preprocess(
         (v) =>
@@ -221,8 +221,8 @@ const contentSchema = z
       ...data,
       // Existing normalizations
       updatedAt: data.updatedAt ?? (data.lastModified ? new Date(data.lastModified) : data.publishedAt),
-      image: data.image || data.coverImage || "",
-      author: data.author || data.authorName || "",
+      image: data.image || data.coverImage || undefined,
+      author: data.author || data.authorName || undefined,
       imageAlt: data.imageAlt || data.title,
       seoTitle: data.seoTitle || data.title,
       // Normalize snake_case -> camelCase for all duplicate field pairs

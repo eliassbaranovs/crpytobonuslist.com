@@ -62,47 +62,52 @@ const combinedFaqs = [
     question: f.question,
     answer: f.answer,
   })),
-  {
+  ...(verdict ? [{
     question: `Which is better, ${nameA} or ${nameB}?`,
     answer: verdict,
+  }] : []),
+].filter((f) => f.question && f.answer);
+
+// JSON-LD
+const compareSchemas: Record<string, any>[] = [
+  {
+    "@type": "Article",
+    headline: `${nameA} vs ${nameB}: Which Crypto Casino Is Better?`,
+    description: `Side-by-side comparison of ${nameA} and ${nameB}. Ratings, bonuses, withdrawal speeds, crypto support, and more.`,
+    url: pageUrl,
+    dateModified: new Date(
+      Math.max(
+        new Date(a.data.updatedAt || a.data.publishedAt || Date.now()).getTime(),
+        new Date(b.data.updatedAt || b.data.publishedAt || Date.now()).getTime()
+      )
+    ).toISOString(),
+    publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
+    author: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Compare Casinos", item: `${siteUrl}/compare` },
+      { "@type": "ListItem", position: 3, name: `${nameA} vs ${nameB}` },
+    ],
   },
 ];
 
-// JSON-LD
+if (combinedFaqs.length > 0) {
+  compareSchemas.push({
+    "@type": "FAQPage",
+    mainEntity: combinedFaqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  });
+}
+
 const schemaJsonLd = JSON.stringify({
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Article",
-      headline: `${nameA} vs ${nameB}: Which Crypto Casino Is Better?`,
-      description: `Side-by-side comparison of ${nameA} and ${nameB}. Ratings, bonuses, withdrawal speeds, crypto support, and more.`,
-      url: pageUrl,
-      dateModified: new Date(
-        Math.max(
-          new Date(a.data.updatedAt || a.data.publishedAt).getTime(),
-          new Date(b.data.updatedAt || b.data.publishedAt).getTime()
-        )
-      ).toISOString(),
-      publisher: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
-      author: { "@type": "Organization", name: "CryptoBonusList", url: siteUrl },
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: combinedFaqs.map((f) => ({
-        "@type": "Question",
-        name: f.question,
-        acceptedAnswer: { "@type": "Answer", text: f.answer },
-      })),
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
-        { "@type": "ListItem", position: 2, name: "Compare Casinos", item: `${siteUrl}/compare` },
-        { "@type": "ListItem", position: 3, name: `${nameA} vs ${nameB}` },
-      ],
-    },
-  ],
+  "@graph": compareSchemas,
 });
 
 const ratingA = a.data.ourRating || 0;
@@ -116,6 +121,7 @@ const ratingBgB = getRatingBg(ratingB);
   description={`${nameA} vs ${nameB} compared side by side. Ratings, bonuses, withdrawal speed, crypto support, KYC policy, and more.`}
   jsonld={schemaJsonLd}
   ogType="article"
+  ogImage={a.data.image || b.data.image || "/images/og-default.jpg"}
   canonical={pageUrl}
 >
   <article class="px-6 py-12">
@@ -164,14 +170,18 @@ const ratingBgB = getRatingBg(ratingB);
         </h2>
         <p class="text-[#D4D4D4] font-[Public_Sans] text-lg leading-relaxed">{verdict}</p>
         <div class="flex flex-wrap gap-3 mt-4">
-          <a href={getClaimUrl(a)} target="_blank" rel="noopener noreferrer nofollow sponsored"
-            class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-5 py-2 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
-            VISIT {nameA.toUpperCase()}
-          </a>
-          <a href={getClaimUrl(b)} target="_blank" rel="noopener noreferrer nofollow sponsored"
-            class="inline-block bg-[#8A2BE2] text-white font-[Space_Grotesk] font-bold px-5 py-2 border-[3px] border-[#8A2BE2] hover:bg-[#7a1fd2] transition-colors text-sm">
-            VISIT {nameB.toUpperCase()}
-          </a>
+          {getClaimUrl(a) && (
+            <a href={getClaimUrl(a)} target="_blank" rel="noopener noreferrer nofollow sponsored"
+              class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-5 py-2 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
+              VISIT {nameA.toUpperCase()}
+            </a>
+          )}
+          {getClaimUrl(b) && (
+            <a href={getClaimUrl(b)} target="_blank" rel="noopener noreferrer nofollow sponsored"
+              class="inline-block bg-[#8A2BE2] text-white font-[Space_Grotesk] font-bold px-5 py-2 border-[3px] border-[#8A2BE2] hover:bg-[#7a1fd2] transition-colors text-sm">
+              VISIT {nameB.toUpperCase()}
+            </a>
+          )}
         </div>
       </section>
 
@@ -209,6 +219,7 @@ const ratingBgB = getRatingBg(ratingB);
       </section>
 
       {/* Pros & Cons */}
+      {((a.data.pros || []).length > 0 || (a.data.cons || []).length > 0 || (b.data.pros || []).length > 0 || (b.data.cons || []).length > 0) && (
       <section class="mb-8">
         <h2 class="font-[Space_Grotesk] text-2xl font-bold mb-4 border-b-[3px] border-[#39FF14] pb-2">
           PROS & CONS
@@ -276,6 +287,7 @@ const ratingBgB = getRatingBg(ratingB);
           </div>
         </div>
       </section>
+      )}
 
       {/* Crypto Support */}
       {(cryptosA.length > 0 || cryptosB.length > 0) && (
@@ -370,10 +382,12 @@ const ratingBgB = getRatingBg(ratingB);
             <h3 class="font-[Space_Grotesk] font-bold text-white text-xl mb-2">{nameA}</h3>
             <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{(() => { const bi = getBonusInfo(a, bonusMap, "Check site for current offers"); return bi.url ? <a href={bi.url} class="text-[#FAFF00] hover:underline">{bi.text}</a> : bi.text; })()}</p>
             <div class="flex gap-3">
-              <a href={getClaimUrl(a)} target="_blank" rel="noopener noreferrer nofollow sponsored"
-                class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#39FF14] text-black px-4 py-3 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
-                VISIT CASINO
-              </a>
+              {getClaimUrl(a) && (
+                <a href={getClaimUrl(a)} target="_blank" rel="noopener noreferrer nofollow sponsored"
+                  class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#39FF14] text-black px-4 py-3 border-[3px] border-[#39FF14] hover:bg-[#2ecc0e] transition-colors text-sm">
+                  VISIT CASINO
+                </a>
+              )}
               <a href={getReviewUrl(a)}
                 class="flex-1 text-center font-[Space_Grotesk] font-bold border-[3px] border-white text-white px-4 py-3 hover:bg-white hover:text-black transition-colors text-sm">
                 READ REVIEW
@@ -384,10 +398,12 @@ const ratingBgB = getRatingBg(ratingB);
             <h3 class="font-[Space_Grotesk] font-bold text-white text-xl mb-2">{nameB}</h3>
             <p class="text-[#D4D4D4] font-[Public_Sans] text-sm mb-4">{(() => { const bi = getBonusInfo(b, bonusMap, "Check site for current offers"); return bi.url ? <a href={bi.url} class="text-[#FAFF00] hover:underline">{bi.text}</a> : bi.text; })()}</p>
             <div class="flex gap-3">
-              <a href={getClaimUrl(b)} target="_blank" rel="noopener noreferrer nofollow sponsored"
-                class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#8A2BE2] text-white px-4 py-3 border-[3px] border-[#8A2BE2] hover:bg-[#7a1fd2] transition-colors text-sm">
-                VISIT CASINO
-              </a>
+              {getClaimUrl(b) && (
+                <a href={getClaimUrl(b)} target="_blank" rel="noopener noreferrer nofollow sponsored"
+                  class="flex-1 text-center font-[Space_Grotesk] font-bold bg-[#8A2BE2] text-white px-4 py-3 border-[3px] border-[#8A2BE2] hover:bg-[#7a1fd2] transition-colors text-sm">
+                  VISIT CASINO
+                </a>
+              )}
               <a href={getReviewUrl(b)}
                 class="flex-1 text-center font-[Space_Grotesk] font-bold border-[3px] border-white text-white px-4 py-3 hover:bg-white hover:text-black transition-colors text-sm">
                 READ REVIEW

@@ -63,7 +63,7 @@ const pageUrl = `${siteUrl}/bonus/${d.slug}`;
 const articleSchema: Record<string, any> = {
   "@type": "Article",
   headline: d.title,
-  description: d.description,
+  ...(d.description ? { description: d.description } : {}),
   url: pageUrl,
   datePublished: d.publishedAt ? new Date(d.publishedAt).toISOString() : undefined,
   dateModified: lastUpdated ? new Date(lastUpdated).toISOString() : undefined,
@@ -85,13 +85,13 @@ if (d.ourRating || d.playerRating) {
   const prodSchema: Record<string, any> = {
     "@type": "Product",
     name: d.casino_name || d.casinoName || d.title,
-    description: d.description,
+    ...(d.description ? { description: d.description } : {}),
   };
   if (d.playerRating && d.playerRatingCount) {
     prodSchema.aggregateRating = { "@type": "AggregateRating", ratingValue: String(d.playerRating), bestRating: "10", worstRating: "0", ratingCount: String(d.playerRatingCount) };
   }
   if (d.bonus) {
-    prodSchema.offers = { "@type": "Offer", name: d.bonus, description: d.description, ...(d.expires_at ? { validThrough: new Date(d.expires_at).toISOString() } : {}), ...(d.code ? { discountCode: d.code } : {}), availability: "https://schema.org/InStock" };
+    prodSchema.offers = { "@type": "Offer", name: d.bonus, ...(d.description ? { description: d.description } : {}), ...(d.expires_at ? { validThrough: new Date(d.expires_at).toISOString() } : {}), ...(d.code ? { discountCode: d.code } : {}), availability: "https://schema.org/InStock" };
   }
   schemas.push(prodSchema);
 }
@@ -147,7 +147,7 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
 
 <Layout
   title={d.seoTitle || d.title}
-  description={d.description}
+  description={d.description || d.title}
   jsonld={jsonld}
   ogType="article"
   ogImage={d.image || "/images/og-default.jpg"}
@@ -244,7 +244,9 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
           </div>
         </div>
 
-        <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{d.description}</p>
+        {d.description && (
+          <p class="text-[#D4D4D4] font-[Public_Sans] text-lg mb-6">{d.description}</p>
+        )}
 
         {/* Stats grid */}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -295,7 +297,7 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
               rel="nofollow sponsored"
               class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-8 py-5 text-center text-xl md:text-2xl border-[3px] border-black shadow-[8px_8px_0px_0px_#000000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_#000000] transition-all uppercase tracking-wide"
             >
-              CLAIM BONUS NOW
+              {casinoName ? `VISIT ${casinoName.toUpperCase()}` : "VISIT CASINO"}
             </a>
           </div>
         )}
@@ -414,14 +416,14 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
       {claimUrl && (
         <div class="mt-10 mb-4 border-[3px] border-[#39FF14] bg-black p-6 text-center">
           <p class="text-white font-[Space_Grotesk] font-bold text-lg md:text-xl mb-4">
-            Ready to claim the {casinoName || ""} bonus?
+            Ready to try {casinoName || "this casino"}?
           </p>
           <a
             href={claimUrl}
             rel="nofollow sponsored"
             class="inline-block bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-10 py-4 text-lg border-[3px] border-black shadow-[6px_6px_0px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[3px_3px_0px_0px_#000] transition-all uppercase tracking-wide"
           >
-            CLAIM BONUS NOW
+            {casinoName ? `VISIT ${casinoName.toUpperCase()}` : "VISIT CASINO"}
           </a>
         </div>
       )}
@@ -461,17 +463,17 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
             </div>
           </div>
         </div>
-      ) : (
+      ) : (d.author || d.authorSlug) ? (
         <aside class="mt-8 p-6 border-[3px] border-[#333] bg-[#0d0d0d]">
           <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-3">
               <span class="text-[#D4D4D4] font-[Public_Sans] text-sm">Reviewed by:</span>
               {d.authorSlug ? (
                 <a href={`/team/${d.authorSlug}`} class="text-[#39FF14] font-[Space_Grotesk] font-bold hover:underline">
-                  {d.author}
+                  {d.author || "Editorial Team"}
                 </a>
               ) : (
-                <span class="text-white font-[Space_Grotesk] font-bold">{d.author}</span>
+                <span class="text-white font-[Space_Grotesk] font-bold">{d.author || "Editorial Team"}</span>
               )}
             </div>
             {lastUpdatedFormatted && (
@@ -479,7 +481,7 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
             )}
           </div>
         </aside>
-      )}
+      ) : null}
 
       {/* Visible FAQ section */}
       {d.faqs && d.faqs.length > 0 && (
@@ -551,7 +553,7 @@ const readingTime = d.readingTime || (Math.ceil(wordCount / 200) || 1) + " min r
   {claimUrl && (
     <div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-black border-t-[3px] border-[#39FF14] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(57,255,20,0.3)]">
       <a href={claimUrl} rel="nofollow sponsored" class="block w-full bg-[#39FF14] text-black font-[Space_Grotesk] font-bold px-6 py-4 text-center text-lg border-[3px] border-white shadow-[4px_4px_0px_0px_#FFFFFF]">
-        CLAIM BONUS
+        {casinoName ? `VISIT ${casinoName.toUpperCase()}` : "VISIT CASINO"}
       </a>
     </div>
   )}
